@@ -1,0 +1,38 @@
+jobs:
+  - name: dataworks-metrics-infrastructure
+    plan:
+      - get: dataworks-metrics-infrastructure-pr
+        trigger: true
+        version: every
+      - put: dataworks-metrics-infrastructure-pr
+        params:
+          path: dataworks-metrics-infrastructure-pr
+          status: pending
+        input_mapping:
+          dataworks-metrics-infrastructure: dataworks-metrics-infrastructure-pr
+      - task: basic-git-test
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: { repository: alpine/git, tag: "latest" }
+          inputs:
+            - name: dataworks-metrics-infrastructure-pr
+          run:
+            path: /bin/sh
+            args:
+              - -xce
+              - |
+                cd dataworks-metrics-infrastructure-pr
+                git log --graph --all --color --pretty=format:"%x1b[31m%h%x09%x1b[32m%d%x1b[0m%x20%s" > log.txt
+                cat log.txt
+        on_failure:
+          put: dataworks-metrics-infrastructure-pr
+          params:
+            path: dataworks-metrics-infrastructure-pr
+            status: failure
+        on_success:
+          put: dataworks-metrics-infrastructure-pr
+          params:
+            path: dataworks-metrics-infrastructure-pr
+            status: success
