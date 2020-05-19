@@ -1,0 +1,4 @@
+groups:
+  - name: pull-request
+    jobs:
+      - dataworks-metrics-infrastructure

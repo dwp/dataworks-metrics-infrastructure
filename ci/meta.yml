@@ -1,0 +1,79 @@
+meta:
+  plan:
+    terraform-bootstrap:
+      task: terraform-bootstrap
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: dwpdigital/jinja-yaml-aws
+            version: 0.0.19
+            tag: 0.0.19
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              python bootstrap_terraform.py
+              cp terraform.tf ../terraform-config
+          dir: dataworks-metrics-infrastructure
+        inputs:
+          - name: dataworks-metrics-infrastructure
+        outputs:
+          - name: terraform-config
+      params:
+        AWS_REGION: eu-west-2
+    terraform-apply:
+      task: terraform-apply
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: hashicorp/terraform
+            version: ((dataworks.terraform_version))
+            tag: ((dataworks.terraform_version))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              cp ../terraform-config/terraform.tf .
+              terraform workspace show
+              terraform init
+              terraform plan -out terraform.plan
+              terraform apply -auto-approve terraform.plan
+          dir: dataworks-metrics-infrastructure
+        inputs:
+          - name: dataworks-metrics-infrastructure
+          - name: terraform-config
+      params:
+        TF_CLI_ARGS_apply: -lock-timeout=300s
+        TF_INPUT: "false"
+    terraform-plan:
+      task: terraform-plan
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: hashicorp/terraform
+            version: ((dataworks.terraform_version))
+            tag: ((dataworks.terraform_version))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              cp ../terraform-config/terraform.tf .
+              terraform workspace show
+              terraform init
+              terraform plan -detailed-exitcode
+          dir: dataworks-metrics-infrastructure
+        inputs:
+          - name: dataworks-metrics-infrastructure
+          - name: terraform-config
+      params:
+        TF_CLI_ARGS_plan: -lock-timeout=300s
+        TF_INPUT: "false"
