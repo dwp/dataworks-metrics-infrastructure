@@ -34,9 +34,11 @@ Up until now, we have utilised CloudWatch Metrics as the only source of metric i
 
 ## Solution
 
-The toolset we shall use is Prometheus.  It answers all of our questions in regards to metrics ingestion.   It will be deployed using ECS, as this suits our needs for size and scalability.
-As show in the images, the tool should be split over Development (DEV,QA,INT,MGMT-DEV) and Production (MGMT, PREPROD, PROD).  This allows us to split out the production data, following similar patterns seen elsewhere on the project.  As far as external parties access is required, SRE need access to scrape metrics from `:9090/metrics` on our Production instance.  
-Metrics aggregation shall be done by basing Prometheus in its own VPC per environment, and having VPC peering connections in to the other VPCs in that Environment. In the normal Prometheus workflow, there is no requirement for the targets to talk back.
+The toolset we shall use is Prometheus. It answers all of our questions in regards to metrics ingestion. It will be deployed using ECS, as this suits our needs for size and scalability.
+As show in the images, the tool should be split over Development (DEV,QA,INT,MGMT-DEV) and Production (MGMT, PREPROD, PROD). This allows us to split out the production data, following similar patterns seen elsewhere on the project.  As far as external parties access is required, SRE need access to scrape metrics from `:9090/metrics` on our Production instance.  
 
 ![High level design](docs/monitoring_high_level.png)
+
+Metrics aggregation shall be done by basing Prometheus in its own VPC per environment, and having VPC peering connections in to the other VPCs in that Environment. In the normal Prometheus workflow, there is no requirement for the targets to talk back.
+
 ![Low level slice](docs/monitoring_slice.png)
