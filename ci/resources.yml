@@ -1,5 +1,5 @@
 resources:
-  - name: dataworks-metrics-infrastructure
+  - name: dataworks-metrics-infrastructure-pr
     type: pull-request
     source:
       repository: dwp/dataworks-metrics-infrastructure
