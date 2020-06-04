@@ -31,3 +31,14 @@ Up until now, we have utilised CloudWatch Metrics as the only source of metric i
 * The lack of custom dimensions for metrics. As previous work with CW Metrics has highlighted, our use case is entirely limited by the inability for it to provide a facility for custom dimensions for their metrics. This means that, to take HTME as an example, horizontally scaling the HTME application has resulted in the work previously done to obtain metrics from this application being of limited use, as we are not able to tag HTME-generated metrics with a custom dimension indicating their source Instance (despite this being a built-in expectation of CW and despite being able to filter the metrics by Instance). As a result, the HTME dashboard is just a "rough indication" of collections being processed and is unable to provide a clear view into the processing that is being done on a per-collection or overall basis.  
 
 * CloudWatch still potentially has a place for AWS-first services that we utilise, such as Lambda. However, these metrics could potentially be collected from CW and posted to another metrics service, in order to centralise the service.
+
+## Solution
+
+The toolset we shall use is Prometheus. It answers all of our questions in regards to metrics ingestion. It will be deployed using ECS, as this suits our needs for size and scalability.
+As show in the images, the tool should be split over Development (DEV,QA,INT,MGMT-DEV) and Production (MGMT, PREPROD, PROD). This allows us to split out the production data, following similar patterns seen elsewhere on the project.  As far as external parties access is required, SRE need access to scrape metrics from `:9090/metrics` on our Production instance.  
+
+![High level design](docs/monitoring_high_level.png)
+
+Metrics aggregation shall be done by basing Prometheus in its own VPC per environment, and having VPC peering connections in to the other VPCs in that Environment. In the normal Prometheus workflow, there is no requirement for the targets to talk back.
+
+![Low level slice](docs/monitoring_slice.png)
