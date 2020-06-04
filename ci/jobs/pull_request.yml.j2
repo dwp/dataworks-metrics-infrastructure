@@ -1,0 +1,10 @@
+jobs:
+- name: management-dev
+  plan:
+  - get: dataworks-metrics-infrastructure
+    trigger: true
+  - .: (( inject meta.plan.terraform-bootstrap ))
+  - .: (( inject meta.plan.terraform-plan ))
+    config:
+      params:
+        AWS_ACC: "{{accounts['management-dev']}}"
