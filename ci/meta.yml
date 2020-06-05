@@ -16,7 +16,9 @@ meta:
             - -exc
             - |
               python bootstrap_terraform.py
-              cp terraform.tf ../terraform-config
+              sed -i '/^assume_role/ d' terraform/deploy/terraform.tfvars
+              cp terraform/deploy/terraform.tf ../terraform-config
+              cp terraform/deploy/terraform.tfvars ../terraform-config
           dir: dataworks-metrics-infrastructure
         inputs:
           - name: dataworks-metrics-infrastructure

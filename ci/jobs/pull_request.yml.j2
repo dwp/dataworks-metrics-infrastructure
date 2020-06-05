@@ -1,0 +1,50 @@
+jobs:
+- name: dataworks-metrics-infrastructure-pr
+  plan:
+  - get: dataworks-metrics-infrastructure-pr
+    trigger: true
+    version: every
+  - put: dataworks-metrics-infrastructure-pr
+    params:
+      path: dataworks-metrics-infrastructure-pr
+      status: pending
+  - .: (( inject meta.plan.terraform-bootstrap ))
+    input_mapping:
+      dataworks-metrics-infrastructure: dataworks-metrics-infrastructure-pr
+  - task: terraform-plan
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: hashicorp/terraform
+          version: ((dataworks.terraform_version))
+          tag: ((dataworks.terraform_version))
+      params:
+        TF_INPUT: false
+        TF_CLI_ARGS_apply: -lock-timeout=300s
+        TF_CLI_ARGS_plan:  -lock-timeout=300s
+      run:
+        path: sh
+        dir: dataworks-metrics-infrastructure-pr/terraform/deploy
+        args:
+        - -exc
+        - |
+          cp ../../../terraform-config/terraform.tf .
+          cp ../../../terraform-config/terraform.tfvars .
+          terraform init
+          terraform workspace show
+          terraform plan
+      inputs:
+      - name: dataworks-metrics-infrastructure-pr
+      - name: terraform-config
+    on_failure:
+      put: dataworks-metrics-infrastructure-pr
+      params:
+        path: dataworks-metrics-infrastructure-pr
+        status: failure
+    on_success:
+      put: dataworks-metrics-infrastructure-pr
+      params:
+        path: dataworks-metrics-infrastructure-pr
+        status: success
