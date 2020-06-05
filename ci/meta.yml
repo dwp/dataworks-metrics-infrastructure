@@ -20,6 +20,8 @@ meta:
               cp terraform/deploy/terraform.tf ../terraform-config
               cp terraform/deploy/terraform.tfvars ../terraform-config
           dir: dataworks-metrics-infrastructure
+        inputs:
+          - name: dataworks-metrics-infrastructure
         outputs:
           - name: terraform-config
       params:
