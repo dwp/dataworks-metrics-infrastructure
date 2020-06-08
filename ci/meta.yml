@@ -41,12 +41,13 @@ meta:
           args:
             - -exc
             - |
-              cp ../terraform-config/terraform.tf .
+              cp ../../../terraform-config/terraform.tf .
+              cp ../../../terraform-config/terraform.tfvars .
               terraform workspace show
               terraform init
               terraform plan -out terraform.plan
               terraform apply -auto-approve terraform.plan
-          dir: dataworks-metrics-infrastructure
+          dir: dataworks-metrics-infrastructure/terraform/deploy
         inputs:
           - name: dataworks-metrics-infrastructure
           - name: terraform-config
@@ -68,11 +69,12 @@ meta:
           args:
             - -exc
             - |
-              cp ../terraform-config/terraform.tf .
+              cp ../../../terraform-config/terraform.tf .
+              cp ../../../terraform-config/terraform.tfvars .
               terraform workspace show
               terraform init
               terraform plan -detailed-exitcode
-          dir: dataworks-metrics-infrastructure
+          dir: dataworks-metrics-infrastructure/terraform/deploy
         inputs:
           - name: dataworks-metrics-infrastructure
           - name: terraform-config

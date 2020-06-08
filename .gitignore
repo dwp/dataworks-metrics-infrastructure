@@ -18,3 +18,4 @@ aviator_pipeline.yml
 *.iml
 .idea/
 
+ci/jobs/*.yml

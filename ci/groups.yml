@@ -2,3 +2,6 @@ groups:
   - name: pull-request
     jobs:
       - dataworks-metrics-infrastructure-pr
+  - name: master
+    jobs:
+      - management-dev
