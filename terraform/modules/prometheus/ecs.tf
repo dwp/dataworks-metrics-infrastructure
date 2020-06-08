@@ -41,6 +41,25 @@ resource "aws_ecs_task_definition" "prometheus" {
 DEFINITION
 }
 
+resource "aws_ecs_service" "prometheus" {
+  name            = "${var.role}-${var.name}"
+  cluster         = var.ecs_cluster_main.id
+  task_definition = aws_ecs_task_definition.prometheus.arn
+  desired_count   = length(data.aws_availability_zones.current.names)
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    security_groups = [aws_security_group.web.id]
+    subnets         = var.vpc.aws_subnets_private.*.id
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.web_http.arn
+    container_name   = "${var.role}-${var.name}"
+    container_port   = var.prom_port
+  }
+}
+
 data "template_file" "prometheus_conf" {
   template = file("${path.module}/config/prometheus-${var.role}.tpl")
 }
