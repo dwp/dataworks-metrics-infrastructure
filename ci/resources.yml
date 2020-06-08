@@ -12,7 +12,5 @@ resources:
     source:
       branch: master
       uri: https://github.com/dwp/dataworks-metrics-infrastructure.git
-      username: ((github_com.username))
-      password: ((github_com.token))
     webhook_token: ((dataworks.concourse_github_webhook_token))
     check_every: 5m
