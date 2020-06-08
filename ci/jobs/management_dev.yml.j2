@@ -1,0 +1,6 @@
+jobs:
+  - name: management-dev
+    plan:
+      - get: dataworks-metrics-infrastructure
+        trigger: true
+      - .: (( inject meta.plan.terraform-plan ))
