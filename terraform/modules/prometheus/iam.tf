@@ -1,5 +1,5 @@
 resource "aws_iam_role" "prometheus" {
-  name               = var.name
+  name               = "${var.role}-${var.name}"
   assume_role_policy = data.aws_iam_policy_document.prometheus.json
   tags               = var.tags
 }
