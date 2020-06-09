@@ -9,6 +9,18 @@ module "vpc" {
   internet_proxy_fqdn         = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.dns_name
   internet_proxy_service_name = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
   vpc_endpoint_source_sg_ids  = [module.prometheus_master.outputs.security_group.id, module.prometheus_slave.outputs.security_group.id]
+  concourse_cidr_block        = local.cidr_block[local.environment].ci-cd-vpc
+}
+
+module "lb" {
+  source = "../modules/loadbalancer"
+
+  name                  = var.name
+  lb_name               = var.name
+  tags                  = local.tags
+  parent_domain_name    = local.parent_domain_name[local.environment]
+  vpc                   = module.vpc.outputs
+  whitelist_cidr_blocks = var.whitelist_cidr_blocks
 }
 
 module "prometheus_master" {
@@ -17,6 +29,9 @@ module "prometheus_master" {
   name                       = var.name
   role                       = "master"
   prometheus_version         = var.prometheus_version
+  lb_listener                = module.lb.outputs.lb_listener
+  lb_security_group_id       = module.lb.outputs.security_group_id
+  fqdn                       = module.lb.outputs.fqdn
   vpc                        = module.vpc.outputs
   ecs_task_execution_role    = data.terraform_remote_state.management.outputs.ecs_task_execution_role
   ecs_cluster_main           = data.terraform_remote_state.management.outputs.ecs_cluster_main
@@ -30,6 +45,9 @@ module "prometheus_slave" {
   name                       = var.name
   role                       = "slave"
   prometheus_version         = var.prometheus_version
+  lb_listener                = module.lb.outputs.lb_listener
+  lb_security_group_id       = module.lb.outputs.security_group_id
+  fqdn                       = module.lb.outputs.fqdn
   vpc                        = module.vpc.outputs
   ecs_task_execution_role    = data.terraform_remote_state.management.outputs.ecs_task_execution_role
   ecs_cluster_main           = data.terraform_remote_state.management.outputs.ecs_cluster_main

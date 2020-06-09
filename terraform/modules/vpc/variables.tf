@@ -51,3 +51,7 @@ variable "vpc_endpoint_source_sg_ids" {
   description = "Security group IDs of consumers of VPC endpoint services"
   type        = list(string)
 }
+
+variable "concourse_cidr_block" {
+  type = string
+}
