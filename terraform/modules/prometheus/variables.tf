@@ -30,7 +30,7 @@ variable "fqdn" {
 
 variable "lb_security_group_id" {
   description = ""
-  type = string
+  type        = string
 }
 
 variable "vpc" {}
