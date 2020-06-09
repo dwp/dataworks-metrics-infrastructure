@@ -17,6 +17,22 @@ variable "prometheus_version" {
   description = "version of prometheus"
   type        = string
 }
+
+variable "lb_listener" {
+  description = "ARN of the LB Listener"
+  type        = string
+}
+
+variable "fqdn" {
+  description = "Route53 FQDN"
+  type        = string
+}
+
+variable "lb_security_group_id" {
+  description = ""
+  type = string
+}
+
 variable "vpc" {}
 variable "ecs_task_execution_role" {}
 variable "ecs_cluster_main_log_group" {}

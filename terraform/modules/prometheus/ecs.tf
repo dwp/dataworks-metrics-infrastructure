@@ -1,5 +1,5 @@
 resource "aws_ecs_task_definition" "prometheus" {
-  family                   = "prometheus"
+  family                   = "${var.role}-${var.name}"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "512"
@@ -11,9 +11,9 @@ resource "aws_ecs_task_definition" "prometheus" {
 [
   {
     "cpu": ${var.fargate_cpu},
-    "image": "prom/prometheus:${var.prometheus_version}",
+    "image": "${data.aws_ecr_repository.prometheus.repository_url}:slave",
     "memory": ${var.fargate_memory},
-    "name": "prometheus",
+    "name": "${var.role}-${var.name}",
     "networkMode": "awsvpc",
     "user" : "nobody",
     "portMappings": [
@@ -45,7 +45,7 @@ resource "aws_ecs_service" "prometheus" {
   name            = "${var.role}-${var.name}"
   cluster         = var.ecs_cluster_main.id
   task_definition = aws_ecs_task_definition.prometheus.arn
-  desired_count   = length(data.aws_availability_zones.current.names)
+  desired_count   = 1
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -58,8 +58,4 @@ resource "aws_ecs_service" "prometheus" {
     container_name   = "${var.role}-${var.name}"
     container_port   = var.prom_port
   }
-}
-
-data "template_file" "prometheus_conf" {
-  template = file("${path.module}/config/prometheus-${var.role}.tpl")
 }
