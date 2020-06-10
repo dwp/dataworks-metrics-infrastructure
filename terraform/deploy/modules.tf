@@ -18,6 +18,9 @@ module "lb" {
   name                  = var.name
   lb_name               = var.name
   tags                  = local.tags
+  region                = var.region
+  accounts              = local.account
+  assume_role           = var.assume_role
   parent_domain_name    = local.parent_domain_name[local.environment]
   vpc                   = module.vpc.outputs
   whitelist_cidr_blocks = var.whitelist_cidr_blocks
