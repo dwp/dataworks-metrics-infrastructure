@@ -15,8 +15,6 @@ resource "aws_route53_record" "prometheus" {
 resource "aws_acm_certificate" "prometheus" {
   domain_name       = local.fqdn
   validation_method = "DNS"
-
-  provider = aws.management_dns
 }
 
 resource "aws_route53_record" "prometheus_validation" {
@@ -32,6 +30,4 @@ resource "aws_route53_record" "prometheus_validation" {
 resource "aws_acm_certificate_validation" "cert" {
   certificate_arn         = aws_acm_certificate.prometheus.arn
   validation_record_fqdns = [aws_route53_record.prometheus_validation.fqdn]
-
-  provider = aws.management_dns
 }
