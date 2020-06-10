@@ -18,29 +18,13 @@ variable "prometheus_version" {
   type        = string
 }
 
-variable "lb_listener" {
-  description = "ARN of the LB Listener"
-  type        = string
-}
-
-variable "fqdn" {
-  description = "Route53 FQDN"
-  type        = string
-}
-
-variable "image" {
+variable "s3_prefix" {
   type = string
 }
 
-variable "lb_security_group_id" {
-  description = ""
-  type        = string
-}
-
+variable "mgmt" {}
 variable "vpc" {}
-variable "ecs_task_execution_role" {}
-variable "ecs_cluster_main_log_group" {}
-variable "ecs_cluster_main" {}
+variable "lb" {}
 
 variable "fargate_cpu" {
   default = "256"

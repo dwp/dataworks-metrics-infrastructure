@@ -16,3 +16,46 @@ data "aws_iam_policy_document" "prometheus" {
     }
   }
 }
+
+data "aws_iam_policy_document" "prometheus_read_config" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:ListBucket",
+    ]
+
+    resources = [
+      var.mgmt.config_bucket.arn,
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject",
+    ]
+
+    resources = [
+      "${var.mgmt.config_bucket.arn}/${var.s3_prefix}/*",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "kms:Decrypt",
+    ]
+
+    resources = [
+      var.mgmt.config_bucket.cmk_arn,
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "prometheus" {
+  policy = data.aws_iam_policy_document.prometheus_read_config.json
+  role   = aws_iam_role.prometheus.id
+}
