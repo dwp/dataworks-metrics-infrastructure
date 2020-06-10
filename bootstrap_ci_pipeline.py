@@ -34,6 +34,10 @@ def main():
         template = jinja2.Template(in_template.read())
     with open('ci/jobs/management_dev.yml', 'w+') as pipeline:
         pipeline.write(template.render(config_data))
+    with open('ci/jobs/management.yml.j2') as in_template:
+        template = jinja2.Template(in_template.read())
+    with open('ci/jobs/management.yml', 'w+') as pipeline:
+        pipeline.write(template.render(config_data))
     with open('ci/jobs/pull_request.yml.j2') as in_template:
         template = jinja2.Template(in_template.read())
     with open('ci/jobs/pull_request.yml', 'w+') as pipeline:
