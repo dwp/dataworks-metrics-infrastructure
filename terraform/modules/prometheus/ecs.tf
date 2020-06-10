@@ -11,7 +11,7 @@ resource "aws_ecs_task_definition" "prometheus" {
 [
   {
     "cpu": ${var.fargate_cpu},
-    "image": "${data.aws_ecr_repository.prometheus.repository_url}:slave",
+    "image": "${var.image}:slave",
     "memory": ${var.fargate_memory},
     "name": "${var.role}-${var.name}",
     "networkMode": "awsvpc",

@@ -28,6 +28,10 @@ variable "fqdn" {
   type        = string
 }
 
+variable "image" {
+  type = string
+}
+
 variable "lb_security_group_id" {
   description = ""
   type        = string
