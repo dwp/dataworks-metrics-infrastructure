@@ -23,7 +23,7 @@ module "lb" {
   assume_role           = var.assume_role
   parent_domain_name    = local.parent_domain_name[local.environment]
   vpc                   = module.vpc.outputs
-  zone_id               = data.terraform_remote_state.management.outputs.dataworks_zone.id
+  zone_id               = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
   whitelist_cidr_blocks = var.whitelist_cidr_blocks
 }
 
