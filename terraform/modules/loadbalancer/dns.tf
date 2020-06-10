@@ -1,7 +1,7 @@
 resource "aws_route53_record" "prometheus" {
   name    = local.fqdn
   type    = "A"
-  zone_id = data.aws_route53_zone.main.id
+  zone_id = var.zone_id
 
   alias {
     evaluate_target_health = false
@@ -22,7 +22,7 @@ resource "aws_acm_certificate" "prometheus" {
 resource "aws_route53_record" "prometheus_validation" {
   name    = aws_acm_certificate.prometheus.domain_validation_options.0.resource_record_name
   type    = aws_acm_certificate.prometheus.domain_validation_options.0.resource_record_type
-  zone_id = data.aws_route53_zone.main.id
+  zone_id = var.zone_id
   records = [aws_acm_certificate.prometheus.domain_validation_options.0.resource_record_value]
   ttl     = 60
 

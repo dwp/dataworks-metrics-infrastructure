@@ -25,6 +25,10 @@ variable "accounts" {
   type = map(string)
 }
 
+variable "zone_id" {
+  type = string
+}
+
 variable "parent_domain_name" {}
 variable "vpc" {}
 variable "whitelist_cidr_blocks" {}
