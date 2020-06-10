@@ -5,3 +5,4 @@ groups:
   - name: master
     jobs:
       - management-dev
+      - management

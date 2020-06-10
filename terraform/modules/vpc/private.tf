@@ -17,3 +17,10 @@ resource "aws_route_table_association" "private" {
   route_table_id = aws_route_table.private[count.index].id
   subnet_id      = aws_subnet.private[count.index].id
 }
+
+resource "aws_route" "route" {
+  count                     = local.zone_count
+  route_table_id            = aws_route_table.private[count.index].id
+  destination_cidr_block    = var.concourse_cidr_block
+  vpc_peering_connection_id = aws_vpc_peering_connection.peering.id
+}

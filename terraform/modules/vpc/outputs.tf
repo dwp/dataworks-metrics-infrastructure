@@ -9,5 +9,6 @@ output "outputs" {
     internet_egress_sg      = aws_security_group.internet_proxy_endpoint
     internet_proxy_endpoint = aws_vpc_endpoint.internet_proxy.dns_entry[0].dns_name
     s3_prefix_list_id       = module.vpc.s3_prefix_list_id
+    prometheus_pcx          = aws_vpc_peering_connection.peering.id
   }
 }
