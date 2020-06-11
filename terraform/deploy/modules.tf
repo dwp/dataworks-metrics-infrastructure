@@ -33,14 +33,10 @@ module "prometheus_master" {
   name                       = var.name
   role                       = "master"
   prometheus_version         = var.prometheus_version
-  image                      = data.terraform_remote_state.management.outputs.ecr_prometheus_url
-  lb_listener                = module.lb.outputs.lb_listener
-  lb_security_group_id       = module.lb.outputs.security_group_id
-  fqdn                       = module.lb.outputs.fqdn
+  lb                         = module.lb.outputs
   vpc                        = module.vpc.outputs
-  ecs_task_execution_role    = data.terraform_remote_state.management.outputs.ecs_task_execution_role
-  ecs_cluster_main           = data.terraform_remote_state.management.outputs.ecs_cluster_main
-  ecs_cluster_main_log_group = data.terraform_remote_state.management.outputs.ecs_cluster_main_log_group
+  mgmt                       = data.terraform_remote_state.management.outputs
+  s3_prefix                  = "monitoring/prometheus"
   tags                       = merge(local.tags, { Name = "prometheus" })
 }
 
@@ -50,13 +46,9 @@ module "prometheus_slave" {
   name                       = var.name
   role                       = "slave"
   prometheus_version         = var.prometheus_version
-  image                      = data.terraform_remote_state.management.outputs.ecr_prometheus_url
-  lb_listener                = module.lb.outputs.lb_listener
-  lb_security_group_id       = module.lb.outputs.security_group_id
-  fqdn                       = module.lb.outputs.fqdn
+  lb                         = module.lb.outputs
   vpc                        = module.vpc.outputs
-  ecs_task_execution_role    = data.terraform_remote_state.management.outputs.ecs_task_execution_role
-  ecs_cluster_main           = data.terraform_remote_state.management.outputs.ecs_cluster_main
-  ecs_cluster_main_log_group = data.terraform_remote_state.management.outputs.ecs_cluster_main_log_group
+  mgmt                       = data.terraform_remote_state.management.outputs
+  s3_prefix                  = "monitoring/prometheus"
   tags                       = merge(local.tags, { Name = "prometheus" })
 }

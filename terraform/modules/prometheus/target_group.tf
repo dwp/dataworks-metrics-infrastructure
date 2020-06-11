@@ -20,7 +20,7 @@ resource "aws_lb_target_group" "web_http" {
 }
 
 resource "aws_lb_listener_rule" "https" {
-  listener_arn = var.lb_listener
+  listener_arn = var.lb.lb_listener
 
   action {
     type             = "forward"
@@ -29,6 +29,6 @@ resource "aws_lb_listener_rule" "https" {
 
   condition {
     field  = "host-header"
-    values = [var.fqdn]
+    values = [var.lb.fqdn]
   }
 }
