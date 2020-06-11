@@ -4,3 +4,4 @@ resource "aws_route" "route" {
   destination_cidr_block    = local.cidr_block[local.environment].mon-master-vpc
   vpc_peering_connection_id = module.vpc.outputs.prometheus_pcx
 }
+  
