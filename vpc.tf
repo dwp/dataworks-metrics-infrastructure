@@ -4,8 +4,8 @@ module "vpc" {
   vpc_name                                   = "prometheus"
   region                                     = data.aws_region.current.name
   vpc_cidr_block                             = local.cidr_block[local.environment].mon-master-vpc
-  interface_vpce_source_security_group_count = length([module.prometheus_master.outputs.security_group.id, module.prometheus_slave.outputs.security_group.id])
-  interface_vpce_source_security_group_ids   = [module.prometheus_master.outputs.security_group.id, module.prometheus_slave.outputs.security_group.id]
+  interface_vpce_source_security_group_count = length([aws_security_group.web[0].id])
+  interface_vpce_source_security_group_ids   = [aws_security_group.web[0].id]
   interface_vpce_subnet_ids                  = aws_subnet.private.*.id
   gateway_vpce_route_table_ids               = aws_route_table.private.*.id
   kms_endpoint                               = true

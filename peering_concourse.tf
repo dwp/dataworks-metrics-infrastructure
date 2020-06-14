@@ -12,5 +12,5 @@ resource "aws_security_group_rule" "web_lb_in_metrics" {
   security_group_id        = data.terraform_remote_state.aws_concourse.outputs.concourse_web_sg
   to_port                  = 9090
   type                     = "ingress"
-  source_security_group_id = module.prometheus_slave.outputs.security_group.id
+  source_security_group_id = aws_security_group.web[0].id
 }

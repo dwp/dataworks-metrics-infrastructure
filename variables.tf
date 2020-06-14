@@ -34,3 +34,19 @@ variable "subnets" {
     }
   }
 }
+
+variable "s3_prefix" {
+  default = "monitoring/prometheus"
+}
+
+variable "fargate_cpu" {
+  default = "256"
+}
+
+variable "fargate_memory" {
+  default = "512"
+}
+
+variable "prom_port" {
+  default = "9090"
+}
