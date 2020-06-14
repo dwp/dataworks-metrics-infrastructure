@@ -4,7 +4,6 @@ module "prometheus_master" {
   name                = var.name
   role                = "master"
   prometheus_version  = var.prometheus_version
-  lb                  = module.lb.outputs
   aws_subnets_private = aws_subnet.private
   aws_vpc             = module.vpc.vpc
   s3_prefix_list_id   = module.vpc.s3_prefix_list_id
@@ -21,7 +20,6 @@ module "prometheus_slave" {
   name                = var.name
   role                = "slave"
   prometheus_version  = var.prometheus_version
-  lb                  = module.lb.outputs
   aws_subnets_private = aws_subnet.private
   aws_vpc             = module.vpc.vpc
   s3_prefix_list_id   = module.vpc.s3_prefix_list_id

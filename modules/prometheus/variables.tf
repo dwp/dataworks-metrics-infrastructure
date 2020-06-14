@@ -23,9 +23,7 @@ variable "s3_prefix" {
 }
 
 variable "mgmt" {}
-variable "aws_subnets_private" {
-  type = string
-}
+variable "aws_subnets_private" {}
 
 variable "aws_vpc" {}
 
@@ -40,8 +38,6 @@ variable "lb_listener" {
 variable "fqdn" {
   type = string
 }
-
-variable "lb" {}
 
 variable "fargate_cpu" {
   default = "256"
