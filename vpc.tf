@@ -1,3 +1,5 @@
+data "aws_availability_zones" "current" {}
+
 module "vpc" {
   source                                     = "dwp/vpc/aws"
   version                                    = "2.0.6"
@@ -69,20 +71,6 @@ resource "aws_route_table_association" "private" {
   subnet_id      = aws_subnet.private[count.index].id
 }
 
-resource "aws_route" "route" {
-  count                     = local.zone_count
-  route_table_id            = aws_route_table.private[count.index].id
-  destination_cidr_block    = local.cidr_block[local.environment].ci-cd-vpc
-  vpc_peering_connection_id = aws_vpc_peering_connection.peering.id
-}
-
-resource "aws_vpc_peering_connection" "peering" {
-  peer_vpc_id = data.aws_vpc.concourse.id
-  vpc_id      = module.vpc.vpc.id
-  auto_accept = true
-  tags        = merge(local.tags, { Name = "prometheus_pcx" })
-}
-
 resource "aws_eip" "nat" {
   count = local.zone_count
   tags  = merge(local.tags, { Name = "${var.name}-nat-${local.zone_names[count.index]}" })
@@ -94,9 +82,3 @@ resource "aws_nat_gateway" "nat" {
   subnet_id     = aws_subnet.public[count.index].id
   tags          = merge(local.tags, { Name = "${var.name}-nat-${local.zone_names[count.index]}" })
 }
-
-data "aws_vpc" "concourse" {
-  cidr_block = local.cidr_block[local.environment].ci-cd-vpc
-}
-
-data "aws_availability_zones" "current" {}
