@@ -5,4 +5,8 @@ jobs:
         trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
       - .: (( inject meta.plan.terraform-apply ))
+        params:
+          TF_WORKSPACE: management-dev
       - .: (( inject meta.plan.terraform-plan ))
+        params:
+          TF_WORKSPACE: management-dev
