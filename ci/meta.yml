@@ -16,9 +16,9 @@ meta:
             - -exc
             - |
               python bootstrap_terraform.py
-              sed -i '/^assume_role/ d' terraform/deploy/terraform.tfvars
-              cp terraform/deploy/terraform.tf ../terraform-config
-              cp terraform/deploy/terraform.tfvars ../terraform-config
+              sed -i '/^assume_role/ d' terraform.tfvars
+              cp terraform.tf ../terraform-config
+              cp terraform.tfvars ../terraform-config
           dir: dataworks-metrics-infrastructure
         inputs:
           - name: dataworks-metrics-infrastructure
@@ -41,13 +41,13 @@ meta:
           args:
             - -exc
             - |
-              cp ../../../terraform-config/terraform.tf .
-              cp ../../../terraform-config/terraform.tfvars .
+              cp ../terraform-config/terraform.tf .
+              cp ../terraform-config/terraform.tfvars .
               terraform workspace show
               terraform init
               terraform plan -out terraform.plan
               terraform apply -auto-approve terraform.plan
-          dir: dataworks-metrics-infrastructure/terraform/deploy
+          dir: dataworks-metrics-infrastructure
         inputs:
           - name: dataworks-metrics-infrastructure
           - name: terraform-config
@@ -69,12 +69,12 @@ meta:
           args:
             - -exc
             - |
-              cp ../../../terraform-config/terraform.tf .
-              cp ../../../terraform-config/terraform.tfvars .
+              cp ../terraform-config/terraform.tf .
+              cp ../terraform-config/terraform.tfvars .
               terraform workspace show
               terraform init
               terraform plan -detailed-exitcode
-          dir: dataworks-metrics-infrastructure/terraform/deploy
+          dir: dataworks-metrics-infrastructure
         inputs:
           - name: dataworks-metrics-infrastructure
           - name: terraform-config

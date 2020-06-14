@@ -26,12 +26,12 @@ jobs:
         TF_CLI_ARGS_plan:  -lock-timeout=300s
       run:
         path: sh
-        dir: dataworks-metrics-infrastructure-pr/terraform/deploy
+        dir: dataworks-metrics-infrastructure-pr
         args:
         - -exc
         - |
-          cp ../../../terraform-config/terraform.tf .
-          cp ../../../terraform-config/terraform.tfvars .
+          cp ../terraform-config/terraform.tf .
+          cp ../terraform-config/terraform.tfvars .
           terraform init
           terraform workspace show
           terraform plan
