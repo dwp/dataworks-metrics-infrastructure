@@ -23,7 +23,24 @@ variable "s3_prefix" {
 }
 
 variable "mgmt" {}
-variable "vpc" {}
+variable "aws_subnets_private" {
+  type = string
+}
+
+variable "aws_vpc" {}
+
+variable "s3_prefix_list_id" {
+  type = string
+}
+
+variable "lb_listener" {
+  type = string
+}
+
+variable "fqdn" {
+  type = string
+}
+
 variable "lb" {}
 
 variable "fargate_cpu" {

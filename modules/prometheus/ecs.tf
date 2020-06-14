@@ -48,6 +48,10 @@ resource "aws_ecs_task_definition" "prometheus" {
       {
         "name": "PROMETHEUS_ROLE",
         "value": "${var.role}"
+      },
+      {
+        "name": "TEMP",
+        "value": "${var.role}"
       }
     ]
   }
@@ -64,7 +68,7 @@ resource "aws_ecs_service" "prometheus" {
 
   network_configuration {
     security_groups = [aws_security_group.web.id]
-    subnets         = var.vpc.aws_subnets_private.*.id
+    subnets         = var.aws_subnets_private.*.id
   }
 
   load_balancer {

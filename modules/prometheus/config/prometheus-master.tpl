@@ -6,4 +6,4 @@ scrape_configs:
     static_configs:
       - targets: ['127.0.0.1:9090']
         labels:
-          group: 'concourse'
+          group: 'prometheus'

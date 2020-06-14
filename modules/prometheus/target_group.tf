@@ -2,7 +2,7 @@ resource "aws_lb_target_group" "web_http" {
   name        = "${var.role}-${var.name}-http"
   port        = 9090
   protocol    = "HTTP"
-  vpc_id      = var.vpc.aws_vpc.id
+  vpc_id      = var.aws_vpc.id
   target_type = "ip"
 
   health_check {
@@ -20,7 +20,7 @@ resource "aws_lb_target_group" "web_http" {
 }
 
 resource "aws_lb_listener_rule" "https" {
-  listener_arn = var.lb.lb_listener
+  listener_arn = var.lb_listener
 
   action {
     type             = "forward"
@@ -29,6 +29,6 @@ resource "aws_lb_listener_rule" "https" {
 
   condition {
     field  = "host-header"
-    values = [var.lb.fqdn]
+    values = [var.fqdn]
   }
 }

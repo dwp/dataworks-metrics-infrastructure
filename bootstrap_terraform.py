@@ -27,13 +27,13 @@ def main():
         sys.exit(1)
 
     config_data = yaml.load(parameter['Parameter']['Value'], Loader=yaml.FullLoader)
-    with open('terraform/deploy/terraform.tf.j2') as in_template:
+    with open('terraform.tf.j2') as in_template:
         template = jinja2.Template(in_template.read())
-    with open('terraform/deploy/terraform.tf', 'w+') as terraform_tf:
+    with open('terraform.tf', 'w+') as terraform_tf:
         terraform_tf.write(template.render(config_data))
-    with open('terraform/deploy/terraform.tfvars.j2') as in_template:
+    with open('terraform.tfvars.j2') as in_template:
         template = jinja2.Template(in_template.read())
-    with open('terraform/deploy/terraform.tfvars', 'w+') as terraform_tfvars:
+    with open('terraform.tfvars', 'w+') as terraform_tfvars:
         terraform_tfvars.write(template.render(config_data))
     print("Terraform config successfully created")
 
