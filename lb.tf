@@ -1,6 +1,6 @@
 resource "aws_lb" "lb" {
   count              = length(local.roles)
-  name               = var.name
+  name               = "${var.name}-${local.roles[count.index]}"
   internal           = false
   load_balancer_type = "application"
   subnets            = module.vpc.outputs.public_subnets[count.index]
