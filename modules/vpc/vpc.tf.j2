@@ -21,6 +21,11 @@ module "prometheus_{{value}}_vpc" {
   common_tags                                = var.common_tags
 }
 
+resource "aws_eip" "prometheus_{{value}}_nat" {
+  count = var.zone_count
+  tags  = merge(var.common_tags, { Name = "${var.name}-nat-${var.zone_names[count.index]}" })
+}
+
 resource "aws_subnet" "prometheus_{{value}}_public" {
   count                   = var.zone_count
   cidr_block              = cidrsubnet(module.prometheus_{{value}}_vpc.vpc.cidr_block, var.subnets.public.newbits, var.subnets.public.netnum + count.index)
@@ -36,6 +41,13 @@ resource "aws_subnet" "prometheus_{{value}}_private" {
   vpc_id               = module.prometheus_{{value}}_vpc.vpc.id
   availability_zone_id = data.aws_availability_zones.current.zone_ids[count.index]
   tags                 = merge(var.common_tags, { Name = "${var.name}-private-${var.zone_names[count.index]}" })
+}
+
+resource "aws_nat_gateway" "prometheus_{{value}}_nat" {
+  count         = var.zone_count
+  allocation_id = aws_eip.prometheus_{{value}}_nat[count.index].id
+  subnet_id     = aws_subnet.prometheus_{{value}}_public[count.index].id
+  tags          = merge(var.common_tags, { Name = "${var.name}-nat-${var.zone_names[count.index]}" })
 }
 
 resource "aws_route_table" "prometheus_{{value}}_private" {
