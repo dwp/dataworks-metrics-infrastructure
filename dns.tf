@@ -14,7 +14,7 @@ locals {
 
 resource "aws_route53_record" "prometheus" {
   count   = length(local.roles)
-  name    = local.fqdn
+  name    = join(".", [local.roles[count.index], local.fqdn])
   type    = "A"
   zone_id = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
 
