@@ -4,6 +4,8 @@ jobs:
       - get: dataworks-metrics-infrastructure
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          TF_WORKSPACE: dev
       - .: (( inject meta.plan.terraform-apply ))
         params:
           TF_WORKSPACE: dev

@@ -1,6 +1,6 @@
 resource "aws_iam_role" "prometheus" {
-  count              = length(lookup(local.roles, local.environment))
-  name               = "${lookup(local.roles, local.environment)[count.index]}-${var.name}"
+  count              = length(local.roles)
+  name               = "${local.roles[count.index]}-${var.name}"
   assume_role_policy = data.aws_iam_policy_document.prometheus.json
   tags               = merge(local.tags, { Name = "prometheus" })
 }
@@ -57,7 +57,7 @@ data "aws_iam_policy_document" "prometheus_read_config" {
 }
 
 resource "aws_iam_role_policy" "prometheus" {
-  count  = length(lookup(local.roles, local.environment))
+  count  = length(local.roles)
   policy = data.aws_iam_policy_document.prometheus_read_config.json
   role   = aws_iam_role.prometheus[count.index].id
 }

@@ -6,6 +6,8 @@ jobs:
         - qa
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          TF_WORKSPACE: integration
       - .: (( inject meta.plan.terraform-apply ))
         params:
           TF_WORKSPACE: integration

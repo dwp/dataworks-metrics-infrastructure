@@ -1,0 +1,8 @@
+output "outputs" {
+  value = {
+      vpc_ids = [{% for value in roles %}module.prometheus_{{value}}_vpc.vpc.id{{ "," if not loop.last }}{% endfor %}]
+      public_subnets = [{% for value in roles %}aws_subnet.prometheus_{{value}}_public[*].id{{ "," if not loop.last }}{% endfor %}]
+      private_route_tables = [{% for value in roles %}aws_route_table.prometheus_{{value}}_private.*.id{{ "," if not loop.last }}{% endfor %}]
+      s3_prefix_list_ids = [{% for value in roles %}module.prometheus_{{value}}_vpc.s3_prefix_list_id{{ "," if not loop.last }}{% endfor %}]
+  }
+}

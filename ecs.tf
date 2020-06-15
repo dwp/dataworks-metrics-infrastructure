@@ -1,6 +1,6 @@
 resource "aws_ecs_task_definition" "prometheus" {
-  count                    = length(lookup(local.roles, local.environment))
-  family                   = "${lookup(local.roles, local.environment)[count.index]}-${var.name}"
+  count                    = length(local.roles)
+  family                   = "${local.roles[count.index]}-${var.name}"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "512"
@@ -14,7 +14,7 @@ resource "aws_ecs_task_definition" "prometheus" {
     "cpu": ${var.fargate_cpu},
     "image": "${data.terraform_remote_state.management.outputs.ecr_prometheus_url}:slave",
     "memory": ${var.fargate_memory},
-    "name": "${lookup(local.roles, local.environment)[count.index]}-${var.name}",
+    "name": "${local.roles[count.index]}-${var.name}",
     "networkMode": "awsvpc",
     "user" : "nobody",
     "portMappings": [
@@ -48,11 +48,11 @@ resource "aws_ecs_task_definition" "prometheus" {
       },
       {
         "name": "PROMETHEUS_ROLE",
-        "value": "${lookup(local.roles, local.environment)[count.index]}"
+        "value": "${local.roles[count.index]}"
       },
       {
         "name": "TEMP",
-        "value": "${lookup(local.roles, local.environment)[count.index]}"
+        "value": "${local.roles[count.index]}"
       }
     ]
   }
@@ -61,8 +61,8 @@ DEFINITION
 }
 
 resource "aws_ecs_service" "prometheus" {
-  count           = length(lookup(local.roles, local.environment))
-  name            = "${lookup(local.roles, local.environment)[count.index]}-${var.name}"
+  count           = length(local.roles)
+  name            = "${local.roles[count.index]}-${var.name}"
   cluster         = data.terraform_remote_state.management.outputs.ecs_cluster_main.id
   task_definition = aws_ecs_task_definition.prometheus[count.index].arn
   desired_count   = 1
@@ -70,35 +70,35 @@ resource "aws_ecs_service" "prometheus" {
 
   network_configuration {
     security_groups = [aws_security_group.web[count.index].id]
-    subnets         = aws_subnet.private.*.id
+    subnets         = module.vpc.outputs.public_subnets[count.index]
   }
 
   load_balancer {
     target_group_arn = aws_lb_target_group.web_http[count.index].arn
-    container_name   = "${lookup(local.roles, local.environment)[count.index]}-${var.name}"
+    container_name   = "${local.roles[count.index]}-${var.name}"
     container_port   = var.prom_port
   }
 }
 
 data template_file "prometheus_config" {
-  count    = length(lookup(local.roles, local.environment))
-  template = file("${path.module}/config/prometheus-${lookup(local.roles, local.environment)[count.index]}.tpl")
+  count    = length(local.roles)
+  template = file("${path.module}/config/prometheus-${local.roles[count.index]}.tpl")
 }
 
 resource "aws_s3_bucket_object" "prometheus_config" {
-  count      = length(lookup(local.roles, local.environment))
+  count      = length(local.roles)
   bucket     = data.terraform_remote_state.management.outputs.config_bucket.id
-  key        = "${var.s3_prefix}/prometheus-${lookup(local.roles, local.environment)[count.index]}.yml"
+  key        = "${var.s3_prefix}/prometheus-${local.roles[count.index]}.yml"
   content    = data.template_file.prometheus_config[count.index].rendered
   kms_key_id = data.terraform_remote_state.management.outputs.config_bucket.cmk_arn
 }
 
 resource "aws_lb_target_group" "web_http" {
-  count       = length(lookup(local.roles, local.environment))
-  name        = "${lookup(local.roles, local.environment)[count.index]}-${var.name}-http"
+  count       = length(local.roles)
+  name        = "${local.roles[count.index]}-${var.name}-http"
   port        = 9090
   protocol    = "HTTP"
-  vpc_id      = module.vpc.vpc.id
+  vpc_id      = module.vpc.outputs.vpc_ids[count.index]
   target_type = "ip"
 
   health_check {
@@ -116,8 +116,8 @@ resource "aws_lb_target_group" "web_http" {
 }
 
 resource "aws_lb_listener_rule" "https" {
-  count        = length(lookup(local.roles, local.environment))
-  listener_arn = aws_lb_listener.https.arn
+  count        = length(local.roles)
+  listener_arn = aws_lb_listener.https[count.index].arn
 
   action {
     type             = "forward"
@@ -126,15 +126,15 @@ resource "aws_lb_listener_rule" "https" {
 
   condition {
     field  = "host-header"
-    values = [aws_route53_record.prometheus.fqdn]
+    values = [aws_route53_record.prometheus[count.index].fqdn]
   }
 }
 
 resource "aws_security_group" "web" {
-  count       = length(lookup(local.roles, local.environment))
-  name        = "${lookup(local.roles, local.environment)[count.index]}-${var.name}"
+  count       = length(local.roles)
+  name        = "${local.roles[count.index]}-${var.name}"
   description = "prometheus web access"
-  vpc_id      = module.vpc.vpc.id
+  vpc_id      = module.vpc.outputs.vpc_ids[count.index]
   tags        = merge(local.tags, { Name = "prometheus" })
 
   lifecycle {
@@ -143,17 +143,17 @@ resource "aws_security_group" "web" {
 }
 
 resource "aws_security_group_rule" "allow_egress_https" {
-  count             = length(lookup(local.roles, local.environment))
+  count             = length(local.roles)
   type              = "egress"
   to_port           = 443
   protocol          = "tcp"
-  prefix_list_ids   = [module.vpc.s3_prefix_list_id]
+  prefix_list_ids   = [module.vpc.outputs.s3_prefix_list_ids[count.index]]
   from_port         = 443
   security_group_id = aws_security_group.web[count.index].id
 }
 
 resource "aws_security_group_rule" "allow_ingress_prom" {
-  count             = length(lookup(local.roles, local.environment))
+  count             = length(local.roles)
   type              = "ingress"
   to_port           = 9090
   protocol          = "tcp"

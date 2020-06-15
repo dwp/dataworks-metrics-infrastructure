@@ -6,6 +6,8 @@ jobs:
         - preprod
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          TF_WORKSPACE: production
       - .: (( inject meta.plan.terraform-apply ))
         params:
           TF_WORKSPACE: production
