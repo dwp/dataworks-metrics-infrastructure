@@ -30,3 +30,21 @@ resource "aws_route" "public" {
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.igw[count.index].id
 }
+
+resource "aws_security_group" "internet_proxy_endpoint" {
+  count       = length(local.roles)
+  name        = "proxy_vpc_endpoint"
+  description = "Control access to the Internet Proxy VPC Endpoint"
+  vpc_id      = module.vpc.outputs.vpc_ids[count.index]
+  tags        = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_vpc_endpoint" "internet_proxy" {
+  count               = length(local.roles)
+  vpc_id              = module.vpc.outputs.vpc_ids[count.index]
+  service_name        = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
+  vpc_endpoint_type   = "Interface"
+  security_group_ids  = [aws_security_group.internet_proxy_endpoint[count.index].id]
+  subnet_ids          = module.vpc.outputs.private_subnets[count.index]
+  private_dns_enabled = false
+}

@@ -70,7 +70,7 @@ resource "aws_ecs_service" "prometheus" {
 
   network_configuration {
     security_groups = [aws_security_group.web[count.index].id]
-    subnets         = module.vpc.outputs.public_subnets[count.index]
+    subnets         = module.vpc.outputs.private_subnets[count.index]
   }
 
   load_balancer {

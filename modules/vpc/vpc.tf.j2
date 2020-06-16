@@ -12,11 +12,15 @@ module "prometheus_{{value}}_vpc" {
   interface_vpce_subnet_ids                  = aws_subnet.prometheus_{{value}}_private.*.id
   gateway_vpce_route_table_ids               = aws_route_table.prometheus_{{value}}_private.*.id
   ec2_endpoint                               = true
+  ec2autoscaling_endpoint                    = true
   ec2messages_endpoint                       = true
   kms_endpoint                               = true
   logs_endpoint                              = true
   monitoring_endpoint                        = true
   s3_endpoint                                = true
+  ssm_endpoint                               = true
+  ssmmessages_endpoint                       = true
+  secretsmanager_endpoint                    = true
   ecrapi_endpoint                            = true
   ecrdkr_endpoint                            = true
   ecs_endpoint                               = true
