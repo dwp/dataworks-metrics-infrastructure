@@ -22,7 +22,7 @@ resource "aws_route" "master_route" {
 
 resource "aws_security_group_rule" "allow_ingress_master" {
   count                    = local.roles[0] == "master" ? 1 : 0
-  description              = "inbound traffic to web nodes metrics port"
+  description              = "Allow master nodes to reach slave node metrics endpoints"
   from_port                = 9090
   protocol                 = "tcp"
   security_group_id        = aws_security_group.web[1].id
@@ -33,6 +33,7 @@ resource "aws_security_group_rule" "allow_ingress_master" {
 
 resource "aws_security_group_rule" "allow_egress_master" {
   count             = local.roles[0] == "master" ? 1 : 0
+  description       = "Allow master nodes to reach slave node metrics endpoints"
   type              = "egress"
   to_port           = 9090
   protocol          = "tcp"

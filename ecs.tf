@@ -81,7 +81,7 @@ resource "aws_ecs_service" "prometheus" {
 
   service_registries {
     registry_arn   = aws_service_discovery_service.prometheus[count.index].arn
-    container_name = "${local.roles[count.index]}-${var.name}"
+    container_name = "${var.name}-${local.roles[count.index]}"
   }
 }
 
@@ -108,7 +108,7 @@ resource "aws_service_discovery_private_dns_namespace" "prometheus" {
 
 resource "aws_service_discovery_service" "prometheus" {
   count = length(local.roles)
-  name  = local.roles[count.index]
+  name  = "${var.name}-${local.roles[count.index]}"
 
   dns_config {
     namespace_id = aws_service_discovery_private_dns_namespace.prometheus.id
