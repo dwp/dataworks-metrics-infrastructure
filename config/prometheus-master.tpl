@@ -1,7 +1,14 @@
 scrape_configs:
-  - job_name: 'ci'
+  - job_name: 'federate'
+    scrape_interval: 15s
 
-    metrics_path: /metrics
+    honor_labels: true
+    metrics_path: '/federate'
+
+    params:
+      'match[]':
+        - '{job="prometheus"}'
+        - '{__name__=~"job:.*"}'
 
     static_configs:
       - targets: ['127.0.0.1:9090']
