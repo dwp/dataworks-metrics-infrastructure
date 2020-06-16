@@ -30,6 +30,26 @@ def main():
 
     config_data = yaml.load(
         parameter['Parameter']['Value'], Loader=yaml.FullLoader)
+    with open('ci/jobs/dev.yml.j2') as in_template:
+        template = jinja2.Template(in_template.read())
+    with open('ci/jobs/dev.yml', 'w+') as pipeline:
+        pipeline.write(template.render(config_data))
+    with open('ci/jobs/qa.yml.j2') as in_template:
+        template = jinja2.Template(in_template.read())
+    with open('ci/jobs/qa.yml', 'w+') as pipeline:
+        pipeline.write(template.render(config_data))
+    with open('ci/jobs/integration.yml.j2') as in_template:
+        template = jinja2.Template(in_template.read())
+    with open('ci/jobs/integration.yml', 'w+') as pipeline:
+        pipeline.write(template.render(config_data))
+    with open('ci/jobs/preprod.yml.j2') as in_template:
+        template = jinja2.Template(in_template.read())
+    with open('ci/jobs/preprod.yml', 'w+') as pipeline:
+        pipeline.write(template.render(config_data))
+    with open('ci/jobs/production.yml.j2') as in_template:
+        template = jinja2.Template(in_template.read())
+    with open('ci/jobs/production.yml', 'w+') as pipeline:
+        pipeline.write(template.render(config_data))
     with open('ci/jobs/management_dev.yml.j2') as in_template:
         template = jinja2.Template(in_template.read())
     with open('ci/jobs/management_dev.yml', 'w+') as pipeline:

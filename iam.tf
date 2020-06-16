@@ -1,7 +1,8 @@
 resource "aws_iam_role" "prometheus" {
-  name               = "${var.role}-${var.name}"
+  count              = length(local.roles)
+  name               = "${local.roles[count.index]}-${var.name}"
   assume_role_policy = data.aws_iam_policy_document.prometheus.json
-  tags               = var.tags
+  tags               = merge(local.tags, { Name = "prometheus" })
 }
 
 data "aws_iam_policy_document" "prometheus" {
@@ -26,7 +27,7 @@ data "aws_iam_policy_document" "prometheus_read_config" {
     ]
 
     resources = [
-      var.mgmt.config_bucket.arn,
+      data.terraform_remote_state.management.outputs.config_bucket.arn,
     ]
   }
 
@@ -38,7 +39,7 @@ data "aws_iam_policy_document" "prometheus_read_config" {
     ]
 
     resources = [
-      "${var.mgmt.config_bucket.arn}/${var.s3_prefix}/*",
+      "${data.terraform_remote_state.management.outputs.config_bucket.arn}/${var.s3_prefix}/*",
     ]
   }
 
@@ -50,12 +51,13 @@ data "aws_iam_policy_document" "prometheus_read_config" {
     ]
 
     resources = [
-      var.mgmt.config_bucket.cmk_arn,
+      data.terraform_remote_state.management.outputs.config_bucket.cmk_arn,
     ]
   }
 }
 
 resource "aws_iam_role_policy" "prometheus" {
+  count  = length(local.roles)
   policy = data.aws_iam_policy_document.prometheus_read_config.json
-  role   = aws_iam_role.prometheus.id
+  role   = aws_iam_role.prometheus[count.index].id
 }

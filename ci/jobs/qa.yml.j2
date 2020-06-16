@@ -1,16 +1,16 @@
 jobs:
-  - name: management
+  - name: qa
     plan:
       - get: dataworks-metrics-infrastructure
         passed:
-        - management-dev
+        - dev
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
-          TF_WORKSPACE: management
+          TF_WORKSPACE: qa
       - .: (( inject meta.plan.terraform-apply ))
         params:
-          TF_WORKSPACE: management
+          TF_WORKSPACE: qa
       - .: (( inject meta.plan.terraform-plan ))
         params:
-          TF_WORKSPACE: management
+          TF_WORKSPACE: qa

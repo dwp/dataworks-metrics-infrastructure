@@ -114,7 +114,34 @@ locals {
   parent_domain_name = {
     management-dev = "mgt-dev.${var.parent_domain_name}"
     management = var.parent_domain_name
+    dev = "dev.${var.parent_domain_name}"
+    qa = "qa.${var.parent_domain_name}"
+    integration = "int.${var.parent_domain_name}"
+    preprod = "preprod.${var.parent_domain_name}"
+    production = "prod.${var.parent_domain_name}"
   }
+
+  monitoring_uri = {
+    master = "master.monitoring.${lookup(local.parent_domain_name, local.environment)}"
+    slave = "slave.monitoring.${lookup(local.parent_domain_name, local.environment)}"
+  }
+
+  slave_peerings = {
+    management-dev = ["management-dev"]
+    management = ["management"]
+    dev = ["management-dev"]
+    qa = ["management-dev"]
+    integration = ["management-dev"]
+    preprod = ["management"]
+    production = ["management"]
+  }
+
+  master_peerings = {
+    management-dev = ["management-dev", "dev", "qa", "integration"]
+    management = ["management", "preprod", "production"]
+  }
+
+  roles = [{% for value in roles %}"{{value}}"{{ "," if not loop.last }}{% endfor %}]
 
   environment = terraform.workspace == "default" ? "management-dev" : terraform.workspace
 
@@ -145,4 +172,6 @@ locals {
       } {% endfor %}
   }
 
+  zone_count = length(data.aws_availability_zones.current.zone_ids)
+  zone_names = data.aws_availability_zones.current.names
 }
