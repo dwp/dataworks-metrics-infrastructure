@@ -11,6 +11,6 @@ scrape_configs:
         - '{__name__=~"job:.*"}'
 
     static_configs:
-      - targets: ['127.0.0.1:9090']
+      - targets: ['slave.services.${parent_domain_name}:9090']
         labels:
           group: 'prometheus'
