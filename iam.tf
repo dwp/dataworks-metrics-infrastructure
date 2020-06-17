@@ -54,6 +54,21 @@ data "aws_iam_policy_document" "prometheus_read_config" {
       data.terraform_remote_state.management.outputs.config_bucket.cmk_arn,
     ]
   }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ec2:DescribeInstances",
+      "ec2:DescribeImages",
+      "ec2:DescribeTags",
+      "ec2:DescribeSnapshots"
+    ]
+
+    resources = [
+      "*"
+    ]
+  }
 }
 
 resource "aws_iam_role_policy" "prometheus" {

@@ -78,11 +78,19 @@ resource "aws_ecs_service" "prometheus" {
     container_name   = "${local.roles[count.index]}-${var.name}"
     container_port   = var.prom_port
   }
+
+  service_registries {
+    registry_arn   = aws_service_discovery_service.prometheus[count.index].arn
+    container_name = "${var.name}-${local.roles[count.index]}"
+  }
 }
 
 data template_file "prometheus_config" {
   count    = length(local.roles)
   template = file("${path.module}/config/prometheus-${local.roles[count.index]}.tpl")
+  vars = {
+    parent_domain_name = var.parent_domain_name
+  }
 }
 
 resource "aws_s3_bucket_object" "prometheus_config" {
@@ -91,6 +99,25 @@ resource "aws_s3_bucket_object" "prometheus_config" {
   key        = "${var.s3_prefix}/prometheus-${local.roles[count.index]}.yml"
   content    = data.template_file.prometheus_config[count.index].rendered
   kms_key_id = data.terraform_remote_state.management.outputs.config_bucket.cmk_arn
+}
+
+resource "aws_service_discovery_private_dns_namespace" "prometheus" {
+  name = "services.${var.parent_domain_name}"
+  vpc  = module.vpc.outputs.vpc_ids[0]
+}
+
+resource "aws_service_discovery_service" "prometheus" {
+  count = length(local.roles)
+  name  = "${var.name}-${local.roles[count.index]}"
+
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.prometheus.id
+
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+  }
 }
 
 resource "aws_lb_target_group" "web_http" {
