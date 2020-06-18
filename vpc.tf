@@ -14,13 +14,13 @@ module "vpc" {
 
 resource "aws_internet_gateway" "igw" {
   count  = length(local.roles)
-  vpc_id = module.vpc.outputs.vpc_ids[count.index]
+  vpc_id = module.vpc.outputs.vpcs[count.index].id
   tags   = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_route_table" "public" {
   count  = length(local.roles)
-  vpc_id = module.vpc.outputs.vpc_ids[count.index]
+  vpc_id = module.vpc.outputs.vpcs[count.index].id
   tags   = merge(local.tags, { Name = "${var.name}-public" })
 }
 
@@ -35,13 +35,13 @@ resource "aws_security_group" "internet_proxy_endpoint" {
   count       = length(local.roles)
   name        = "proxy_vpc_endpoint"
   description = "Control access to the Internet Proxy VPC Endpoint"
-  vpc_id      = module.vpc.outputs.vpc_ids[count.index]
+  vpc_id      = module.vpc.outputs.vpcs[count.index].id
   tags        = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_vpc_endpoint" "internet_proxy" {
   count               = length(local.roles)
-  vpc_id              = module.vpc.outputs.vpc_ids[count.index]
+  vpc_id              = module.vpc.outputs.vpcs[count.index].id
   service_name        = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
   vpc_endpoint_type   = "Interface"
   security_group_ids  = [aws_security_group.internet_proxy_endpoint[count.index].id]

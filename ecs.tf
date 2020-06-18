@@ -103,7 +103,7 @@ resource "aws_s3_bucket_object" "prometheus_config" {
 
 resource "aws_service_discovery_private_dns_namespace" "prometheus" {
   name = "services.${var.parent_domain_name}"
-  vpc  = module.vpc.outputs.vpc_ids[0]
+  vpc  = module.vpc.outputs.vpcs[0].id
 }
 
 resource "aws_service_discovery_service" "prometheus" {
@@ -125,7 +125,7 @@ resource "aws_lb_target_group" "web_http" {
   name        = "${local.roles[count.index]}-${var.name}-http"
   port        = 9090
   protocol    = "HTTP"
-  vpc_id      = module.vpc.outputs.vpc_ids[count.index]
+  vpc_id      = module.vpc.outputs.vpcs[count.index].id
   target_type = "ip"
 
   health_check {
@@ -161,7 +161,7 @@ resource "aws_security_group" "web" {
   count       = length(local.roles)
   name        = "${local.roles[count.index]}-${var.name}"
   description = "prometheus web access"
-  vpc_id      = module.vpc.outputs.vpc_ids[count.index]
+  vpc_id      = module.vpc.outputs.vpcs[count.index].id
   tags        = merge(local.tags, { Name = "prometheus" })
 
   lifecycle {

@@ -29,7 +29,7 @@ resource "aws_lb_listener" "https" {
 
 resource "aws_security_group" "lb" {
   count  = length(local.roles)
-  vpc_id = module.vpc.outputs.vpc_ids[count.index]
+  vpc_id = module.vpc.outputs.vpcs[count.index].id
   tags   = merge(local.tags, { Name = "${var.name}-lb" })
 
   lifecycle {

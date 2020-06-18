@@ -13,7 +13,7 @@ terraform {
 
 data "terraform_remote_state" "internet_egress" {
   backend   = "s3"
-  workspace = terraform.workspace
+  workspace = local.environment == "management" ? "management" : "default"
 
   config = {
     bucket         = "{{state_file_bucket}}"
@@ -27,7 +27,7 @@ data "terraform_remote_state" "internet_egress" {
 
 data "terraform_remote_state" "security-tools" {
   backend = "s3"
-  workspace = local.environment
+  workspace = local.environment == "management" ? "management" : "default"
 
   config = {
     bucket         = "{{state_file_bucket}}"
@@ -41,7 +41,7 @@ data "terraform_remote_state" "security-tools" {
 
 data "terraform_remote_state" "management" {
   backend   = "s3"
-  workspace = terraform.workspace
+  workspace = local.environment == "management" ? "management" : "default"
 
   config = {
     bucket         = "{{state_file_bucket}}"
@@ -67,9 +67,23 @@ data "terraform_remote_state" "management_dns" {
   }
 }
 
+data "terraform_remote_state" "management_dmi" {
+  backend   = "s3"
+  workspace = "default"
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/dataworks-metrics-infrastructure.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
 data "terraform_remote_state" "aws_concourse" {
   backend   = "s3"
-  workspace = terraform.workspace
+  workspace = local.environment == "management" ? "management" : "default"
 
   config = {
     bucket         = "{{state_file_bucket}}"
@@ -111,10 +125,14 @@ locals {
 }
 
 locals {
+
+  cidr_block_cicd_vpc = local.environment == "management" || local.environment == "management-dev" ? [local.cidr_block[local.environment].ci-cd-vpc] : ["0.0.0.0/0"]
+  cidr_block_mon_master_vpc = local.environment == "management" || local.environment == "management-dev" ? [local.cidr_block[local.environment].mon-master-vpc] : ["0.0.0.0/0"]
+
   parent_domain_name = {
     management-dev = "mgt-dev.${var.parent_domain_name}"
     management = var.parent_domain_name
-    dev = "dev.${var.parent_domain_name}"
+    development = "dev.${var.parent_domain_name}"
     qa = "qa.${var.parent_domain_name}"
     integration = "int.${var.parent_domain_name}"
     preprod = "preprod.${var.parent_domain_name}"
@@ -127,13 +145,13 @@ locals {
   }
 
   slave_peerings = {
-    management-dev = ["management-dev"]
-    management = ["management"]
-    dev = ["management-dev"]
-    qa = ["management-dev"]
-    integration = ["management-dev"]
-    preprod = ["management"]
-    production = ["management"]
+    management-dev = "management-dev"
+    management = "management"
+    development = "management-dev"
+    qa = "management-dev"
+    integration = "management-dev"
+    preprod = "management"
+    production = "management"
   }
 
   master_peerings = {

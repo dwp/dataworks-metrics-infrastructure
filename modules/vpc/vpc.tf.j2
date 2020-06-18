@@ -74,3 +74,6 @@ resource "aws_route_table_association" "prometheus_{{value}}_private" {
   subnet_id      = aws_subnet.prometheus_{{value}}_private[count.index].id
 }
 {% endfor %}
+{% if roles|length == 1 %}
+resource "null_resource" "dummy" {}
+{% endif %}

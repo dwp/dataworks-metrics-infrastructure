@@ -1,7 +1,7 @@
 resource "aws_vpc_peering_connection" "peering" {
   count       = local.roles[0] == "master" ? 1 : 0
   peer_vpc_id = data.terraform_remote_state.aws_concourse.outputs.aws_vpc.id
-  vpc_id      = module.vpc.outputs.vpc_ids[1]
+  vpc_id      = module.vpc.outputs.vpcs[1].id
   auto_accept = true
   tags        = merge(local.tags, { Name = "prometheus_pcx" })
 }
@@ -16,7 +16,7 @@ resource "aws_route" "concourse_route" {
 resource "aws_route" "route" {
   count                     = local.roles[0] == "master" ? local.zone_count : 0
   route_table_id            = module.vpc.outputs.private_route_tables[1][count.index]
-  destination_cidr_block    = local.cidr_block[local.environment].ci-cd-vpc
+  destination_cidr_block    = local.cidr_block_cicd_vpc[0]
   vpc_peering_connection_id = aws_vpc_peering_connection.peering[0].id
 }
 
@@ -38,5 +38,5 @@ resource "aws_security_group_rule" "allow_egress_prometheus" {
   protocol          = "tcp"
   from_port         = 9090
   security_group_id = aws_security_group.web[1].id
-  cidr_blocks       = [local.cidr_block[local.environment].ci-cd-vpc]
+  cidr_blocks       = [local.cidr_block_cicd_vpc[0]]
 }

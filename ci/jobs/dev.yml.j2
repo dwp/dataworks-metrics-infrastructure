@@ -1,14 +1,16 @@
 jobs:
-  - name: dev
+  - name: development
     plan:
       - get: dataworks-metrics-infrastructure
+        passed:
+          - management-dev
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
-          TF_WORKSPACE: dev
+          TF_WORKSPACE: development
       - .: (( inject meta.plan.terraform-apply ))
         params:
-          TF_WORKSPACE: dev
+          TF_WORKSPACE: development
       - .: (( inject meta.plan.terraform-plan ))
         params:
-          TF_WORKSPACE: dev
+          TF_WORKSPACE: development
