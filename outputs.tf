@@ -7,7 +7,7 @@ output "private_route_tables" {
 }
 
 output "peering_master_slave" {
-  value = local.roles[0] == "master" ? aws_vpc_peering_connection.master_slave[0] : null_resource.dummy
+  value = local.roles[0] == "master" ? aws_vpc_peering_connection.master_slave[0].id : null_resource.dummy.id
 }
 
 output "master_security_group" {
