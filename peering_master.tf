@@ -27,7 +27,7 @@ resource "aws_route" "slave_route_non_management" {
   count                     = local.roles[0] == "slave" ? local.zone_count : 0
   route_table_id            = module.vpc.outputs.private_route_tables[index(local.roles, "slave")][count.index]
   destination_cidr_block    = data.terraform_remote_state.management_dmi.outputs.vpcs[0].cidr_block
-  vpc_peering_connection_id = data.terraform_remote_state.management_dmi.outputs.peering_master_slave.id
+  vpc_peering_connection_id = data.terraform_remote_state.management_dmi.outputs.peering_master_slave
 }
 
 resource "aws_route" "master_route_management" {
