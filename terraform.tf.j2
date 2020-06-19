@@ -161,7 +161,7 @@ locals {
 
   roles = [{% for value in roles %}"{{value}}"{{ "," if not loop.last }}{% endfor %}]
 
-  environment = terraform.workspace == "default" ? "management-dev" : terraform.workspace
+  environment = terraform.workspace == "default" ? "development" : terraform.workspace
 
   tags = {
   {% for key, value in common_tags.items() %}
