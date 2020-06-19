@@ -2,8 +2,6 @@ jobs:
   - name: development
     plan:
       - get: dataworks-metrics-infrastructure
-        passed:
-          - management-dev
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
