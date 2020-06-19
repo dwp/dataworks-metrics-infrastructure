@@ -41,7 +41,7 @@ resource "aws_route" "master_route_non_management" {
   count                     = local.roles[0] == "slave" ? local.zone_count : 0
   route_table_id            = data.terraform_remote_state.management_dmi.outputs.private_route_tables[0][count.index]
   destination_cidr_block    = local.cidr_block[local.environment].mon-slave-vpc
-  vpc_peering_connection_id = data.terraform_remote_state.management_dmi.outputs.peering_master_slave.id
+  vpc_peering_connection_id = data.terraform_remote_state.management_dmi.outputs.peering_master_slave
 
   provider = aws.dmi_management
 }
