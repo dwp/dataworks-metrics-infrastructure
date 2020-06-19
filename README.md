@@ -42,3 +42,32 @@ As show in the images, the tool should be split over Development (DEV,QA,INT,MGM
 Metrics aggregation shall be done by basing Prometheus in its own VPC per environment, and having VPC peering connections in to the other VPCs in that Environment. In the normal Prometheus workflow, there is no requirement for the targets to talk back.
 
 ![Low level slice](docs/monitoring_slice.png)
+
+## Thanos
+
+To answer one of our most important requirements, in long-term metics storage we are going to integrate [Thanos](https://github.com/thanos-io/thanos).  
+
+Thanos is a set of components that can be composed into a highly available metric system with unlimited storage capacity, which can be added seamlessly on top of existing Prometheus deployments.
+
+Thanos leverages the Prometheus 2.0 storage format to cost-efficiently store historical metric data in any object storage while retaining fast query latencies. Additionally, it provides a global query view across all Prometheus installations and can merge data from Prometheus HA pairs on the fly.
+
+![Thanos Architecture Overview](docs/thanos_arch.jpg)
+
+Concretely the aims of the project are:
+
+1. Global query view of metrics.
+1. Unlimited retention of metrics.
+1. High availability of components, including Prometheus.
+
+Features
+* Global querying view across all connected Prometheus servers
+* Deduplication and merging of metrics collected from Prometheus HA pairs
+* Seamless integration with existing Prometheus setups
+* Any object storage as its only, optional dependency
+* Downsampling historical data for massive query speedup
+* Cross-cluster federation
+* Fault-tolerant query routing
+* Simple gRPC "Store API" for unified data access across all metric data
+* Easy integration points for custom metric providers
+
+We are currently working on updating the current infrastructure Thanos, and will reflect the architecture documents in due time.
