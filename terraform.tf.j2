@@ -69,7 +69,7 @@ data "terraform_remote_state" "management_dns" {
 
 data "terraform_remote_state" "management_dmi" {
   backend   = "s3"
-  workspace = "default"
+  workspace = "management-dev"
 
   config = {
     bucket         = "{{state_file_bucket}}"

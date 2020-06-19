@@ -33,7 +33,7 @@ def main():
     
 
     config_data = yaml.load(parameter['Parameter']['Value'], Loader=yaml.FullLoader)
-    config_data['roles'] = json.loads(response['SecretBinary'])[os.getenv('TF_WORKSPACE', 'management-dev')]
+    config_data['roles'] = json.loads(response['SecretBinary'])[os.getenv('TF_WORKSPACE', 'development')]
 
     with open('modules/vpc/vpc.tf.j2') as in_template:
         template = jinja2.Template(in_template.read())

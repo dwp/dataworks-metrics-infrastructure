@@ -49,10 +49,6 @@ resource "aws_ecs_task_definition" "prometheus" {
       {
         "name": "PROMETHEUS_ROLE",
         "value": "${local.roles[count.index]}"
-      },
-      {
-        "name": "TEMP",
-        "value": "${local.roles[count.index]}"
       }
     ]
   }
@@ -60,8 +56,8 @@ resource "aws_ecs_task_definition" "prometheus" {
 DEFINITION
 }
 
-resource "aws_ecs_service" "prometheus" {
-  count           = length(local.roles)
+resource "aws_ecs_service" "prometheus_master" {
+  count           = local.roles[0] == "master" ? 1 : 0
   name            = "${local.roles[count.index]}-${var.name}"
   cluster         = data.terraform_remote_state.management.outputs.ecs_cluster_main.id
   task_definition = aws_ecs_task_definition.prometheus[count.index].arn
@@ -74,7 +70,7 @@ resource "aws_ecs_service" "prometheus" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.web_http[count.index].arn
+    target_group_arn = aws_lb_target_group.web_http[0].arn
     container_name   = "${local.roles[count.index]}-${var.name}"
     container_port   = var.prom_port
   }
@@ -82,6 +78,24 @@ resource "aws_ecs_service" "prometheus" {
   service_registries {
     registry_arn   = aws_service_discovery_service.prometheus[count.index].arn
     container_name = "${var.name}-${local.roles[count.index]}"
+  }
+}
+
+resource "aws_ecs_service" "prometheus_slave" {
+  name            = "slave-${var.name}"
+  cluster         = data.terraform_remote_state.management.outputs.ecs_cluster_main.id
+  task_definition = aws_ecs_task_definition.prometheus[index(local.roles, "slave")].arn
+  desired_count   = 1
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    security_groups = [aws_security_group.web[index(local.roles, "slave")].id]
+    subnets         = module.vpc.outputs.private_subnets[index(local.roles, "slave")]
+  }
+
+  service_registries {
+    registry_arn   = aws_service_discovery_service.prometheus[index(local.roles, "slave")].arn
+    container_name = "${var.name}-slave"
   }
 }
 
@@ -117,43 +131,6 @@ resource "aws_service_discovery_service" "prometheus" {
       ttl  = 10
       type = "A"
     }
-  }
-}
-
-resource "aws_lb_target_group" "web_http" {
-  count       = length(local.roles)
-  name        = "${local.roles[count.index]}-${var.name}-http"
-  port        = 9090
-  protocol    = "HTTP"
-  vpc_id      = module.vpc.outputs.vpcs[count.index].id
-  target_type = "ip"
-
-  health_check {
-    port    = "9090"
-    path    = "/-/healthy"
-    matcher = "200"
-  }
-
-  stickiness {
-    enabled = true
-    type    = "lb_cookie"
-  }
-
-  tags = merge(local.tags, { Name = "prometheus" })
-}
-
-resource "aws_lb_listener_rule" "https" {
-  count        = length(local.roles)
-  listener_arn = aws_lb_listener.https[count.index].arn
-
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.web_http[count.index].arn
-  }
-
-  condition {
-    field  = "host-header"
-    values = [aws_route53_record.prometheus[count.index].fqdn]
   }
 }
 
