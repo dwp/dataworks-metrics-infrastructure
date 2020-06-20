@@ -20,6 +20,18 @@ variable "whitelist_cidr_blocks" {
   type        = list(string)
 }
 
+variable "primary" {
+  description = "Name used for primary role"
+  type        = string
+  default     = "master"
+}
+
+variable "secondary" {
+  description = "Name used for secondary role"
+  type        = string
+  default     = "slave"
+}
+
 variable "s3_prefix" {
   default = "monitoring/prometheus"
 }

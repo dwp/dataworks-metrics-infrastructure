@@ -7,7 +7,7 @@ output "private_route_tables" {
 }
 
 output "master_security_group" {
-  value = aws_security_group.web[0]
+  value = aws_security_group.prometheus[0]
 }
 
 resource "null_resource" "dummy" {}

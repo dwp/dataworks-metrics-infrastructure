@@ -1,9 +1,9 @@
 output "outputs" {
   value = {
-      vpcs = [{% for value in roles %}module.prometheus_{{value}}_vpc.vpc{% if roles|length == 1 %}, null_resource.dummy{% else %}{{ "," if not loop.last }}{% endif %}{% endfor %}]
-      public_subnets = [{% for value in roles %}aws_subnet.prometheus_{{value}}_public[*].id{% if roles|length == 1 %}, null_resource.dummy.id{% else %}{{ "," if not loop.last }}{% endif %}{% endfor %}]
-      private_subnets = [{% for value in roles %}aws_subnet.prometheus_{{value}}_private[*].id{% if roles|length == 1 %}, null_resource.dummy.id{% else %}{{ "," if not loop.last }}{% endif %}{% endfor %}]
-      private_route_tables = [{% for value in roles %}aws_route_table.prometheus_{{value}}_private.*.id{% if roles|length == 1 %}, null_resource.dummy.id{% else %}{{ "," if not loop.last }}{% endif %}{% endfor %}]
-      s3_prefix_list_ids = [{% for value in roles %}module.prometheus_{{value}}_vpc.s3_prefix_list_id{% if roles|length == 1 %}, null_resource.dummy.id{% else %}{{ "," if not loop.last }}{% endif %}{% endfor %}]
+      vpcs = [{% for value in roles %}module.monitoring_{{value}}_vpc.vpc{% if roles|length == 1 %}, null_resource.dummy{% else %}{{ "," if not loop.last }}{% endif %}{% endfor %}]
+      public_subnets = [{% for value in roles %}aws_subnet.monitoring_{{value}}_public[*].id{% if roles|length == 1 %}, null_resource.dummy.id{% else %}{{ "," if not loop.last }}{% endif %}{% endfor %}]
+      private_subnets = [{% for value in roles %}aws_subnet.monitoring_{{value}}_private[*].id{% if roles|length == 1 %}, null_resource.dummy.id{% else %}{{ "," if not loop.last }}{% endif %}{% endfor %}]
+      private_route_tables = [{% for value in roles %}aws_route_table.monitoring_{{value}}_private.*.id{% if roles|length == 1 %}, null_resource.dummy.id{% else %}{{ "," if not loop.last }}{% endif %}{% endfor %}]
+      s3_prefix_list_ids = [{% for value in roles %}module.monitoring_{{value}}_vpc.s3_prefix_list_id{% if roles|length == 1 %}, null_resource.dummy.id{% else %}{{ "," if not loop.last }}{% endif %}{% endfor %}]
   }
 }

@@ -177,6 +177,12 @@ locals {
 
   environment = terraform.workspace == "default" ? "development" : terraform.workspace
 
+  secondary_role_index = index(local.roles, var.secondary)
+
+  management_envs = ["management-dev", "management"]
+
+  is_management_env = contains(local.management_envs, local.environment)
+
   tags = {
   {% for key, value in common_tags.items() %}
     {{key}} = "{{value}}"{% endfor %}

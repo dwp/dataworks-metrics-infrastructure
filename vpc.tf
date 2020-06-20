@@ -5,7 +5,7 @@ module "vpc" {
   name                                     = var.name
   region                                   = data.aws_region.current.name
   vpc_cidr_block                           = local.cidr_block[local.environment]
-  interface_vpce_source_security_group_ids = aws_security_group.web.*.id
+  interface_vpce_source_security_group_ids = aws_security_group.prometheus.*.id
   zone_count                               = local.zone_count
   zone_names                               = local.zone_names
   route_tables_public                      = aws_route_table.public
@@ -13,12 +13,12 @@ module "vpc" {
 }
 
 resource "aws_eip" "prometheus_master_nat" {
-  count = local.roles[0] == "master" ? local.zone_count : 0
+  count = local.is_management_env ? local.zone_count : 0
   tags  = merge(local.tags, { Name = "${var.name}-nat-${local.zone_names[count.index]}" })
 }
 
 resource "aws_nat_gateway" "prometheus_master_nat" {
-  count         = local.roles[0] == "master" ? local.zone_count : 0
+  count         = local.is_management_env ? local.zone_count : 0
   allocation_id = aws_eip.prometheus_master_nat[count.index].id
   subnet_id     = module.vpc.outputs.public_subnets[0][count.index]
   tags          = merge(local.tags, { Name = "${var.name}-nat-${local.zone_names[count.index]}" })

@@ -1,16 +1,16 @@
 data "aws_availability_zones" "current" {}
 
 {% for value in roles %}
-module "prometheus_{{value}}_vpc" {
+module "monitoring_{{value}}_vpc" {
   source                                     = "dwp/vpc/aws"
   version                                    = "2.0.6"
-  vpc_name                                   = "prometheus-{{value}}"
+  vpc_name                                   = "monitoring-{{value}}"
   region                                     = var.region
   vpc_cidr_block                             = var.vpc_cidr_block.mon-{{value}}-vpc
   interface_vpce_source_security_group_count = length([var.interface_vpce_source_security_group_ids[{{loop.index-1}}]])
   interface_vpce_source_security_group_ids   = [var.interface_vpce_source_security_group_ids[{{loop.index-1}}]]
-  interface_vpce_subnet_ids                  = aws_subnet.prometheus_{{value}}_private.*.id
-  gateway_vpce_route_table_ids               = aws_route_table.prometheus_{{value}}_private.*.id
+  interface_vpce_subnet_ids                  = aws_subnet.monitoring_{{value}}_private.*.id
+  gateway_vpce_route_table_ids               = aws_route_table.monitoring_{{value}}_private.*.id
   ec2_endpoint                               = true
   ec2autoscaling_endpoint                    = true
   ec2messages_endpoint                       = true
@@ -27,39 +27,39 @@ module "prometheus_{{value}}_vpc" {
   common_tags                                = var.common_tags
 }
 
-resource "aws_subnet" "prometheus_{{value}}_public" {
+resource "aws_subnet" "monitoring_{{value}}_public" {
   count                   = var.zone_count
-  cidr_block              = cidrsubnet(module.prometheus_{{value}}_vpc.vpc.cidr_block, var.subnets.public.newbits, var.subnets.public.netnum + count.index)
-  vpc_id                  = module.prometheus_{{value}}_vpc.vpc.id
+  cidr_block              = cidrsubnet(module.monitoring_{{value}}_vpc.vpc.cidr_block, var.subnets.public.newbits, var.subnets.public.netnum + count.index)
+  vpc_id                  = module.monitoring_{{value}}_vpc.vpc.id
   availability_zone_id    = data.aws_availability_zones.current.zone_ids[count.index]
   map_public_ip_on_launch = true
   tags                    = merge(var.common_tags, { Name = "${var.name}-public-${var.zone_names[count.index]}" })
 }
 
-resource "aws_subnet" "prometheus_{{value}}_private" {
+resource "aws_subnet" "monitoring_{{value}}_private" {
   count                = var.zone_count
-  cidr_block           = cidrsubnet(module.prometheus_{{value}}_vpc.vpc.cidr_block, var.subnets.private.newbits, var.subnets.private.netnum + count.index)
-  vpc_id               = module.prometheus_{{value}}_vpc.vpc.id
+  cidr_block           = cidrsubnet(module.monitoring_{{value}}_vpc.vpc.cidr_block, var.subnets.private.newbits, var.subnets.private.netnum + count.index)
+  vpc_id               = module.monitoring_{{value}}_vpc.vpc.id
   availability_zone_id = data.aws_availability_zones.current.zone_ids[count.index]
   tags                 = merge(var.common_tags, { Name = "${var.name}-private-${var.zone_names[count.index]}" })
 }
 
-resource "aws_route_table" "prometheus_{{value}}_private" {
+resource "aws_route_table" "monitoring_{{value}}_private" {
   count  = var.zone_count
-  vpc_id = module.prometheus_{{value}}_vpc.vpc.id
+  vpc_id = module.monitoring_{{value}}_vpc.vpc.id
   tags   = merge(var.common_tags, { Name = "${var.name}-private-${var.zone_names[count.index]}" })
 }
 
-resource "aws_route_table_association" "prometheus_{{value}}_public" {
+resource "aws_route_table_association" "monitoring_{{value}}_public" {
   count          = var.zone_count
   route_table_id = var.route_tables_public[{{loop.index-1}}].id
-  subnet_id      = aws_subnet.prometheus_{{value}}_public[count.index].id
+  subnet_id      = aws_subnet.monitoring_{{value}}_public[count.index].id
 }
 
-resource "aws_route_table_association" "prometheus_{{value}}_private" {
+resource "aws_route_table_association" "monitoring_{{value}}_private" {
   count          = var.zone_count
-  route_table_id = aws_route_table.prometheus_{{value}}_private[count.index].id
-  subnet_id      = aws_subnet.prometheus_{{value}}_private[count.index].id
+  route_table_id = aws_route_table.monitoring_{{value}}_private[count.index].id
+  subnet_id      = aws_subnet.monitoring_{{value}}_private[count.index].id
 }
 {% endfor %}
 {% if roles|length == 1 %}
