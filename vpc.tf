@@ -12,6 +12,18 @@ module "vpc" {
   common_tags                              = merge(local.tags, { Name = var.name })
 }
 
+resource "aws_eip" "prometheus_master_nat" {
+  count = local.roles[0] == "master" ? local.zone_count : 0
+  tags  = merge(local.tags, { Name = "${var.name}-nat-${local.zone_names[count.index]}" })
+}
+
+resource "aws_nat_gateway" "prometheus_master_nat" {
+  count         = local.roles[0] == "master" ? local.zone_count : 0
+  allocation_id = aws_eip.prometheus_master_nat[count.index].id
+  subnet_id     = module.vpc.outputs.public_subnets[0][count.index]
+  tags          = merge(local.tags, { Name = "${var.name}-nat-${local.zone_names[count.index]}" })
+}
+
 resource "aws_internet_gateway" "igw" {
   count  = length(local.roles)
   vpc_id = module.vpc.outputs.vpcs[count.index].id

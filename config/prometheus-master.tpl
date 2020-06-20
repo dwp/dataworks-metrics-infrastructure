@@ -11,6 +11,9 @@ scrape_configs:
         - '{__name__=~"job:.*"}'
 
     static_configs:
-      - targets: ['monitoring-slave.services.${parent_domain_name}:9090']
+      - targets: ['monitoring-slave.development.services.${parent_domain_name}:9090']
         labels:
-          group: 'prometheus'
+          group: 'development-slave'
+      - targets: ['monitoring-slave.management-dev.services.${parent_domain_name}:9090']
+        labels:
+          group: 'management-dev-slave'

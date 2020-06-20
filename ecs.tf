@@ -6,7 +6,7 @@ resource "aws_ecs_task_definition" "prometheus" {
   cpu                      = "512"
   memory                   = "4096"
   task_role_arn            = aws_iam_role.prometheus[count.index].arn
-  execution_role_arn       = data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn
+  execution_role_arn       = local.roles[0] == "master" ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
 
   container_definitions = <<DEFINITION
 [
@@ -40,7 +40,7 @@ resource "aws_ecs_task_definition" "prometheus" {
     "environment": [
       {
         "name": "PROMETHEUS_CONFIG_S3_BUCKET",
-        "value": "${data.terraform_remote_state.management.outputs.config_bucket.id}"
+        "value": "${local.roles[0] == "master" ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id}"
       },
       {
         "name": "PROMETHEUS_CONFIG_S3_PREFIX",
@@ -83,7 +83,7 @@ resource "aws_ecs_service" "prometheus_master" {
 
 resource "aws_ecs_service" "prometheus_slave" {
   name            = "slave-${var.name}"
-  cluster         = data.terraform_remote_state.management.outputs.ecs_cluster_main.id
+  cluster         = local.roles[0] == "master" ? data.terraform_remote_state.management.outputs.ecs_cluster_main.id : data.terraform_remote_state.common.outputs.ecs_cluster_main.id
   task_definition = aws_ecs_task_definition.prometheus[index(local.roles, "slave")].arn
   desired_count   = 1
   launch_type     = "FARGATE"
@@ -109,14 +109,14 @@ data template_file "prometheus_config" {
 
 resource "aws_s3_bucket_object" "prometheus_config" {
   count      = length(local.roles)
-  bucket     = data.terraform_remote_state.management.outputs.config_bucket.id
+  bucket     = local.roles[0] == "master" ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.s3_prefix}/prometheus-${local.roles[count.index]}.yml"
   content    = data.template_file.prometheus_config[count.index].rendered
-  kms_key_id = data.terraform_remote_state.management.outputs.config_bucket.cmk_arn
+  kms_key_id = local.roles[0] == "master" ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
 
 resource "aws_service_discovery_private_dns_namespace" "prometheus" {
-  name = "services.${var.parent_domain_name}"
+  name = "${local.environment}.services.${var.parent_domain_name}"
   vpc  = module.vpc.outputs.vpcs[0].id
 }
 

@@ -13,7 +13,7 @@ terraform {
 
 data "terraform_remote_state" "internet_egress" {
   backend   = "s3"
-  workspace = local.environment == "management" ? "management" : "default"
+  workspace = lookup(local.slave_peerings, local.environment) == "management-dev" ? "default" : "management"
 
   config = {
     bucket         = "{{state_file_bucket}}"
@@ -27,7 +27,7 @@ data "terraform_remote_state" "internet_egress" {
 
 data "terraform_remote_state" "security-tools" {
   backend = "s3"
-  workspace = local.environment == "management" ? "management" : "default"
+  workspace = lookup(local.slave_peerings, local.environment) == "management-dev" ? "default" : "management"
 
   config = {
     bucket         = "{{state_file_bucket}}"
@@ -41,7 +41,7 @@ data "terraform_remote_state" "security-tools" {
 
 data "terraform_remote_state" "management" {
   backend   = "s3"
-  workspace = local.environment == "management" ? "management" : "default"
+  workspace = lookup(local.slave_peerings, local.environment) == "management-dev" ? "default" : "management"
 
   config = {
     bucket         = "{{state_file_bucket}}"
@@ -69,7 +69,7 @@ data "terraform_remote_state" "management_dns" {
 
 data "terraform_remote_state" "management_dmi" {
   backend   = "s3"
-  workspace = "management-dev"
+  workspace = lookup(local.slave_peerings, local.environment)
 
   config = {
     bucket         = "{{state_file_bucket}}"
@@ -81,9 +81,23 @@ data "terraform_remote_state" "management_dmi" {
   }
 }
 
+data "terraform_remote_state" "common" {
+  backend   = "s3"
+  workspace = lookup(local.common_workspace, terraform.workspace)
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/common.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
 data "terraform_remote_state" "aws_concourse" {
   backend   = "s3"
-  workspace = local.environment == "management" ? "management" : "default"
+  workspace = lookup(local.slave_peerings, local.environment) == "management-dev" ? "default" : "management"
 
   config = {
     bucket         = "{{state_file_bucket}}"
@@ -139,11 +153,6 @@ locals {
     production = "prod.${var.parent_domain_name}"
   }
 
-  monitoring_uri = {
-    master = "master.monitoring.${lookup(local.parent_domain_name, local.environment)}"
-    slave = "slave.monitoring.${lookup(local.parent_domain_name, local.environment)}"
-  }
-
   slave_peerings = {
     management-dev = "management-dev"
     management = "management"
@@ -154,9 +163,14 @@ locals {
     production = "management"
   }
 
-  master_peerings = {
-    management-dev = ["management-dev", "dev", "qa", "integration"]
-    management = ["management", "preprod", "production"]
+  common_workspace = {
+    management-dev = "default"
+    management     = "preprod"
+    default        = "default"
+    qa             = "qa"
+    integration    = "integration"
+    preprod        = "preprod"
+    production     = "production"
   }
 
   roles = [{% for value in roles %}"{{value}}"{{ "," if not loop.last }}{% endfor %}]
