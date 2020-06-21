@@ -27,7 +27,7 @@ data "aws_iam_policy_document" "prometheus_read_config" {
     ]
 
     resources = [
-      data.terraform_remote_state.management.outputs.config_bucket.arn,
+      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}",
     ]
   }
 
@@ -39,7 +39,7 @@ data "aws_iam_policy_document" "prometheus_read_config" {
     ]
 
     resources = [
-      "${data.terraform_remote_state.management.outputs.config_bucket.arn}/${var.s3_prefix}/*",
+      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.s3_prefix}/*",
     ]
   }
 
@@ -51,7 +51,7 @@ data "aws_iam_policy_document" "prometheus_read_config" {
     ]
 
     resources = [
-      data.terraform_remote_state.management.outputs.config_bucket.cmk_arn,
+      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn}",
     ]
   }
 

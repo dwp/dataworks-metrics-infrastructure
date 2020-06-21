@@ -4,7 +4,7 @@ groups:
       - dataworks-metrics-infrastructure-pr
   - name: master
     jobs:
-      - dev
+      - development
       - qa
       - integration
       - preprod
