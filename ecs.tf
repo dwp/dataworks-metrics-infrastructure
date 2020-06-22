@@ -1,11 +1,12 @@
 resource "aws_ecs_task_definition" "prometheus" {
-  count              = length(local.roles)
-  family             = "prometheus-${local.roles[count.index]}"
-  network_mode       = "awsvpc"
-  cpu                = "512"
-  memory             = "4096"
-  task_role_arn      = aws_iam_role.prometheus[count.index].arn
-  execution_role_arn = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
+  count                    = length(local.roles)
+  family                   = "prometheus-${local.roles[count.index]}"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = "512"
+  memory                   = "4096"
+  task_role_arn            = aws_iam_role.prometheus[count.index].arn
+  execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
 
   volume {
     name = "prometheus-${local.roles[count.index]}"
@@ -133,8 +134,8 @@ resource "aws_ecs_service" "prometheus_primary" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.prometheus[local.primary_role_index].arn
-    container_name   = "thanos-${var.primary}"
-    container_port   = 10902
+    container_name   = "prometheus-${var.primary}"
+    container_port   = var.prom_port
   }
 
   service_registries {
