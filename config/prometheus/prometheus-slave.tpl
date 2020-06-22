@@ -1,4 +1,6 @@
 global:
+  external_labels:
+    role: slave
   scrape_interval: 1m
   scrape_timeout: 10s
   evaluation_interval: 1m
