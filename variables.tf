@@ -32,10 +32,6 @@ variable "secondary" {
   default     = "slave"
 }
 
-variable "s3_prefix" {
-  default = "monitoring/prometheus"
-}
-
 variable "fargate_cpu" {
   default = "256"
 }
@@ -45,5 +41,5 @@ variable "fargate_memory" {
 }
 
 variable "prom_port" {
-  default = "9090"
+  default = 9090
 }

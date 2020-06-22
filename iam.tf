@@ -39,7 +39,7 @@ data "aws_iam_policy_document" "prometheus_read_config" {
     ]
 
     resources = [
-      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.s3_prefix}/*",
+      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/*",
     ]
   }
 
@@ -59,10 +59,24 @@ data "aws_iam_policy_document" "prometheus_read_config" {
     effect = "Allow"
 
     actions = [
+      "s3:*",
+    ]
+
+    resources = [
+      "${local.is_management_env ? aws_s3_bucket.monitoring[local.primary_role_index].arn : data.terraform_remote_state.management_dmi.outputs.monitoring_bucket.arn}",
+      "${local.is_management_env ? aws_s3_bucket.monitoring[local.primary_role_index].arn : data.terraform_remote_state.management_dmi.outputs.monitoring_bucket.arn}/*",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
       "ec2:DescribeInstances",
       "ec2:DescribeImages",
       "ec2:DescribeTags",
-      "ec2:DescribeSnapshots"
+      "ec2:DescribeSnapshots",
+      "elasticfilesystem:*"
     ]
 
     resources = [

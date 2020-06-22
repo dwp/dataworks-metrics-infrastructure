@@ -10,4 +10,11 @@ output "master_security_group" {
   value = aws_security_group.prometheus[0]
 }
 
+output "monitoring_bucket" {
+  value = {
+    id  = local.is_management_env ? aws_s3_bucket.monitoring[local.primary_role_index].id : null_resource.dummy.id
+    arn = local.is_management_env ? aws_s3_bucket.monitoring[local.primary_role_index].arn : null_resource.dummy.id
+  }
+}
+
 resource "null_resource" "dummy" {}

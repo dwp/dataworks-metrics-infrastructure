@@ -22,10 +22,10 @@ resource "aws_route" "prometheus_secondary_concourse" {
 resource "aws_security_group_rule" "concourse_allow_ingress_prometheus" {
   count                    = local.is_management_env ? 1 : 0
   description              = "Allow prometheus ${var.secondary} to access concourse metrics"
-  from_port                = 9090
+  from_port                = var.prom_port
   protocol                 = "tcp"
   security_group_id        = data.terraform_remote_state.aws_concourse.outputs.concourse_web_sg
-  to_port                  = 9090
+  to_port                  = var.prom_port
   type                     = "ingress"
   source_security_group_id = aws_security_group.prometheus[1].id
 }
@@ -33,9 +33,9 @@ resource "aws_security_group_rule" "concourse_allow_ingress_prometheus" {
 resource "aws_security_group_rule" "prometheus_allow_egress_concourse" {
   count             = local.is_management_env ? 1 : 0
   type              = "egress"
-  to_port           = 9090
+  to_port           = var.prom_port
   protocol          = "tcp"
-  from_port         = 9090
+  from_port         = var.prom_port
   security_group_id = aws_security_group.prometheus[local.secondary_role_index].id
   cidr_blocks       = [local.cidr_block_cicd_vpc[0]]
 }
