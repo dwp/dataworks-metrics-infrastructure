@@ -1,5 +1,5 @@
 provider "aws" {
-  version = "~> 2.57.0"
+  version = "~> 2.67.0"
   region  = var.region
   alias   = "management_dns"
 
@@ -14,7 +14,7 @@ locals {
 
 resource "aws_route53_record" "monitoring_loadbalancer" {
   count   = local.is_management_env ? 1 : 0
-  name    = join(".", [local.roles[0], local.fqdn])
+  name    = join(".", [local.roles[local.primary_role_index], local.fqdn])
   type    = "A"
   zone_id = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
 
