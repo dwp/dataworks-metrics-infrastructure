@@ -244,3 +244,13 @@ resource "aws_security_group_rule" "allow_ingress_thanos_grpc" {
   security_group_id = aws_security_group.prometheus[count.index].id
   cidr_blocks       = ["0.0.0.0/0"]
 }
+
+resource "aws_security_group_rule" "allow_egress_thanos_grpc" {
+  count             = length(local.roles)
+  type              = "egress"
+  to_port           = 10901
+  protocol          = "tcp"
+  from_port         = 10901
+  security_group_id = aws_security_group.prometheus[count.index].id
+  cidr_blocks       = ["0.0.0.0/0"]
+}
