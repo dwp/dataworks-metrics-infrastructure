@@ -1,5 +1,5 @@
 provider "aws" {
-  version = "~> 2.57.0"
+  version = "~> 2.67.0"
   region  = var.region
   alias   = "dmi_management"
 
@@ -46,10 +46,10 @@ resource "aws_route" "non_management_prometheus_primary_prometheus_secondary" {
 
 resource "aws_security_group_rule" "prometheus_secondary_allow_ingress_prometheus_primary" {
   description       = "Allow prometheus ${var.primary} to access prometheus ${var.secondary}"
-  from_port         = 9090
+  from_port         = var.prom_port
   protocol          = "tcp"
   security_group_id = aws_security_group.prometheus[local.secondary_role_index].id
-  to_port           = 9090
+  to_port           = var.prom_port
   type              = "ingress"
   cidr_blocks       = ["${lookup(local.cidr_block, lookup(local.slave_peerings, local.environment)).mon-master-vpc}"]
 }
@@ -57,9 +57,9 @@ resource "aws_security_group_rule" "prometheus_secondary_allow_ingress_prometheu
 resource "aws_security_group_rule" "prometheus_primary_allow_egress_prometheus_secondary" {
   description       = "Allow prometheus ${var.primary} to access prometheus ${var.secondary}"
   type              = "egress"
-  to_port           = 9090
+  to_port           = var.prom_port
   protocol          = "tcp"
-  from_port         = 9090
+  from_port         = var.prom_port
   security_group_id = local.is_management_env ? aws_security_group.prometheus[0].id : data.terraform_remote_state.management_dmi.outputs.master_security_group.id
   cidr_blocks       = [local.cidr_block[local.environment].mon-slave-vpc]
 

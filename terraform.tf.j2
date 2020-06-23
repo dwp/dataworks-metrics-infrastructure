@@ -118,7 +118,7 @@ variable "region" {
 }
 
 provider "aws" {
-  version = "~> 2.57.0"
+  version = "~> 2.67.0"
   region  = var.region
 
   assume_role {
@@ -177,6 +177,7 @@ locals {
 
   environment = terraform.workspace == "default" ? "development" : terraform.workspace
 
+  primary_role_index = 0
   secondary_role_index = index(local.roles, var.secondary)
 
   management_envs = ["management-dev", "management"]

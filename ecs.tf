@@ -1,6 +1,6 @@
 resource "aws_ecs_task_definition" "prometheus" {
   count                    = length(local.roles)
-  family                   = "${local.roles[count.index]}-${var.name}"
+  family                   = "prometheus-${local.roles[count.index]}"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "512"
@@ -8,19 +8,33 @@ resource "aws_ecs_task_definition" "prometheus" {
   task_role_arn            = aws_iam_role.prometheus[count.index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
 
+  volume {
+    name = "prometheus-${local.roles[count.index]}"
+    efs_volume_configuration {
+      file_system_id = aws_efs_file_system.prometheus[count.index].id
+      root_directory = "/"
+    }
+  }
+
   container_definitions = <<DEFINITION
 [
   {
     "cpu": ${var.fargate_cpu},
     "image": "${data.terraform_remote_state.management.outputs.ecr_prometheus_url}:slave",
     "memory": ${var.fargate_memory},
-    "name": "${local.roles[count.index]}-${var.name}",
+    "name": "prometheus-${local.roles[count.index]}",
     "networkMode": "awsvpc",
-    "user" : "nobody",
+    "user": "0:0",
     "portMappings": [
       {
         "containerPort": ${var.prom_port},
         "hostPort": ${var.prom_port}
+      }
+    ],
+    "mountPoints": [
+      {
+        "containerPath": "/prometheus",
+        "sourceVolume": "prometheus-${local.roles[count.index]}"
       }
     ],
     "logConfiguration": {
@@ -44,11 +58,59 @@ resource "aws_ecs_task_definition" "prometheus" {
       },
       {
         "name": "PROMETHEUS_CONFIG_S3_PREFIX",
-        "value": "${var.s3_prefix}"
+        "value": "${var.name}/prometheus"
       },
       {
         "name": "PROMETHEUS_ROLE",
         "value": "${local.roles[count.index]}"
+      }
+    ]
+  },
+  {
+    "cpu": ${var.fargate_cpu},
+    "image": "${data.terraform_remote_state.management.outputs.ecr_thanos_url}",
+    "memory": ${var.fargate_memory},
+    "name": "thanos-${local.roles[count.index]}",
+    "networkMode": "awsvpc",
+    "user": "0:0",
+    "portMappings": [
+      {
+        "containerPort": 10901,
+        "hostPort": 10901
+      },
+      {
+        "containerPort": 10902,
+        "hostPort": 10902
+      }
+    ],
+    "mountPoints": [
+      {
+        "containerPath": "/prometheus",
+        "sourceVolume": "prometheus-${local.roles[count.index]}"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${data.terraform_remote_state.management.outputs.ecs_cluster_main_log_group.name}",
+        "awslogs-region": "${data.aws_region.current.name}",
+        "awslogs-stream-prefix": "thanos"
+      }
+    },
+    "placementStrategy": [
+      {
+        "field": "attribute:ecs.availability-zone",
+        "type": "spread"
+      }
+    ],
+    "environment": [
+      {
+        "name": "THANOS_CONFIG_S3_BUCKET",
+        "value": "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id}"
+      },
+      {
+        "name": "THANOS_CONFIG_S3_PREFIX",
+        "value": "${var.name}/thanos"
       }
     ]
   }
@@ -57,36 +119,38 @@ DEFINITION
 }
 
 resource "aws_ecs_service" "prometheus_primary" {
-  count           = local.is_management_env ? 1 : 0
-  name            = "${local.roles[count.index]}-${var.name}"
-  cluster         = data.terraform_remote_state.management.outputs.ecs_cluster_main.id
-  task_definition = aws_ecs_task_definition.prometheus[count.index].arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
+  count            = local.is_management_env ? 1 : 0
+  name             = "prometheus-${var.primary}"
+  cluster          = data.terraform_remote_state.management.outputs.ecs_cluster_main.id
+  task_definition  = aws_ecs_task_definition.prometheus[local.primary_role_index].arn
+  platform_version = "1.4.0"
+  desired_count    = 1
+  launch_type      = "FARGATE"
 
   network_configuration {
-    security_groups = [aws_security_group.prometheus[count.index].id]
-    subnets         = module.vpc.outputs.private_subnets[count.index]
+    security_groups = [aws_security_group.prometheus[local.primary_role_index].id]
+    subnets         = module.vpc.outputs.private_subnets[local.primary_role_index]
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.prometheus[0].arn
-    container_name   = "${local.roles[count.index]}-${var.name}"
+    target_group_arn = aws_lb_target_group.prometheus[local.primary_role_index].arn
+    container_name   = "prometheus-${var.primary}"
     container_port   = var.prom_port
   }
 
   service_registries {
-    registry_arn   = aws_service_discovery_service.prometheus[count.index].arn
-    container_name = "${var.name}-${local.roles[count.index]}"
+    registry_arn   = aws_service_discovery_service.prometheus[local.primary_role_index].arn
+    container_name = "prometheus-${var.primary}"
   }
 }
 
 resource "aws_ecs_service" "prometheus_secondary" {
-  name            = "slave-${var.name}"
-  cluster         = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_cluster_main.id : data.terraform_remote_state.common.outputs.ecs_cluster_main.id
-  task_definition = aws_ecs_task_definition.prometheus[local.secondary_role_index].arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
+  name             = "prometheus-${var.secondary}"
+  cluster          = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_cluster_main.id : data.terraform_remote_state.common.outputs.ecs_cluster_main.id
+  task_definition  = aws_ecs_task_definition.prometheus[local.secondary_role_index].arn
+  platform_version = "1.4.0"
+  desired_count    = 1
+  launch_type      = "FARGATE"
 
   network_configuration {
     security_groups = [aws_security_group.prometheus[local.secondary_role_index].id]
@@ -95,24 +159,8 @@ resource "aws_ecs_service" "prometheus_secondary" {
 
   service_registries {
     registry_arn   = aws_service_discovery_service.prometheus[local.secondary_role_index].arn
-    container_name = "${var.name}-slave"
+    container_name = "prometheus-${var.secondary}"
   }
-}
-
-data template_file "prometheus" {
-  count    = length(local.roles)
-  template = file("${path.module}/config/prometheus-${local.roles[count.index]}.tpl")
-  vars = {
-    parent_domain_name = var.parent_domain_name
-  }
-}
-
-resource "aws_s3_bucket_object" "prometheus" {
-  count      = length(local.roles)
-  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
-  key        = "${var.s3_prefix}/prometheus-${local.roles[count.index]}.yml"
-  content    = data.template_file.prometheus[count.index].rendered
-  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
 
 resource "aws_service_discovery_private_dns_namespace" "monitoring" {
@@ -136,7 +184,7 @@ resource "aws_service_discovery_service" "prometheus" {
 
 resource "aws_security_group" "prometheus" {
   count       = length(local.roles)
-  name        = "${local.roles[count.index]}-${var.name}"
+  name        = "${var.name}-${local.roles[count.index]}"
   description = "Rules necesary for pulling container image and accessing other prometheus instances"
   vpc_id      = module.vpc.outputs.vpcs[count.index].id
   tags        = merge(local.tags, { Name = "prometheus" })
@@ -156,12 +204,43 @@ resource "aws_security_group_rule" "allow_egress_https" {
   security_group_id = aws_security_group.prometheus[count.index].id
 }
 
+resource "aws_security_group_rule" "prometheus_allow_egress_efs" {
+  count                    = length(local.roles)
+  description              = "Allow prometheus to access efs"
+  from_port                = 2049
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.prometheus[count.index].id
+  to_port                  = 2049
+  type                     = "egress"
+  source_security_group_id = aws_security_group.efs[count.index].id
+}
+
 resource "aws_security_group_rule" "allow_ingress_prom" {
   count             = length(local.roles)
   type              = "ingress"
-  to_port           = 9090
+  to_port           = var.prom_port
   protocol          = "tcp"
-  from_port         = 9090
+  from_port         = var.prom_port
+  security_group_id = aws_security_group.prometheus[count.index].id
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group_rule" "allow_ingress_thanos_http" {
+  count             = length(local.roles)
+  type              = "ingress"
+  to_port           = 10902
+  protocol          = "tcp"
+  from_port         = 10902
+  security_group_id = aws_security_group.prometheus[count.index].id
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group_rule" "allow_ingress_thanos_grpc" {
+  count             = length(local.roles)
+  type              = "ingress"
+  to_port           = 10901
+  protocol          = "tcp"
+  from_port         = 10901
   security_group_id = aws_security_group.prometheus[count.index].id
   cidr_blocks       = ["0.0.0.0/0"]
 }
