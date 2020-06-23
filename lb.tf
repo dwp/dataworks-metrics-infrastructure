@@ -49,6 +49,28 @@ resource "aws_lb_target_group" "prometheus" {
   tags = merge(local.tags, { Name = "prometheus" })
 }
 
+resource "aws_lb_target_group" "thanos" {
+  count       = local.is_management_env ? 1 : 0
+  name        = "thanos-http"
+  port        = var.prom_port
+  protocol    = "HTTP"
+  vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
+  target_type = "ip"
+
+  health_check {
+    port    = var.prom_port
+    path    = "/-/healthy"
+    matcher = "200"
+  }
+
+  stickiness {
+    enabled = true
+    type    = "lb_cookie"
+  }
+
+  tags = merge(local.tags, { Name = "prometheus" })
+}
+
 resource "aws_lb_listener_rule" "prometheus" {
   count        = local.is_management_env ? 1 : 0
   listener_arn = aws_lb_listener.monitoring[local.primary_role_index].arn
@@ -61,6 +83,21 @@ resource "aws_lb_listener_rule" "prometheus" {
   condition {
     field  = "host-header"
     values = [aws_route53_record.monitoring_loadbalancer[local.primary_role_index].fqdn]
+  }
+}
+
+resource "aws_lb_listener_rule" "thanos" {
+  count        = local.is_management_env ? 1 : 0
+  listener_arn = aws_lb_listener.monitoring[local.primary_role_index].arn
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.thanos[local.primary_role_index].arn
+  }
+
+  condition {
+    field  = "host-header"
+    values = [aws_route53_record.thanos_loadbalancer[local.primary_role_index].fqdn]
   }
 }
 
