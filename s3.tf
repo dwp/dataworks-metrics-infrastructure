@@ -70,6 +70,10 @@ data template_file "thanos" {
   }
 }
 
+data template_file "grafana" {
+  template = file("${path.module}/config/grafana/grafana.tpl")
+}
+
 resource "aws_s3_bucket_object" "prometheus" {
   count      = length(local.roles)
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
@@ -81,6 +85,13 @@ resource "aws_s3_bucket_object" "prometheus" {
 resource "aws_s3_bucket_object" "thanos" {
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/thanos/bucket.yml"
+  content    = data.template_file.thanos.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+}
+
+resource "aws_s3_bucket_object" "grafana" {
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/grafana.ini"
   content    = data.template_file.thanos.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
