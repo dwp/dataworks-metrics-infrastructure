@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "thanos" {
 [
   {
     "cpu": ${var.fargate_cpu},
-    "image": "${data.terraform_remote_state.management.outputs.ecr_prometheus_url}-temp:temp",
+    "image": "${data.terraform_remote_state.management.outputs.ecr_thanos_url}-temp:temp",
     "memory": ${var.fargate_memory},
     "name": "thanos",
     "networkMode": "awsvpc",
@@ -47,7 +47,7 @@ resource "aws_ecs_task_definition" "thanos" {
         "value": "${var.name}/thanos"
       },
       {
-        "name": "THANOS_ROLE",
+        "name": "THANOS_MODE",
         "value": "query"
       },
       {
@@ -70,7 +70,7 @@ resource "aws_ecs_service" "thanos" {
   launch_type      = "FARGATE"
 
   network_configuration {
-    security_groups = [aws_security_group.thanos[local.primary_role_index].id]
+    security_groups = [aws_security_group.prometheus[local.primary_role_index].id]
     subnets         = module.vpc.outputs.private_subnets[local.primary_role_index]
   }
 
@@ -98,36 +98,4 @@ resource "aws_service_discovery_service" "thanos" {
       type = "A"
     }
   }
-}
-
-resource "aws_security_group" "thanos" {
-  count       = local.is_management_env ? 1 : 0
-  name        = "thanos"
-  description = "Rules necesary for pulling container image and allowing lb in"
-  vpc_id      = module.vpc.outputs.vpcs[count.index].id
-  tags        = merge(local.tags, { Name = "prometheus" })
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_security_group_rule" "thanos_query_allow_egress_https" {
-  count             = local.is_management_env ? 1 : 0
-  type              = "egress"
-  to_port           = 443
-  protocol          = "tcp"
-  prefix_list_ids   = [module.vpc.outputs.s3_prefix_list_ids[count.index]]
-  from_port         = 443
-  security_group_id = aws_security_group.thanos[count.index].id
-}
-
-resource "aws_security_group_rule" "allow_ingress_thanos_query_http" {
-  count                    = local.is_management_env ? 1 : 0
-  type                     = "ingress"
-  to_port                  = var.prom_port
-  protocol                 = "tcp"
-  from_port                = var.prom_port
-  security_group_id        = aws_security_group.prometheus[count.index].id
-  source_security_group_id = aws_security_group.thanos[local.primary_role_index].id
 }
