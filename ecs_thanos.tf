@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "thanos" {
 [
   {
     "cpu": ${var.fargate_cpu},
-    "image": "${data.terraform_remote_state.management.outputs.ecr_thanos_url}-temp:temp",
+    "image": "${data.terraform_remote_state.management.outputs.ecr_thanos_url}",
     "memory": ${var.fargate_memory},
     "name": "thanos",
     "networkMode": "awsvpc",
