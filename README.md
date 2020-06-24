@@ -71,3 +71,8 @@ Features
 * Easy integration points for custom metric providers
 
 We are currently working on updating the current infrastructure Thanos, and will reflect the architecture documents in due time.
+
+## Current Architecture
+
+![Current Architecture](docs/metrics_architecture_240620.png)
+
