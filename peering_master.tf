@@ -36,12 +36,11 @@ resource "aws_route" "management_prometheus_primary_prometheus_secondary" {
 }
 
 resource "aws_route" "non_management_prometheus_primary_prometheus_secondary" {
+  provider                  = aws.dmi_management
   count                     = local.is_management_env ? 0 : local.zone_count
   route_table_id            = data.terraform_remote_state.management_dmi.outputs.private_route_tables[0][count.index]
   destination_cidr_block    = local.cidr_block[local.environment].mon-slave-vpc
   vpc_peering_connection_id = aws_vpc_peering_connection.prometheus.id
-
-  provider = aws.dmi_management
 }
 
 resource "aws_security_group_rule" "prometheus_secondary_allow_ingress_prometheus_primary" {
@@ -55,6 +54,7 @@ resource "aws_security_group_rule" "prometheus_secondary_allow_ingress_prometheu
 }
 
 resource "aws_security_group_rule" "prometheus_primary_allow_egress_prometheus_secondary" {
+  provider          = aws.dmi_management
   description       = "Allow prometheus ${var.primary} to access prometheus ${var.secondary}"
   type              = "egress"
   to_port           = var.prom_port
@@ -62,6 +62,4 @@ resource "aws_security_group_rule" "prometheus_primary_allow_egress_prometheus_s
   from_port         = var.prom_port
   security_group_id = local.is_management_env ? aws_security_group.prometheus[0].id : data.terraform_remote_state.management_dmi.outputs.master_security_group.id
   cidr_blocks       = [local.cidr_block[local.environment].mon-slave-vpc]
-
-  provider = aws.dmi_management
 }
