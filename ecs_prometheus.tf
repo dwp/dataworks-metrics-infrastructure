@@ -225,6 +225,16 @@ resource "aws_security_group_rule" "allow_ingress_prom" {
   cidr_blocks       = ["0.0.0.0/0"]
 }
 
+resource "aws_security_group_rule" "allow_egress_grafana_prom" {
+  count             = length(local.roles)
+  type              = "egress"
+  to_port           = var.prom_port
+  protocol          = "tcp"
+  from_port         = var.prom_port
+  security_group_id = aws_security_group.prometheus[count.index].id
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
 resource "aws_security_group_rule" "allow_ingress_thanos_http" {
   count             = length(local.roles)
   type              = "ingress"
@@ -238,6 +248,26 @@ resource "aws_security_group_rule" "allow_ingress_thanos_http" {
 resource "aws_security_group_rule" "allow_ingress_thanos_grpc" {
   count             = length(local.roles)
   type              = "ingress"
+  to_port           = 10901
+  protocol          = "tcp"
+  from_port         = 10901
+  security_group_id = aws_security_group.prometheus[count.index].id
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group_rule" "allow_ingress_grafana" {
+  count             = length(local.roles)
+  type              = "ingress"
+  to_port           = 3000
+  protocol          = "tcp"
+  from_port         = 3000
+  security_group_id = aws_security_group.prometheus[count.index].id
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group_rule" "allow_egress_thanos_grpc" {
+  count             = length(local.roles)
+  type              = "egress"
   to_port           = 10901
   protocol          = "tcp"
   from_port         = 10901
