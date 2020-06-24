@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "grafana" {
 [
   {
     "cpu": ${var.fargate_cpu},
-    "image": "grafana-temp:temp",
+    "image": "${data.terraform_remote_state.management.outputs.ecr_grafana_url}",
     "memory": ${var.fargate_memory},
     "name": "grafana",
     "networkMode": "awsvpc",

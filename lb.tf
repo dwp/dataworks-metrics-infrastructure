@@ -168,3 +168,13 @@ resource "aws_security_group_rule" "allow_egress_prom" {
   security_group_id = aws_security_group.monitoring[local.primary_role_index].id
   cidr_blocks       = local.cidr_block_mon_master_vpc
 }
+
+resource "aws_security_group_rule" "allow_egress_grafana" {
+  count             = local.is_management_env ? 1 : 0
+  type              = "egress"
+  to_port           = 3000
+  protocol          = "tcp"
+  from_port         = 3000
+  security_group_id = aws_security_group.monitoring[local.primary_role_index].id
+  cidr_blocks       = local.cidr_block_mon_master_vpc
+}
