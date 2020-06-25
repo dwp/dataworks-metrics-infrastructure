@@ -1,0 +1,216 @@
+terraform {
+  required_version = "{{terraform_12_version}}"
+
+  backend "s3" {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/dataworks-metrics-infrastructure.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "internet_egress" {
+  backend   = "s3"
+  workspace = lookup(local.slave_peerings, local.environment) == "management-dev" ? "default" : "management"
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-internet-egress.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "security-tools" {
+  backend = "s3"
+  workspace = lookup(local.slave_peerings, local.environment) == "management-dev" ? "default" : "management"
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-security-tools.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "management" {
+  backend   = "s3"
+  workspace = lookup(local.slave_peerings, local.environment) == "management-dev" ? "default" : "management"
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/management.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "management_dns" {
+  backend   = "s3"
+  workspace = "management"
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/management.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "management_dmi" {
+  backend   = "s3"
+  workspace = lookup(local.slave_peerings, local.environment)
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/dataworks-metrics-infrastructure.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "common" {
+  backend   = "s3"
+  workspace = lookup(local.common_workspace, terraform.workspace)
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/common.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "aws_concourse" {
+  backend   = "s3"
+  workspace = lookup(local.slave_peerings, local.environment) == "management-dev" ? "default" : "management"
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-concourse.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+variable "assume_role" {
+  default = "ci"
+}
+
+variable "region" {
+  default = "eu-west-2"
+}
+
+provider "aws" {
+  version = "~> 2.67.0"
+  region  = var.region
+
+  assume_role {
+    role_arn = "arn:aws:iam::${lookup(local.account, local.environment)}:role/${var.assume_role}"
+  }
+}
+
+// Get AWS Account ID for credentials in use
+data "aws_caller_identity" "current" {}
+
+data "aws_region" "current" {}
+data "aws_availability_zones" "available" {}
+
+locals {
+  account = { {% for key, value in accounts.items() %}
+    {{key}} = "{{value}}"{% endfor %}
+  }
+}
+
+locals {
+
+  cidr_block_cicd_vpc = local.environment == "management" || local.environment == "management-dev" ? [local.cidr_block[local.environment].ci-cd-vpc] : ["0.0.0.0/0"]
+  cidr_block_mon_master_vpc = local.environment == "management" || local.environment == "management-dev" ? [local.cidr_block[local.environment].mon-master-vpc] : ["0.0.0.0/0"]
+
+  parent_domain_name = {
+    management-dev = "mgt-dev.${var.parent_domain_name}"
+    management = var.parent_domain_name
+    development = "dev.${var.parent_domain_name}"
+    qa = "qa.${var.parent_domain_name}"
+    integration = "int.${var.parent_domain_name}"
+    preprod = "preprod.${var.parent_domain_name}"
+    production = "prod.${var.parent_domain_name}"
+  }
+
+  slave_peerings = {
+    management-dev = "management-dev"
+    management = "management"
+    development = "management-dev"
+    qa = "management-dev"
+    integration = "management-dev"
+    preprod = "management"
+    production = "management"
+  }
+
+  common_workspace = {
+    management-dev = "default"
+    management     = "preprod"
+    default        = "default"
+    qa             = "qa"
+    integration    = "integration"
+    preprod        = "preprod"
+    production     = "production"
+  }
+
+  roles = [{% for value in roles %}"{{value}}"{{ "," if not loop.last }}{% endfor %}]
+
+  environment = terraform.workspace == "default" ? "development" : terraform.workspace
+
+  primary_role_index = 0
+  secondary_role_index = index(local.roles, var.secondary)
+
+  management_envs = ["management-dev", "management"]
+
+  is_management_env = contains(local.management_envs, local.environment)
+
+  tags = {
+  {% for key, value in common_tags.items() %}
+    {{key}} = "{{value}}"{% endfor %}
+    Name         = "prometheus"
+    Environment  = local.environment
+    Project      = "monitoring"
+    Application  = "dataworks-metrics-infrastructure"
+    Persistence  = "Ignore"
+    AutoShutdown = "False"
+  }
+
+  root_dns_name = {
+    development = "dev.wip.{{dataworks_domain_name}}"
+    qa          = "qa.wip.{{dataworks_domain_name}}"
+    integration = "int.wip.{{dataworks_domain_name}}"
+    preprod     = "pre.{{dataworks_domain_name}}"
+    production  = "{{dataworks_domain_name}}"
+  }
+
+  cidr_block = {
+  {% for environment, ranges in cidr_block.items() %}
+      {{ environment }} = {
+        {% for key, value in ranges.items() %}
+          {{ key }} = "{{ value }}"{% endfor %}
+      } {% endfor %}
+  }
+
+  zone_count = length(data.aws_availability_zones.current.zone_ids)
+  zone_names = data.aws_availability_zones.current.names
+}
