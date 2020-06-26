@@ -40,7 +40,7 @@ resource "aws_ecs_task_definition" "prometheus" {
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
-        "awslogs-group": "${data.terraform_remote_state.management.outputs.ecs_cluster_main_log_group.name}",
+        "awslogs-group": "${aws_cloudwatch_log_group.monitoring.name}",
         "awslogs-region": "${data.aws_region.current.name}",
         "awslogs-stream-prefix": "prometheus"
       }
@@ -92,7 +92,7 @@ resource "aws_ecs_task_definition" "prometheus" {
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
-        "awslogs-group": "${data.terraform_remote_state.management.outputs.ecs_cluster_main_log_group.name}",
+        "awslogs-group": "${aws_cloudwatch_log_group.monitoring.name}",
         "awslogs-region": "${data.aws_region.current.name}",
         "awslogs-stream-prefix": "thanos"
       }
@@ -161,6 +161,11 @@ resource "aws_ecs_service" "prometheus_secondary" {
     registry_arn   = aws_service_discovery_service.prometheus[local.secondary_role_index].arn
     container_name = "prometheus-${var.secondary}"
   }
+}
+
+resource "aws_cloudwatch_log_group" "monitoring" {
+  name = "${data.terraform_remote_state.management.outputs.ecs_cluster_main_log_group.name}/${var.name}"
+  tags = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_service_discovery_private_dns_namespace" "monitoring" {

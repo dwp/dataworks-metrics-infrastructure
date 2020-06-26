@@ -26,7 +26,7 @@ resource "aws_ecs_task_definition" "grafana" {
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
-        "awslogs-group": "${data.terraform_remote_state.management.outputs.ecs_cluster_main_log_group.name}",
+        "awslogs-group": "${aws_cloudwatch_log_group.monitoring.name}",
         "awslogs-region": "${data.aws_region.current.name}",
         "awslogs-stream-prefix": "grafana"
       }
