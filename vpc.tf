@@ -41,21 +41,21 @@ resource "aws_subnet" "public" {
 }
 
 resource "aws_route_table" "public" {
-  count  = local.is_management_env ? 1 : 0
+  count  = local.is_management_env ? local.zone_count : 0
   vpc_id = module.vpc.outputs.vpcs[local.primary_role_index].id
-  tags   = merge(local.tags, { Name = "${var.name}-public" })
+  tags   = merge(local.tags, { Name = "${var.name}-public-${local.zone_names[count.index]}" })
 }
 
 resource "aws_route" "public" {
-  count                  = local.is_management_env ? 1 : 0
-  route_table_id         = aws_route_table.public[local.primary_role_index].id
+  count                  = local.is_management_env ? local.zone_count : 0
+  route_table_id         = aws_route_table.public[count.index].id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.igw[local.primary_role_index].id
 }
 
 resource "aws_route_table_association" "public" {
   count          = local.is_management_env ? local.zone_count : 0
-  route_table_id = aws_route.public[local.primary_role_index].id
+  route_table_id = aws_route.public[count.index].id
   subnet_id      = aws_subnet.public[count.index].id
 }
 
