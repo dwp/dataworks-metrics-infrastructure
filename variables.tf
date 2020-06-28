@@ -40,7 +40,19 @@ variable "fargate_memory" {
   default = "512"
 }
 
-variable "prom_port" {
+variable "grafana_port" {
+  default = 3000
+}
+
+variable "prometheus_port" {
+  default = 9090
+}
+
+variable "thanos_port_grpc" {
+  default = 10901
+}
+
+variable "thanos_port_http" {
   default = 9090
 }
 

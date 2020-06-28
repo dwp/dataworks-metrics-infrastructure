@@ -19,8 +19,8 @@ resource "aws_ecs_task_definition" "grafana" {
     "user": "0:0",
     "portMappings": [
       {
-        "containerPort": 3000,
-        "hostPort": 3000
+        "containerPort": ${var.grafana_port},
+        "hostPort": ${var.grafana_port}
       }
     ],
     "logConfiguration": {
@@ -62,14 +62,14 @@ resource "aws_ecs_service" "grafana" {
   launch_type      = "FARGATE"
 
   network_configuration {
-    security_groups = [aws_security_group.prometheus.id]
+    security_groups = [aws_security_group.grafana[0].id]
     subnets         = module.vpc.outputs.private_subnets[local.primary_role_index]
   }
 
   load_balancer {
     target_group_arn = aws_lb_target_group.grafana[local.primary_role_index].arn
     container_name   = "grafana"
-    container_port   = 3000
+    container_port   = var.grafana_port
   }
 
   service_registries {
@@ -93,9 +93,10 @@ resource "aws_service_discovery_service" "grafana" {
 }
 
 resource "aws_security_group" "grafana" {
-  name        = "prometheus"
+  count       = local.is_management_env ? 1 : 0
+  name        = "grafana"
   description = "Rules necesary for pulling container image and accessing other grafana instances"
-  vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
+  vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
   tags        = merge(local.tags, { Name = "grafana" })
 
   lifecycle {
@@ -104,28 +105,34 @@ resource "aws_security_group" "grafana" {
 }
 
 resource "aws_security_group_rule" "allow_grafana_egress_https" {
+  count             = local.is_management_env ? 1 : 0
+  description       = "Allows ECS to pull container from S3"
   type              = "egress"
   to_port           = 443
   protocol          = "tcp"
-  prefix_list_ids   = [module.vpc.outputs.s3_prefix_list_ids[local.secondary_role_index]]
+  prefix_list_ids   = [module.vpc.outputs.s3_prefix_list_ids[local.primary_role_index]]
   from_port         = 443
-  security_group_id = aws_security_group.grafana.id
+  security_group_id = aws_security_group.grafana[0].id
 }
 
-resource "aws_security_group_rule" "allow_egress_grafana_prom" {
-  type              = "egress"
-  to_port           = var.prom_port
-  protocol          = "tcp"
-  from_port         = var.prom_port
-  security_group_id = aws_security_group.grafana.id
-  cidr_blocks       = ["0.0.0.0/0"]
+resource "aws_security_group_rule" "allow_egress_grafana_thanos_http" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow grafana to access thanos query api"
+  type                     = "egress"
+  to_port                  = var.thanos_port_http
+  protocol                 = "tcp"
+  from_port                = var.thanos_port_http
+  security_group_id        = aws_security_group.grafana[0].id
+  source_security_group_id = aws_security_group.thanos[0].id
 }
 
-resource "aws_security_group_rule" "allow_ingress_grafana" {
-  type              = "ingress"
-  to_port           = 3000
-  protocol          = "tcp"
-  from_port         = 3000
-  security_group_id = aws_security_group.grafana.id
-  cidr_blocks       = ["0.0.0.0/0"]
+resource "aws_security_group_rule" "allow_loadbalancer_ingress_grafana_http" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allows loadbalancer to access grafanas user interface"
+  type                     = "ingress"
+  to_port                  = var.grafana_port
+  protocol                 = "tcp"
+  from_port                = var.grafana_port
+  security_group_id        = aws_security_group.grafana[0].id
+  source_security_group_id = aws_security_group.monitoring[0].id
 }

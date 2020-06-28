@@ -30,13 +30,13 @@ resource "aws_lb_listener" "monitoring" {
 resource "aws_lb_target_group" "prometheus" {
   count       = local.is_management_env ? 1 : 0
   name        = "${var.primary}-${var.name}-http"
-  port        = var.prom_port
+  port        = var.prometheus_port
   protocol    = "HTTP"
   vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
   target_type = "ip"
 
   health_check {
-    port    = var.prom_port
+    port    = var.prometheus_port
     path    = "/-/healthy"
     matcher = "200"
   }
@@ -52,13 +52,13 @@ resource "aws_lb_target_group" "prometheus" {
 resource "aws_lb_target_group" "thanos" {
   count       = local.is_management_env ? 1 : 0
   name        = "thanos-http"
-  port        = var.prom_port
+  port        = var.prometheus_port
   protocol    = "HTTP"
   vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
   target_type = "ip"
 
   health_check {
-    port    = var.prom_port
+    port    = var.prometheus_port
     path    = "/-/healthy"
     matcher = "200"
   }
@@ -162,9 +162,9 @@ resource "aws_security_group_rule" "allow_ingress_https" {
 resource "aws_security_group_rule" "allow_egress_prom" {
   count             = local.is_management_env ? 1 : 0
   type              = "egress"
-  to_port           = var.prom_port
+  to_port           = var.prometheus_port
   protocol          = "tcp"
-  from_port         = var.prom_port
+  from_port         = var.prometheus_port
   security_group_id = aws_security_group.monitoring[local.primary_role_index].id
   cidr_blocks       = local.cidr_block_mon_master_vpc
 }

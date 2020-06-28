@@ -44,22 +44,43 @@ resource "aws_route" "non_management_prometheus_primary_prometheus_secondary" {
 }
 
 resource "aws_security_group_rule" "prometheus_secondary_allow_ingress_prometheus_primary" {
-  description       = "Allow prometheus ${var.primary} to access prometheus ${var.secondary}"
-  from_port         = var.prom_port
+  description       = "Allow thanos query node to access prometheus"
+  from_port         = var.prometheus_port
   protocol          = "tcp"
   security_group_id = aws_security_group.prometheus.id
-  to_port           = var.prom_port
+  to_port           = var.prometheus_port
   type              = "ingress"
   cidr_blocks       = ["${lookup(local.cidr_block, lookup(local.slave_peerings, local.environment)).mon-master-vpc}"]
 }
 
 resource "aws_security_group_rule" "prometheus_primary_allow_egress_prometheus_secondary" {
   provider          = aws.dmi_management
-  description       = "Allow prometheus ${var.primary} to access prometheus ${var.secondary}"
+  description       = "Allow thanos query node to access prometheus"
   type              = "egress"
-  to_port           = var.prom_port
+  to_port           = var.prometheus_port
   protocol          = "tcp"
-  from_port         = var.prom_port
-  security_group_id = local.is_management_env ? aws_security_group.prometheus.id : data.terraform_remote_state.management_dmi.outputs.prometheus_security_group.id
+  from_port         = var.prometheus_port
+  security_group_id = local.is_management_env ? aws_security_group.thanos[0].id : data.terraform_remote_state.management_dmi.outputs.thanos_security_group
+  cidr_blocks       = [local.cidr_block[local.environment].mon-slave-vpc]
+}
+
+resource "aws_security_group_rule" "thanos_sidecar_allow_ingress_thanos_query" {
+  description       = "Allow thanos query node to access thanos sidecar"
+  from_port         = var.thanos_port_grpc
+  protocol          = "tcp"
+  security_group_id = aws_security_group.prometheus.id
+  to_port           = var.thanos_port_grpc
+  type              = "ingress"
+  cidr_blocks       = ["${lookup(local.cidr_block, lookup(local.slave_peerings, local.environment)).mon-master-vpc}"]
+}
+
+resource "aws_security_group_rule" "thanos_query_allow_egress_thanos_sidecar" {
+  provider          = aws.dmi_management
+  description       = "Allow thanos query node to access thanos sidecar"
+  type              = "egress"
+  to_port           = var.thanos_port_grpc
+  protocol          = "tcp"
+  from_port         = var.thanos_port_grpc
+  security_group_id = local.is_management_env ? aws_security_group.thanos[0].id : data.terraform_remote_state.management_dmi.outputs.thanos_security_group
   cidr_blocks       = [local.cidr_block[local.environment].mon-slave-vpc]
 }
