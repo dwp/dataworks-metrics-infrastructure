@@ -1,0 +1,9 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    orgId: 1
+    access: proxy
+    url: http://${thanos_query_hostname}:9090
+    editable: false
