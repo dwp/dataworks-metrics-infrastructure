@@ -6,7 +6,7 @@ module "vpc" {
   region                                   = data.aws_region.current.name
   is_management_env                        = local.is_management_env
   vpc_cidr_block                           = local.cidr_block[local.environment]
-  interface_vpce_source_security_group_ids = aws_security_group.prometheus.*.id
+  interface_vpce_source_security_group_ids = [aws_security_group.grafana.id, aws_security_group.thanos.id, aws_security_group.prometheus.id]
   zone_count                               = local.zone_count
   zone_names                               = local.zone_names
   route_tables_public                      = aws_route_table.public

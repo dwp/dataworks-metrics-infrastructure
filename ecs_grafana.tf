@@ -5,7 +5,7 @@ resource "aws_ecs_task_definition" "grafana" {
   requires_compatibilities = ["FARGATE"]
   cpu                      = "512"
   memory                   = "4096"
-  task_role_arn            = aws_iam_role.prometheus[count.index].arn
+  task_role_arn            = aws_iam_role.prometheus.arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
 
   container_definitions = <<DEFINITION
@@ -90,4 +90,42 @@ resource "aws_service_discovery_service" "grafana" {
       type = "A"
     }
   }
+}
+
+resource "aws_security_group" "grafana" {
+  name        = "prometheus"
+  description = "Rules necesary for pulling container image and accessing other grafana instances"
+  vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
+  tags        = merge(local.tags, { Name = "grafana" })
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_security_group_rule" "allow_grafana_egress_https" {
+  type              = "egress"
+  to_port           = 443
+  protocol          = "tcp"
+  prefix_list_ids   = [module.vpc.outputs.s3_prefix_list_ids[local.secondary_role_index]]
+  from_port         = 443
+  security_group_id = aws_security_group.grafana.id
+}
+
+resource "aws_security_group_rule" "allow_egress_grafana_prom" {
+  type              = "egress"
+  to_port           = var.prom_port
+  protocol          = "tcp"
+  from_port         = var.prom_port
+  security_group_id = aws_security_group.grafana.id
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group_rule" "allow_ingress_grafana" {
+  type              = "ingress"
+  to_port           = 3000
+  protocol          = "tcp"
+  from_port         = 3000
+  security_group_id = aws_security_group.grafana.id
+  cidr_blocks       = ["0.0.0.0/0"]
 }

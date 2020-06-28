@@ -170,7 +170,7 @@ resource "aws_security_group" "prometheus" {
   }
 }
 
-resource "aws_security_group_rule" "allow_egress_https" {
+resource "aws_security_group_rule" "allow_prometheus_egress_https" {
   type              = "egress"
   to_port           = 443
   protocol          = "tcp"
@@ -179,66 +179,11 @@ resource "aws_security_group_rule" "allow_egress_https" {
   security_group_id = aws_security_group.prometheus.id
 }
 
-resource "aws_security_group_rule" "prometheus_allow_egress_efs" {
-  description              = "Allow prometheus to access efs"
-  from_port                = 2049
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.prometheus.id
-  to_port                  = 2049
-  type                     = "egress"
-  source_security_group_id = aws_security_group.efs.id
-}
-
 resource "aws_security_group_rule" "allow_ingress_prom" {
   type              = "ingress"
   to_port           = var.prom_port
   protocol          = "tcp"
   from_port         = var.prom_port
-  security_group_id = aws_security_group.prometheus.id
-  cidr_blocks       = ["0.0.0.0/0"]
-}
-
-resource "aws_security_group_rule" "allow_egress_grafana_prom" {
-  type              = "egress"
-  to_port           = var.prom_port
-  protocol          = "tcp"
-  from_port         = var.prom_port
-  security_group_id = aws_security_group.prometheus.id
-  cidr_blocks       = ["0.0.0.0/0"]
-}
-
-resource "aws_security_group_rule" "allow_ingress_thanos_http" {
-  type              = "ingress"
-  to_port           = 10902
-  protocol          = "tcp"
-  from_port         = 10902
-  security_group_id = aws_security_group.prometheus.id
-  cidr_blocks       = ["0.0.0.0/0"]
-}
-
-resource "aws_security_group_rule" "allow_ingress_thanos_grpc" {
-  type              = "ingress"
-  to_port           = 10901
-  protocol          = "tcp"
-  from_port         = 10901
-  security_group_id = aws_security_group.prometheus.id
-  cidr_blocks       = ["0.0.0.0/0"]
-}
-
-resource "aws_security_group_rule" "allow_ingress_grafana" {
-  type              = "ingress"
-  to_port           = 3000
-  protocol          = "tcp"
-  from_port         = 3000
-  security_group_id = aws_security_group.prometheus.id
-  cidr_blocks       = ["0.0.0.0/0"]
-}
-
-resource "aws_security_group_rule" "allow_egress_thanos_grpc" {
-  type              = "egress"
-  to_port           = 10901
-  protocol          = "tcp"
-  from_port         = 10901
   security_group_id = aws_security_group.prometheus.id
   cidr_blocks       = ["0.0.0.0/0"]
 }

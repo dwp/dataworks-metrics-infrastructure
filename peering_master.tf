@@ -47,7 +47,7 @@ resource "aws_security_group_rule" "prometheus_secondary_allow_ingress_prometheu
   description       = "Allow prometheus ${var.primary} to access prometheus ${var.secondary}"
   from_port         = var.prom_port
   protocol          = "tcp"
-  security_group_id = aws_security_group.prometheus[local.secondary_role_index].id
+  security_group_id = aws_security_group.prometheus.id
   to_port           = var.prom_port
   type              = "ingress"
   cidr_blocks       = ["${lookup(local.cidr_block, lookup(local.slave_peerings, local.environment)).mon-master-vpc}"]
