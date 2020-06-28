@@ -3,7 +3,7 @@ resource "aws_lb" "monitoring" {
   name               = "${var.name}-${var.primary}"
   internal           = false
   load_balancer_type = "application"
-  subnets            = module.vpc.outputs.public_subnets[0]
+  subnets            = aws_subnet.public.*.id
   security_groups    = [aws_security_group.monitoring[0].id]
   tags               = merge(local.tags, { Name = "${var.name}-lb" })
 }
