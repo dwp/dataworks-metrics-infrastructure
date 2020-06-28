@@ -6,8 +6,8 @@ output "private_route_tables" {
   value = module.vpc.outputs.private_route_tables
 }
 
-output "master_security_group" {
-  value = aws_security_group.prometheus[0]
+output "prometheus_security_group" {
+  value = aws_security_group.prometheus
 }
 
 output "monitoring_bucket" {

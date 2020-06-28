@@ -70,7 +70,7 @@ resource "aws_ecs_service" "thanos" {
   launch_type      = "FARGATE"
 
   network_configuration {
-    security_groups = [aws_security_group.prometheus[local.primary_role_index].id]
+    security_groups = [aws_security_group.prometheus.id]
     subnets         = module.vpc.outputs.private_subnets[local.primary_role_index]
   }
 

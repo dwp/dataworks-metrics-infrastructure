@@ -60,6 +60,6 @@ resource "aws_security_group_rule" "prometheus_primary_allow_egress_prometheus_s
   to_port           = var.prom_port
   protocol          = "tcp"
   from_port         = var.prom_port
-  security_group_id = local.is_management_env ? aws_security_group.prometheus[0].id : data.terraform_remote_state.management_dmi.outputs.master_security_group.id
+  security_group_id = local.is_management_env ? aws_security_group.prometheus.id : data.terraform_remote_state.management_dmi.outputs.prometheus_security_group.id
   cidr_blocks       = [local.cidr_block[local.environment].mon-slave-vpc]
 }

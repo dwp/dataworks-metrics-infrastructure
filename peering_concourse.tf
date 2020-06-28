@@ -27,7 +27,7 @@ resource "aws_security_group_rule" "concourse_allow_ingress_prometheus" {
   security_group_id        = data.terraform_remote_state.aws_concourse.outputs.concourse_web_sg
   to_port                  = var.prom_port
   type                     = "ingress"
-  source_security_group_id = aws_security_group.prometheus[1].id
+  source_security_group_id = aws_security_group.prometheus.id
 }
 
 resource "aws_security_group_rule" "prometheus_allow_egress_concourse" {
@@ -36,6 +36,6 @@ resource "aws_security_group_rule" "prometheus_allow_egress_concourse" {
   to_port           = var.prom_port
   protocol          = "tcp"
   from_port         = var.prom_port
-  security_group_id = aws_security_group.prometheus[local.secondary_role_index].id
+  security_group_id = aws_security_group.prometheus.id
   cidr_blocks       = [local.cidr_block_cicd_vpc[0]]
 }
