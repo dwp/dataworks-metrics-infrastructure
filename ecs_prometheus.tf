@@ -10,8 +10,12 @@ resource "aws_ecs_task_definition" "prometheus" {
   volume {
     name = "prometheus"
     efs_volume_configuration {
-      file_system_id = aws_efs_file_system.prometheus.id
-      root_directory = "/"
+      file_system_id     = aws_efs_file_system.prometheus.id
+      root_directory     = "/"
+      transit_encryption = "ENABLED"
+      authorization_config {
+        access_point_id = aws_efs_access_point.prometheus.id
+      }
     }
   }
 
@@ -23,7 +27,7 @@ resource "aws_ecs_task_definition" "prometheus" {
     "memory": ${var.fargate_memory},
     "name": "prometheus",
     "networkMode": "awsvpc",
-    "user": "0:0",
+    "user": "nobody",
     "portMappings": [
       {
         "containerPort": ${var.prometheus_port},
@@ -71,7 +75,7 @@ resource "aws_ecs_task_definition" "prometheus" {
     "memory": ${var.fargate_memory},
     "name": "thanos-sidecar",
     "networkMode": "awsvpc",
-    "user": "0:0",
+    "user": "nobody",
     "portMappings": [
       {
         "containerPort": 10901,

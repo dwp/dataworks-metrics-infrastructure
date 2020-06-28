@@ -16,7 +16,7 @@ resource "aws_ecs_task_definition" "thanos" {
     "memory": ${var.fargate_memory},
     "name": "thanos-query",
     "networkMode": "awsvpc",
-    "user": "0:0",
+    "user": "nobody",
     "portMappings": [
       {
         "containerPort": ${var.thanos_port_http},

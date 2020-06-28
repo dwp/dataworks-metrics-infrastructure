@@ -14,14 +14,14 @@ resource "aws_efs_access_point" "prometheus" {
   root_directory {
     path = "/prometheus"
     creation_info {
-      owner_gid   = 99
-      owner_uid   = 99
-      permissions = 644
+      owner_gid   = 0
+      owner_uid   = 0
+      permissions = 600
     }
   }
   posix_user {
-    uid = 99
-    gid = 99
+    uid = 0
+    gid = 0
   }
 }
 
