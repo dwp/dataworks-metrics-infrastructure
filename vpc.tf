@@ -33,7 +33,7 @@ resource "aws_internet_gateway" "igw" {
 
 resource "aws_subnet" "public" {
   count                   = local.is_management_env ? local.zone_count : 0
-  cidr_block              = cidrsubnet(local.cidr_block[local.environment].mon-master-vpc, var.subnets.public.newbits, var.subnets.public.netnum + count.index)
+  cidr_block              = cidrsubnet(local.cidr_block_mon_master_vpc[0], var.subnets.public.newbits, var.subnets.public.netnum + count.index)
   vpc_id                  = module.vpc.outputs.vpcs[local.primary_role_index].id
   availability_zone_id    = data.aws_availability_zones.current.zone_ids[count.index]
   map_public_ip_on_launch = true
