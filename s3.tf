@@ -74,6 +74,21 @@ data template_file "grafana" {
   template = file("${path.module}/config/grafana/grafana.tpl")
 }
 
+data template_file "grafana_datasource_config" {
+  template = file("${path.module}/config/grafana/provisioning/datasource/datasource.tpl")
+  vars = {
+    thanos_query_hostname = "thanos.${local.environment}.services.${var.parent_domain_name}"
+  }
+}
+
+data template_file "grafana_dashboard_config" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/dashboards.tpl")
+}
+
+data template_file "grafana_dashboard" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/dashboard.json")
+}
+
 resource "aws_s3_bucket_object" "prometheus" {
   count      = length(local.roles)
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
@@ -93,6 +108,30 @@ resource "aws_s3_bucket_object" "grafana" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/grafana/grafana.ini"
-  content    = data.template_file.thanos.rendered
+  content    = data.template_file.grafana.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+}
+
+resource "aws_s3_bucket_object" "grafana_datasource_config" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/datasource/datasource.yaml"
+  content    = data.template_file.grafana_datasource_config.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+}
+
+resource "aws_s3_bucket_object" "grafana_dashboard_config" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/dashboards.yaml"
+  content    = data.template_file.grafana_dashboard_config.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+}
+
+resource "aws_s3_bucket_object" "grafana_dashboard" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/dashboard.json"
+  content    = data.template_file.grafana_dashboard.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
