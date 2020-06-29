@@ -109,6 +109,34 @@ data "terraform_remote_state" "aws_concourse" {
   }
 }
 
+data "terraform_remote_state" "aws_analytical_dataset_generation" {
+  backend   = "s3"
+  workspace = lookup(local.common_workspace, terraform.workspace)
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-analytical-dataset-generation.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "aws_internal_compute" {
+  backend   = "s3"
+  workspace = lookup(local.common_workspace, terraform.workspace)
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-internal-compute.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
 variable "assume_role" {
   default = "ci"
 }
@@ -140,7 +168,8 @@ locals {
 
 locals {
 
-  cidr_block_cicd_vpc = local.environment == "management" || local.environment == "management-dev" ? [local.cidr_block[local.environment].ci-cd-vpc] : ["0.0.0.0/0"]
+  cidr_block_cicd_vpc = local.environment == "management" || local.environment == "management-dev" ? local.cidr_block[local.environment].ci-cd-vpc : "0.0.0.0/0"
+  cidr_block_internal_compute_vpc = local.environment != "management" && local.environment != "management-dev" ? local.cidr_block[local.environment].internal-compute-vpc : "0.0.0.0/0"
   cidr_block_mon_master_vpc = local.environment == "management" || local.environment == "management-dev" ? [local.cidr_block[local.environment].mon-master-vpc] : ["0.0.0.0/0"]
 
   parent_domain_name = {

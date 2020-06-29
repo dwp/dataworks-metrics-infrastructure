@@ -14,8 +14,8 @@ resource "aws_route" "concourse_prometheus_secondary" {
 
 resource "aws_route" "prometheus_secondary_concourse" {
   count                     = local.is_management_env ? local.zone_count : 0
-  route_table_id            = module.vpc.outputs.private_route_tables[1][count.index]
-  destination_cidr_block    = local.cidr_block_cicd_vpc[0]
+  route_table_id            = module.vpc.outputs.private_route_tables[local.secondary_role_index][count.index]
+  destination_cidr_block    = local.cidr_block_cicd_vpc
   vpc_peering_connection_id = aws_vpc_peering_connection.concourse[0].id
 }
 
@@ -37,5 +37,5 @@ resource "aws_security_group_rule" "prometheus_allow_egress_concourse" {
   protocol          = "tcp"
   from_port         = var.prometheus_port
   security_group_id = aws_security_group.prometheus.id
-  cidr_blocks       = [local.cidr_block_cicd_vpc[0]]
+  cidr_blocks       = [local.cidr_block_cicd_vpc]
 }
