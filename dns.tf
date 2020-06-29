@@ -1,5 +1,5 @@
 provider "aws" {
-  version = "~> 2.67.0"
+  version = "~> 2.68.0"
   region  = var.region
   alias   = "management_dns"
 

@@ -6,8 +6,8 @@ output "private_route_tables" {
   value = module.vpc.outputs.private_route_tables
 }
 
-output "master_security_group" {
-  value = aws_security_group.prometheus[0]
+output "thanos_security_group" {
+  value = local.is_management_env ? aws_security_group.thanos[0].id : null_resource.dummy.id
 }
 
 output "monitoring_bucket" {
