@@ -75,7 +75,7 @@ data template_file "grafana" {
 }
 
 data template_file "grafana_datasource_config" {
-  template = file("${path.module}/config/grafana/provisioning/datasource/datasource.tpl")
+  template = file("${path.module}/config/grafana/provisioning/datasources/datasource.tpl")
   vars = {
     thanos_query_hostname = "thanos.${local.environment}.services.${var.parent_domain_name}"
   }
@@ -115,7 +115,7 @@ resource "aws_s3_bucket_object" "grafana" {
 resource "aws_s3_bucket_object" "grafana_datasource_config" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
-  key        = "${var.name}/grafana/provisioning/datasource/datasource.yaml"
+  key        = "${var.name}/grafana/provisioning/datasources/datasource.yaml"
   content    = data.template_file.grafana_datasource_config.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
