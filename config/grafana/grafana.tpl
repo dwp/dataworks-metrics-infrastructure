@@ -63,7 +63,6 @@ name = OAuth
 allow_sign_up = true
 client_id = ${client_id}
 client_secret = ${client_secret}
-allowed_domains = infinityworks.com
 scopes = openid profile email
 auth_url = https://${cognito_domain}.auth.${region}.amazoncognito.com/oauth2/authorize
 token_url = https://${cognito_domain}.auth.${region}.amazoncognito.com/oauth2/token
