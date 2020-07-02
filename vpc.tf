@@ -76,3 +76,25 @@ resource "aws_vpc_endpoint" "internet_proxy" {
   subnet_ids          = module.vpc.outputs.private_subnets[local.primary_role_index]
   private_dns_enabled = false
 }
+
+resource "aws_security_group_rule" "egress_internet_proxy" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow Internet access via the proxy"
+  type                     = "egress"
+  from_port                = 3128
+  to_port                  = 3128
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.internet_proxy_endpoint[0].id
+  security_group_id        = aws_security_group.grafana[0].id
+}
+
+resource "aws_security_group_rule" "ingress_internet_proxy" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow proxy access from grafana"
+  type                     = "ingress"
+  from_port                = 3128
+  to_port                  = 3128
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.grafana[0].id
+  security_group_id        = aws_security_group.internet_proxy_endpoint[0].id
+}

@@ -45,6 +45,18 @@ resource "aws_ecs_task_definition" "grafana" {
       {
         "name": "GRAFANA_CONFIG_S3_PREFIX",
         "value": "${var.name}/grafana"
+      },
+      {
+        "name": "HTTP_PROXY",
+        "value": "http://${aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name}:3128"
+      },
+      {
+        "name": "HTTPS_PROXY",
+        "value": "http://${aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name}:3128"
+      },
+      {
+        "name": "NO_PROXY",
+        "value": "127.0.0.1,s3.${var.region}.amazonaws.com"
       }
     ]
   }

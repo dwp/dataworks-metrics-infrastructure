@@ -71,7 +71,15 @@ data template_file "thanos" {
 }
 
 data template_file "grafana" {
+  count    = local.is_management_env ? 1 : 0
   template = file("${path.module}/config/grafana/grafana.tpl")
+  vars = {
+    grafana_domain = aws_route53_record.grafana_loadbalancer[0].fqdn
+    client_id      = aws_cognito_user_pool_client.grafana[0].id
+    client_secret  = aws_cognito_user_pool_client.grafana[0].client_secret
+    cognito_domain = aws_cognito_user_pool_domain.grafana[0].domain
+    region         = var.region
+  }
 }
 
 data template_file "grafana_datasource_config" {
@@ -108,7 +116,7 @@ resource "aws_s3_bucket_object" "grafana" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/grafana/grafana.ini"
-  content    = data.template_file.grafana.rendered
+  content    = data.template_file.grafana[0].rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
 

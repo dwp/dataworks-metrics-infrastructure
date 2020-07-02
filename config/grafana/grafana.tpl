@@ -5,6 +5,8 @@
 
 #################################### Server ####################################
 [server]
+domain = ${grafana_domain}
+root_url = https://${grafana_domain}
 
 #################################### Database ####################################
 [database]
@@ -20,6 +22,7 @@
 
 #################################### Security ####################################
 [security]
+cookie_secure = true
 
 #################################### Snapshots ###########################
 [snapshots]
@@ -55,6 +58,15 @@
 
 #################################### Generic OAuth ##########################
 [auth.generic_oauth]
+enabled = true
+name = OAuth
+allow_sign_up = true
+client_id = ${client_id}
+client_secret = ${client_secret}
+scopes = openid profile email
+auth_url = https://${cognito_domain}.auth.${region}.amazoncognito.com/oauth2/authorize
+token_url = https://${cognito_domain}.auth.${region}.amazoncognito.com/oauth2/token
+api_url = https://${cognito_domain}.auth.${region}.amazoncognito.com/oauth2/userinfo
 
 #################################### Basic Auth ##########################
 [auth.basic]
@@ -103,14 +115,6 @@
 [external_image_storage]
 
 [external_image_storage.s3]
-
-[external_image_storage.webdav]
-
-[external_image_storage.gcs]
-
-[external_image_storage.azure_blob]
-
-[external_image_storage.local]
 
 [rendering]
 
