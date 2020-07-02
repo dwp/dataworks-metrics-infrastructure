@@ -56,7 +56,7 @@ resource "aws_ecs_task_definition" "grafana" {
       },
       {
         "name": "NO_PROXY",
-        "value": "127.0.0.1,s3.eu-west-2.amazonaws.com"
+        "value": "127.0.0.1,s3.${var.region}.amazonaws.com"
       }
     ]
   }
