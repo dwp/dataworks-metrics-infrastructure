@@ -74,5 +74,5 @@ We are currently working on updating the current infrastructure Thanos, and will
 
 ## Current Architecture
 
-![Current Architecture](docs/metrics_architecture_240620.png)
+![Current Architecture](docs/metrics_architecture_070720.png)
 
