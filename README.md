@@ -35,7 +35,7 @@ Up until now, we have utilised CloudWatch Metrics as the only source of metric i
 ## Solution
 
 The toolset we shall use is Prometheus. It answers all of our questions in regards to metrics ingestion. It will be deployed using ECS, as this suits our needs for size and scalability.
-As show in the images, the tool should be split over Development (DEV,QA,INT,MGMT-DEV) and Production (MGMT, PREPROD, PROD). This allows us to split out the production data, following similar patterns seen elsewhere on the project.  As far as external parties access is required, SRE need access to scrape metrics from `:9090/metrics` on our Production instance.  
+As shown in the images, the tool should be split over Development (DEV,QA,INT,MGMT-DEV) and Production (MGMT, PREPROD, PROD). This allows us to split out the production data, following similar patterns seen elsewhere on the project.  As far as external parties access is required, SRE need access to scrape metrics from `:9090/metrics` on our Production instance.  
 
 ![High level design](docs/monitoring_high_level.png)
 
@@ -43,7 +43,7 @@ Metrics aggregation shall be done by basing Prometheus in its own VPC per enviro
 
 ![Low level slice](docs/monitoring_slice.png)
 
-## Thanos
+### Thanos
 
 To answer one of our most important requirements, in long-term metics storage we are going to integrate [Thanos](https://github.com/thanos-io/thanos).  
 
@@ -71,6 +71,16 @@ Features
 * Easy integration points for custom metric providers
 
 We are currently working on updating the current infrastructure Thanos, and will reflect the architecture documents in due time.
+
+### Alerts
+
+Alerts will be handled using Prometheus' Alertmanager which will be located in the primary VPC. With this pattern alerts can either be pushed from a Prometheus in the target VPC or from the Thanos Ruler which would be located in the primary VPC. This pattern is shown in the Thanos architecture [here](#Thanos). Although there is the capability for two methods of pushing alerts we are going to take the latter option for the following reasons:
+
+* The logical flow of routing does not need to be changed. So all queries will still run through the thanos query node, then down into the target VPC. As opposed to alerts being pushed up from the target environment into the primary VPC.
+* The Thanos ruler can be used to optimise queries to help improve the speed of alert resolution, if slow complex queries are required.
+* Configuration for alerts can be centralised, simplifying the updating and deployment of those rules.
+
+The drawback is that as we are routing the queries through the query node, there is an increased chance of failed queries. However there are mitigation steps that can be taken to handle this situation should it occur outlined [here](https://thanos.io/components/rule.md/#must-have-essential-ruler-alerts)
 
 ## Current Architecture
 
