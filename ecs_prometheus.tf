@@ -282,7 +282,8 @@ data "aws_iam_policy_document" "prometheus_efs" {
     effect = "Allow"
 
     actions = [
-      "elasticfilesystem:*"
+      "elasticfilesystem:ClientMount",
+      "elasticfilesystem:ClientWrite"
     ]
 
     resources = [
