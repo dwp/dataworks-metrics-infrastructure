@@ -29,7 +29,7 @@ resource "aws_security_group" "efs" {
   name        = "efs"
   description = "Rules necesary for accessing EFS"
   vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
-  tags        = merge(local.tags, { Name = "prometheus" })
+  tags        = merge(local.tags, { Name = "efs" })
 
   lifecycle {
     create_before_destroy = true
