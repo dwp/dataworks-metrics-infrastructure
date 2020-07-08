@@ -12,20 +12,6 @@ locals {
   fqdn = join(".", [var.name, local.parent_domain_name[local.environment]])
 }
 
-resource "aws_route53_record" "monitoring_loadbalancer" {
-  provider = aws.management_dns
-  count    = local.is_management_env ? 1 : 0
-  name     = join(".", [local.roles[local.primary_role_index], local.fqdn])
-  type     = "A"
-  zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
-
-  alias {
-    evaluate_target_health = false
-    name                   = aws_lb.monitoring[0].dns_name
-    zone_id                = aws_lb.monitoring[0].zone_id
-  }
-}
-
 resource "aws_route53_record" "thanos_loadbalancer" {
   provider = aws.management_dns
   count    = local.is_management_env ? 1 : 0
@@ -54,25 +40,46 @@ resource "aws_route53_record" "grafana_loadbalancer" {
   }
 }
 
-resource "aws_acm_certificate" "monitoring" {
-  count                     = local.is_management_env ? 1 : 0
-  domain_name               = "grafana.${local.fqdn}"
-  subject_alternative_names = ["thanos.${local.fqdn}"]
-  validation_method         = "DNS"
+resource "aws_acm_certificate" "thanos" {
+  count             = local.is_management_env ? 1 : 0
+  domain_name       = "thanos.${local.fqdn}"
+  validation_method = "DNS"
 }
 
-resource "aws_route53_record" "monitoring" {
+resource "aws_acm_certificate" "grafana" {
+  count             = local.is_management_env ? 1 : 0
+  domain_name       = "grafana.${local.fqdn}"
+  validation_method = "DNS"
+}
+
+resource "aws_route53_record" "thanos_validation" {
   provider = aws.management_dns
   count    = local.is_management_env ? 1 : 0
-  name     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.0.resource_record_name
-  type     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.0.resource_record_type
+  name     = aws_acm_certificate.thanos[local.primary_role_index].domain_validation_options.0.resource_record_name
+  type     = aws_acm_certificate.thanos[local.primary_role_index].domain_validation_options.0.resource_record_type
   zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
-  records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.0.resource_record_value]
+  records  = [aws_acm_certificate.thanos[local.primary_role_index].domain_validation_options.0.resource_record_value]
   ttl      = 60
 }
 
-resource "aws_acm_certificate_validation" "monitoring" {
+resource "aws_route53_record" "grafana_validation" {
+  provider = aws.management_dns
+  count    = local.is_management_env ? 1 : 0
+  name     = aws_acm_certificate.grafana[local.primary_role_index].domain_validation_options.0.resource_record_name
+  type     = aws_acm_certificate.grafana[local.primary_role_index].domain_validation_options.0.resource_record_type
+  zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
+  records  = [aws_acm_certificate.grafana[local.primary_role_index].domain_validation_options.0.resource_record_value]
+  ttl      = 60
+}
+
+resource "aws_acm_certificate_validation" "thanos_cert" {
   count                   = local.is_management_env ? 1 : 0
-  certificate_arn         = aws_acm_certificate.monitoring[local.primary_role_index].arn
-  validation_record_fqdns = [aws_route53_record.monitoring[local.primary_role_index].fqdn]
+  certificate_arn         = aws_acm_certificate.thanos[local.primary_role_index].arn
+  validation_record_fqdns = [aws_route53_record.thanos[local.primary_role_index].fqdn]
+}
+
+resource "aws_acm_certificate_validation" "grafana_cert" {
+  count                   = local.is_management_env ? 1 : 0
+  certificate_arn         = aws_acm_certificate.grafana[local.primary_role_index].arn
+  validation_record_fqdns = [aws_route53_record.grafana[local.primary_role_index].fqdn]
 }
