@@ -181,7 +181,7 @@ resource "aws_security_group_rule" "allow_prometheus_egress_https" {
 }
 
 resource "aws_security_group_rule" "prometheus_allow_egress_efs" {
-  description              = "Allow prometheus to access efs"
+  description              = "Allow prometheus to access efs mount target"
   from_port                = 2049
   protocol                 = "tcp"
   to_port                  = 2049
