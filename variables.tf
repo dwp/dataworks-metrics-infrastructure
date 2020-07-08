@@ -40,21 +40,10 @@ variable "fargate_memory" {
   default = "512"
 }
 
-variable "grafana_port" {
-  default = 3000
-}
-
-variable "prometheus_port" {
-  default = 9090
-}
-
-variable "thanos_port_grpc" {
-  default = 10901
-}
-
-variable "thanos_port_http" {
-  default = 9090
-}
+variable "grafana_port" {}
+variable "prometheus_port" {}
+variable "thanos_port_grpc" {}
+variable "thanos_port_http" {}
 
 variable "subnets" {
   description = "define sizes for subnets using Terraform cidrsubnet function. For an empty /24 VPC, the defaults will create /28 public subnets and /26 private subnets, one of each in each AZ."
