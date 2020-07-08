@@ -75,11 +75,11 @@ resource "aws_route53_record" "grafana_validation" {
 resource "aws_acm_certificate_validation" "thanos_cert" {
   count                   = local.is_management_env ? 1 : 0
   certificate_arn         = aws_acm_certificate.thanos[local.primary_role_index].arn
-  validation_record_fqdns = [aws_route53_record.thanos[local.primary_role_index].fqdn]
+  validation_record_fqdns = [aws_route53_record.thanos_validation[local.primary_role_index].fqdn]
 }
 
 resource "aws_acm_certificate_validation" "grafana_cert" {
   count                   = local.is_management_env ? 1 : 0
   certificate_arn         = aws_acm_certificate.grafana[local.primary_role_index].arn
-  validation_record_fqdns = [aws_route53_record.grafana[local.primary_role_index].fqdn]
+  validation_record_fqdns = [aws_route53_record.grafana_validation[local.primary_role_index].fqdn]
 }
