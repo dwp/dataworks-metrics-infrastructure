@@ -55,9 +55,10 @@ resource "aws_route53_record" "grafana_loadbalancer" {
 }
 
 resource "aws_acm_certificate" "monitoring" {
-  count             = local.is_management_env ? 1 : 0
-  domain_name       = "*.${local.fqdn}"
-  validation_method = "DNS"
+  count                     = local.is_management_env ? 1 : 0
+  domain_name               = "grafana.${local.fqdn}"
+  subject_alternative_names = ["thanos.${local.fqdn}"]
+  validation_method         = "DNS"
 }
 
 resource "aws_route53_record" "monitoring" {
