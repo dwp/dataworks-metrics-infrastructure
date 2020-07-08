@@ -25,7 +25,10 @@ resource "aws_s3_bucket" "monitoring" {
   count  = local.is_management_env ? 1 : 0
   bucket = random_id.monitoring_bucket[local.primary_role_index].hex
   acl    = "private"
-  tags   = local.tags
+  tags = merge(
+    local.tags,
+    map("Name", "Metrics Store")
+  )
 
   versioning {
     enabled = false
