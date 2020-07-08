@@ -5,7 +5,7 @@ resource "aws_ecs_task_definition" "grafana" {
   requires_compatibilities = ["FARGATE"]
   cpu                      = "512"
   memory                   = "4096"
-  task_role_arn            = aws_iam_role.prometheus.arn
+  task_role_arn            = aws_iam_role.grafana[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
 
   container_definitions = <<DEFINITION
@@ -147,4 +147,70 @@ resource "aws_security_group_rule" "allow_loadbalancer_ingress_grafana_http" {
   from_port                = var.grafana_port
   security_group_id        = aws_security_group.grafana[0].id
   source_security_group_id = aws_security_group.monitoring[0].id
+}
+
+resource "aws_iam_role" "grafana" {
+  count              = local.is_management_env ? 1 : 0
+  name               = "grafana"
+  assume_role_policy = data.aws_iam_policy_document.grafana[local.primary_role_index].json
+  tags               = merge(local.tags, { Name = "grafana" })
+}
+
+data "aws_iam_policy_document" "grafana" {
+  count = local.is_management_env ? 1 : 0
+  statement {
+    actions = [
+      "sts:AssumeRole",
+    ]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy" "grafana" {
+  count  = local.is_management_env ? 1 : 0
+  policy = data.aws_iam_policy_document.grafana_read_config[local.primary_role_index].json
+  role   = aws_iam_role.grafana[local.primary_role_index].id
+}
+
+data "aws_iam_policy_document" "grafana_read_config" {
+  count = local.is_management_env ? 1 : 0
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:ListBucket",
+    ]
+
+    resources = [
+      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject",
+    ]
+
+    resources = [
+      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/grafana/*",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "kms:Decrypt",
+    ]
+
+    resources = [
+      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn}",
+    ]
+  }
 }
