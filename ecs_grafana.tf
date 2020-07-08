@@ -16,7 +16,7 @@ resource "aws_ecs_task_definition" "grafana" {
     "memory": ${var.fargate_memory},
     "name": "grafana",
     "networkMode": "awsvpc",
-    "user": "0:0",
+    "user": "grafana",
     "portMappings": [
       {
         "containerPort": ${var.grafana_port},
