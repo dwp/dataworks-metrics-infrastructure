@@ -12,7 +12,6 @@ module "monitoring_{{value}}_vpc" {
   interface_vpce_subnet_ids                  = aws_subnet.monitoring_{{value}}_private.*.id
   gateway_vpce_route_table_ids               = aws_route_table.monitoring_{{value}}_private.*.id
   ec2_endpoint                               = true
-  ec2autoscaling_endpoint                    = true
   ec2messages_endpoint                       = true
   kms_endpoint                               = true
   logs_endpoint                              = true
