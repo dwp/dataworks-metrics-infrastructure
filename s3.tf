@@ -3,13 +3,41 @@ resource "random_id" "monitoring_bucket" {
   byte_length = 16
 }
 
+resource "aws_kms_key" "monitoring_bucket_cmk" {
+  count                   = local.is_management_env ? 1 : 0
+  description             = "Monitoring Bucket Master Key"
+  deletion_window_in_days = 28
+  is_enabled              = true
+  enable_key_rotation     = true
+  tags = merge(
+    local.tags,
+    map("Name", "Monitoring bucket key")
+  )
+}
+
+resource "aws_kms_alias" "monitoring_bucket_cmk_alias" {
+  count         = local.is_management_env ? 1 : 0
+  target_key_id = aws_kms_key.monitoring_bucket_cmk[local.primary_role_index].key_id
+  name          = "alias/monitoring_bucket_cmk"
+}
+
 resource "aws_s3_bucket" "monitoring" {
   count  = local.is_management_env ? 1 : 0
   bucket = random_id.monitoring_bucket[local.primary_role_index].hex
   acl    = "private"
   tags   = local.tags
+
   versioning {
     enabled = false
+  }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        kms_master_key_id = aws_kms_key.monitoring_bucket_cmk[local.primary_role_index].arn
+        sse_algorithm     = "aws:kms"
+      }
+    }
   }
 }
 
