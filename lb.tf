@@ -161,6 +161,7 @@ resource "aws_security_group_rule" "allow_ingress_https" {
 
 resource "aws_security_group_rule" "allow_egress_thanos" {
   count                    = local.is_management_env ? 1 : 0
+  description              = "Allow loadbalancer to access thanos http endpoint"
   type                     = "egress"
   to_port                  = var.thanos_port_http
   protocol                 = "tcp"
@@ -171,6 +172,7 @@ resource "aws_security_group_rule" "allow_egress_thanos" {
 
 resource "aws_security_group_rule" "allow_egress_grafana" {
   count                    = local.is_management_env ? 1 : 0
+  description              = "Allow loadbalancer to access grafana user interface"
   type                     = "egress"
   to_port                  = var.grafana_port
   protocol                 = "tcp"
