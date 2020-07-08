@@ -159,22 +159,22 @@ resource "aws_security_group_rule" "allow_ingress_https" {
   cidr_blocks       = var.whitelist_cidr_blocks
 }
 
-resource "aws_security_group_rule" "allow_egress_prom" {
-  count             = local.is_management_env ? 1 : 0
-  type              = "egress"
-  to_port           = var.prometheus_port
-  protocol          = "tcp"
-  from_port         = var.prometheus_port
-  security_group_id = aws_security_group.monitoring[local.primary_role_index].id
-  cidr_blocks       = local.cidr_block_mon_master_vpc
+resource "aws_security_group_rule" "allow_egress_thanos" {
+  count                    = local.is_management_env ? 1 : 0
+  type                     = "egress"
+  to_port                  = var.thanos_port_http
+  protocol                 = "tcp"
+  from_port                = var.thanos_port_http
+  security_group_id        = aws_security_group.monitoring[local.primary_role_index].id
+  source_security_group_id = aws_security_group.thanos[local.primary_role_index].id
 }
 
 resource "aws_security_group_rule" "allow_egress_grafana" {
-  count             = local.is_management_env ? 1 : 0
-  type              = "egress"
-  to_port           = 3000
-  protocol          = "tcp"
-  from_port         = 3000
-  security_group_id = aws_security_group.monitoring[local.primary_role_index].id
-  cidr_blocks       = local.cidr_block_mon_master_vpc
+  count                    = local.is_management_env ? 1 : 0
+  type                     = "egress"
+  to_port                  = var.grafana_port
+  protocol                 = "tcp"
+  from_port                = var.grafana_port
+  security_group_id        = aws_security_group.monitoring[local.primary_role_index].id
+  source_security_group_id = aws_security_group.grafana[local.primary_role_index].id
 }
