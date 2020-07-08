@@ -148,12 +148,11 @@ resource "aws_security_group_rule" "allow_grafana_ingress_thanos_http" {
 resource "aws_iam_role" "thanos" {
   count              = local.is_management_env ? 1 : 0
   name               = "thanos"
-  assume_role_policy = data.aws_iam_policy_document.thanos[local.primary_role_index].json
+  assume_role_policy = data.aws_iam_policy_document.thanos.json
   tags               = merge(local.tags, { Name = "thanos" })
 }
 
 data "aws_iam_policy_document" "thanos" {
-  count = local.is_management_env ? 1 : 0
   statement {
     actions = [
       "sts:AssumeRole",
@@ -168,12 +167,11 @@ data "aws_iam_policy_document" "thanos" {
 
 resource "aws_iam_role_policy" "thanos" {
   count  = local.is_management_env ? 1 : 0
-  policy = data.aws_iam_policy_document.thanos_read_config[local.primary_role_index].json
+  policy = data.aws_iam_policy_document.thanos_read_config.json
   role   = aws_iam_role.thanos[local.primary_role_index].id
 }
 
 data "aws_iam_policy_document" "thanos_read_config" {
-  count = local.is_management_env ? 1 : 0
   statement {
     effect = "Allow"
 

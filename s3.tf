@@ -55,7 +55,6 @@ resource "aws_s3_bucket_public_access_block" "monitoring" {
 }
 
 data "aws_iam_policy_document" "monitoring_bucket_enforce_https" {
-  count = local.is_management_env ? 1 : 0
   statement {
     sid     = "BlockHTTP"
     effect  = "Deny"
@@ -82,7 +81,7 @@ data "aws_iam_policy_document" "monitoring_bucket_enforce_https" {
 resource "aws_s3_bucket_policy" "monitoring" {
   count  = local.is_management_env ? 1 : 0
   bucket = aws_s3_bucket.monitoring[local.primary_role_index].id
-  policy = local.is_management_env ? data.aws_iam_policy_document.monitoring_bucket_enforce_https[local.primary_role_index].json : "{}"
+  policy = local.is_management_env ? data.aws_iam_policy_document.monitoring_bucket_enforce_https.json : "{}"
 }
 
 data template_file "prometheus" {
@@ -102,7 +101,6 @@ data template_file "thanos" {
 }
 
 data template_file "grafana" {
-  count    = local.is_management_env ? 1 : 0
   template = file("${path.module}/config/grafana/grafana.tpl")
   vars = {
     grafana_domain = aws_route53_record.grafana_loadbalancer[0].fqdn
@@ -147,7 +145,7 @@ resource "aws_s3_bucket_object" "grafana" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/grafana/grafana.ini"
-  content    = data.template_file.grafana[0].rendered
+  content    = data.template_file.grafana.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
 

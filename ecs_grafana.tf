@@ -152,12 +152,11 @@ resource "aws_security_group_rule" "allow_loadbalancer_ingress_grafana_http" {
 resource "aws_iam_role" "grafana" {
   count              = local.is_management_env ? 1 : 0
   name               = "grafana"
-  assume_role_policy = data.aws_iam_policy_document.grafana[local.primary_role_index].json
+  assume_role_policy = data.aws_iam_policy_document.grafana.json
   tags               = merge(local.tags, { Name = "grafana" })
 }
 
 data "aws_iam_policy_document" "grafana" {
-  count = local.is_management_env ? 1 : 0
   statement {
     actions = [
       "sts:AssumeRole",
@@ -172,12 +171,11 @@ data "aws_iam_policy_document" "grafana" {
 
 resource "aws_iam_role_policy" "grafana" {
   count  = local.is_management_env ? 1 : 0
-  policy = data.aws_iam_policy_document.grafana_read_config[local.primary_role_index].json
+  policy = data.aws_iam_policy_document.grafana_read_config.json
   role   = aws_iam_role.grafana[local.primary_role_index].id
 }
 
 data "aws_iam_policy_document" "grafana_read_config" {
-  count = local.is_management_env ? 1 : 0
   statement {
     effect = "Allow"
 
