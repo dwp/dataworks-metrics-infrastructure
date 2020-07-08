@@ -192,11 +192,11 @@ resource "aws_security_group_rule" "prometheus_allow_egress_efs" {
 
 resource "aws_iam_role" "prometheus" {
   name               = "prometheus"
-  assume_role_policy = data.aws_iam_policy_document.prometheus.json
+  assume_role_policy = data.aws_iam_policy_document.prometheus_assume_role.json
   tags               = merge(local.tags, { Name = "prometheus" })
 }
 
-data "aws_iam_policy_document" "prometheus" {
+data "aws_iam_policy_document" "prometheus_assume_role" {
   statement {
     actions = [
       "sts:AssumeRole",
@@ -209,9 +209,15 @@ data "aws_iam_policy_document" "prometheus" {
   }
 }
 
-resource "aws_iam_role_policy" "prometheus_read_config" {
-  policy = data.aws_iam_policy_document.prometheus_read_config.json
-  role   = aws_iam_role.prometheus.id
+resource "aws_iam_role_policy_attachment" "prometheus_read_config_attachment" {
+  role       = aws_iam_role.prometheus.name
+  policy_arn = aws_iam_policy.prometheus_read_config.arn
+}
+
+resource "aws_iam_policy" "prometheus_read_config" {
+  name        = "PrometheusReadConfigPolicy"
+  description = "Allow Prometheus to read from config bucket"
+  policy      = data.aws_iam_policy_document.prometheus_read_config.json
 }
 
 data "aws_iam_policy_document" "prometheus_read_config" {
@@ -252,9 +258,15 @@ data "aws_iam_policy_document" "prometheus_read_config" {
   }
 }
 
-resource "aws_iam_role_policy" "prometheus_service_discovery" {
-  policy = data.aws_iam_policy_document.prometheus_service_discovery.json
-  role   = aws_iam_role.prometheus.id
+resource "aws_iam_role_policy_attachment" "prometheus_service_discovery_attachment" {
+  role       = aws_iam_role.prometheus.name
+  policy_arn = aws_iam_policy.prometheus_service_discovery.arn
+}
+
+resource "aws_iam_policy" "prometheus_service_discovery" {
+  name        = "PrometheusServiceDiscoveryPolicy"
+  description = "Allow Prometheus to perform service discovery"
+  policy      = data.aws_iam_policy_document.prometheus_service_discovery.json
 }
 
 data "aws_iam_policy_document" "prometheus_service_discovery" {
@@ -272,9 +284,15 @@ data "aws_iam_policy_document" "prometheus_service_discovery" {
   }
 }
 
-resource "aws_iam_role_policy" "prometheus_efs" {
-  policy = data.aws_iam_policy_document.prometheus_efs.json
-  role   = aws_iam_role.prometheus.id
+resource "aws_iam_role_policy_attachment" "prometheus_efs_attachment" {
+  role       = aws_iam_role.prometheus.name
+  policy_arn = aws_iam_policy.prometheus_efs.arn
+}
+
+resource "aws_iam_policy" "prometheus_efs" {
+  name        = "PrometheusEFSPolicy"
+  description = "Allow Prometheus to access EFS volume"
+  policy      = data.aws_iam_policy_document.prometheus_efs.json
 }
 
 data "aws_iam_policy_document" "prometheus_efs" {
@@ -292,9 +310,15 @@ data "aws_iam_policy_document" "prometheus_efs" {
   }
 }
 
-resource "aws_iam_role_policy" "monitoring_bucket_read_write" {
-  policy = data.aws_iam_policy_document.monitoring_bucket_read_write.json
-  role   = aws_iam_role.prometheus.id
+resource "aws_iam_role_policy_attachment" "monitoring_bucket_read_write" {
+  role       = aws_iam_role.prometheus.name
+  policy_arn = aws_iam_policy.monitoring_bucket_read_write.arn
+}
+
+resource "aws_iam_policy" "monitoring_bucket_read_write" {
+  name        = "MonitoringBucketReadWritePolicy"
+  description = "Allow Prometheus to read and write to monitoring bucket"
+  policy      = data.aws_iam_policy_document.monitoring_bucket_read_write.json
 }
 
 data "aws_iam_policy_document" "monitoring_bucket_read_write" {

@@ -148,11 +148,11 @@ resource "aws_security_group_rule" "allow_grafana_ingress_thanos_http" {
 resource "aws_iam_role" "thanos" {
   count              = local.is_management_env ? 1 : 0
   name               = "thanos"
-  assume_role_policy = data.aws_iam_policy_document.thanos.json
+  assume_role_policy = data.aws_iam_policy_document.thanos_assume_role.json
   tags               = merge(local.tags, { Name = "thanos" })
 }
 
-data "aws_iam_policy_document" "thanos" {
+data "aws_iam_policy_document" "thanos_assume_role" {
   statement {
     actions = [
       "sts:AssumeRole",
@@ -165,10 +165,16 @@ data "aws_iam_policy_document" "thanos" {
   }
 }
 
-resource "aws_iam_role_policy" "thanos" {
-  count  = local.is_management_env ? 1 : 0
-  policy = data.aws_iam_policy_document.thanos_read_config.json
-  role   = aws_iam_role.thanos[local.primary_role_index].id
+resource "aws_iam_role_policy_attachment" "thanos_read_config_attachment" {
+  role       = aws_iam_role.thanos[local.primary_role_index].name
+  policy_arn = aws_iam_policy.thanos_read_config[local.primary_role_index].arn
+}
+
+resource "aws_iam_policy" "thanos_read_config" {
+  count       = local.is_management_env ? 1 : 0
+  name        = "ThanosReadConfigPolicy"
+  description = "Allow Thanos to read from config bucket"
+  policy      = data.aws_iam_policy_document.thanos_read_config.json
 }
 
 data "aws_iam_policy_document" "thanos_read_config" {
