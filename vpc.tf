@@ -18,13 +18,6 @@ resource "aws_eip" "prometheus_master_nat" {
   tags  = merge(local.tags, { Name = "${var.name}-nat-${local.zone_names[count.index]}" })
 }
 
-resource "aws_nat_gateway" "prometheus_master_nat" {
-  count         = local.is_management_env ? local.zone_count : 0
-  allocation_id = aws_eip.prometheus_master_nat[count.index].id
-  subnet_id     = aws_subnet.public[count.index].id
-  tags          = merge(local.tags, { Name = "${var.name}-nat-${local.zone_names[count.index]}" })
-}
-
 resource "aws_internet_gateway" "igw" {
   count  = local.is_management_env ? 1 : 0
   vpc_id = module.vpc.outputs.vpcs[local.primary_role_index].id
@@ -32,12 +25,11 @@ resource "aws_internet_gateway" "igw" {
 }
 
 resource "aws_subnet" "public" {
-  count                   = local.is_management_env ? local.zone_count : 0
-  cidr_block              = cidrsubnet(local.cidr_block_mon_master_vpc[0], var.subnets.public.newbits, var.subnets.public.netnum + count.index)
-  vpc_id                  = module.vpc.outputs.vpcs[local.primary_role_index].id
-  availability_zone_id    = data.aws_availability_zones.current.zone_ids[count.index]
-  map_public_ip_on_launch = true
-  tags                    = merge(local.tags, { Name = "${var.name}-public-${local.zone_names[count.index]}" })
+  count                = local.is_management_env ? local.zone_count : 0
+  cidr_block           = cidrsubnet(local.cidr_block_mon_master_vpc[0], var.subnets.public.newbits, var.subnets.public.netnum + count.index)
+  vpc_id               = module.vpc.outputs.vpcs[local.primary_role_index].id
+  availability_zone_id = data.aws_availability_zones.current.zone_ids[count.index]
+  tags                 = merge(local.tags, { Name = "${var.name}-public-${local.zone_names[count.index]}" })
 }
 
 resource "aws_route_table" "public" {

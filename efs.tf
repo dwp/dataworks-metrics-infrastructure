@@ -1,5 +1,5 @@
 resource "aws_efs_file_system" "prometheus" {
-  tags = merge(local.tags, { Name = "prometheus" })
+  tags = merge(local.tags, { Name = "prometheus_efs" })
 }
 
 resource "aws_efs_mount_target" "prometheus" {
@@ -29,7 +29,7 @@ resource "aws_security_group" "efs" {
   name        = "efs"
   description = "Rules necesary for accessing EFS"
   vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
-  tags        = merge(local.tags, { Name = "prometheus" })
+  tags        = merge(local.tags, { Name = "prometheus_efs" })
 
   lifecycle {
     create_before_destroy = true
@@ -37,7 +37,7 @@ resource "aws_security_group" "efs" {
 }
 
 resource "aws_security_group_rule" "efs_allow_ingress_prometheus" {
-  description              = "Allow prometheus to access efs"
+  description              = "Allow prometheus to access efs mount target"
   from_port                = 2049
   protocol                 = "tcp"
   security_group_id        = aws_security_group.efs.id
