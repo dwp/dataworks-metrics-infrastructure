@@ -166,6 +166,7 @@ data "aws_iam_policy_document" "thanos_assume_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "thanos_read_config_attachment" {
+  count      = local.is_management_env ? 1 : 0
   role       = aws_iam_role.thanos[local.primary_role_index].name
   policy_arn = aws_iam_policy.thanos_read_config[local.primary_role_index].arn
 }

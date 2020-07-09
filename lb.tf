@@ -8,6 +8,21 @@ resource "aws_lb" "monitoring" {
   tags               = merge(local.tags, { Name = "${var.name}-lb" })
 }
 
+module "waf" {
+  source                = "./modules/waf"
+  name                  = var.name
+  whitelist_cidr_blocks = var.whitelist_cidr_blocks
+  log_bucket            = data.terraform_remote_state.security-tools.outputs.logstore_bucket.arn
+  cloudwatch_log_group  = "/${var.name}/waf"
+  tags                  = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_wafregional_web_acl_association" "lb" {
+  count        = local.is_management_env ? 1 : 0
+  resource_arn = aws_lb.monitoring[local.primary_role_index].arn
+  web_acl_id   = module.waf.wafregional_web_acl_id
+}
+
 resource "aws_lb_listener" "monitoring" {
   count             = local.is_management_env ? 1 : 0
   load_balancer_arn = aws_lb.monitoring[0].arn
