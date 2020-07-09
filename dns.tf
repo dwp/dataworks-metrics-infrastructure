@@ -55,13 +55,13 @@ resource "aws_route53_record" "grafana_loadbalancer" {
 }
 
 resource "aws_acm_certificate" "monitoring" {
-  count             = local.is_management_env ? 1 : 0
-  domain_name       = local.fqdn
-  validation_method = "DNS"
+  count                     = local.is_management_env ? 1 : 0
+  domain_name               = local.fqdn
+  validation_method         = "DNS"
   subject_alternative_names = ["thanos.${local.fqdn}", "grafana.${local.fqdn}"]
-  
+
   lifecycle {
-    ignore_changes = ["subject_alternative_names"]
+    ignore_changes = [subject_alternative_names]
   }
 }
 
@@ -96,8 +96,8 @@ resource "aws_route53_record" "grafana" {
 }
 
 resource "aws_acm_certificate_validation" "monitoring" {
-  count                   = local.is_management_env ? 1 : 0
-  certificate_arn         = aws_acm_certificate.monitoring[local.primary_role_index].arn
+  count           = local.is_management_env ? 1 : 0
+  certificate_arn = aws_acm_certificate.monitoring[local.primary_role_index].arn
   validation_record_fqdns = [
     aws_route53_record.monitoring[local.primary_role_index].fqdn,
     aws_route53_record.thanos[local.primary_role_index].fqdn,

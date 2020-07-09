@@ -22,6 +22,8 @@ root_url = https://${grafana_domain}
 
 #################################### Security ####################################
 [security]
+admin_user = ${grafana_user}
+admin_password = ${grafana_password}
 cookie_secure = true
 
 #################################### Snapshots ###########################
