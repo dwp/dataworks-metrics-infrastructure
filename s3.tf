@@ -1,3 +1,11 @@
+data "aws_secretsmanager_secret" "dataworks-secrets" {
+  name = "/concourse/dataworks/dataworks-secrets"
+}
+
+data "aws_secretsmanager_secret_version" "dataworks-secrets" {
+  secret_id = data.aws_secretsmanager_secret.dataworks-secrets.id
+}
+
 resource "random_id" "monitoring_bucket" {
   count       = local.is_management_env ? 1 : 0
   byte_length = 16
@@ -103,11 +111,13 @@ data template_file "thanos" {
 data template_file "grafana" {
   template = file("${path.module}/config/grafana/grafana.tpl")
   vars = {
-    grafana_domain = aws_route53_record.grafana_loadbalancer[0].fqdn
-    client_id      = aws_cognito_user_pool_client.grafana[0].id
-    client_secret  = aws_cognito_user_pool_client.grafana[0].client_secret
-    cognito_domain = aws_cognito_user_pool_domain.grafana[0].domain
-    region         = var.region
+    grafana_user     = jsondecode(data.aws_secretsmanager_secret_version.dataworks-secrets.secret_binary)["grafana_user"]
+    grafana_password = jsondecode(data.aws_secretsmanager_secret_version.dataworks-secrets.secret_binary)["grafana_password"]
+    grafana_domain   = aws_route53_record.grafana_loadbalancer[0].fqdn
+    client_id        = aws_cognito_user_pool_client.grafana[0].id
+    client_secret    = aws_cognito_user_pool_client.grafana[0].client_secret
+    cognito_domain   = aws_cognito_user_pool_domain.grafana[0].domain
+    region           = var.region
   }
 }
 
