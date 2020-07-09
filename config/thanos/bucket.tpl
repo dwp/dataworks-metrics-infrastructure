@@ -5,7 +5,7 @@ config:
   region: ""
   insecure: false
   signature_version2: false
-  encrypt_sse: false
+  encrypt_sse: true
   put_user_metadata: {}
   http_config:
     idle_conn_timeout: 90s

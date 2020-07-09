@@ -5,7 +5,7 @@ resource "aws_ecs_task_definition" "thanos" {
   requires_compatibilities = ["FARGATE"]
   cpu                      = "512"
   memory                   = "4096"
-  task_role_arn            = aws_iam_role.prometheus.arn
+  task_role_arn            = aws_iam_role.thanos[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
 
   container_definitions = <<DEFINITION
@@ -143,4 +143,74 @@ resource "aws_security_group_rule" "allow_grafana_ingress_thanos_http" {
   from_port                = var.thanos_port_http
   security_group_id        = aws_security_group.thanos[0].id
   source_security_group_id = aws_security_group.grafana[0].id
+}
+
+resource "aws_iam_role" "thanos" {
+  count              = local.is_management_env ? 1 : 0
+  name               = "thanos"
+  assume_role_policy = data.aws_iam_policy_document.thanos_assume_role.json
+  tags               = merge(local.tags, { Name = "thanos" })
+}
+
+data "aws_iam_policy_document" "thanos_assume_role" {
+  statement {
+    actions = [
+      "sts:AssumeRole",
+    ]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "thanos_read_config_attachment" {
+  role       = aws_iam_role.thanos[local.primary_role_index].name
+  policy_arn = aws_iam_policy.thanos_read_config[local.primary_role_index].arn
+}
+
+resource "aws_iam_policy" "thanos_read_config" {
+  count       = local.is_management_env ? 1 : 0
+  name        = "ThanosReadConfigPolicy"
+  description = "Allow Thanos to read from config bucket"
+  policy      = data.aws_iam_policy_document.thanos_read_config.json
+}
+
+data "aws_iam_policy_document" "thanos_read_config" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:ListBucket",
+    ]
+
+    resources = [
+      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject",
+    ]
+
+    resources = [
+      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/thanos/*",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "kms:Decrypt",
+    ]
+
+    resources = [
+      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn}",
+    ]
+  }
 }
