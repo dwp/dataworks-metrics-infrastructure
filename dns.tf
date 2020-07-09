@@ -9,7 +9,7 @@ provider "aws" {
 }
 
 locals {
-  fqdn = join(".", [var.name, local.parent_domain_name[local.environment]])
+  fqdn = join(".", ["monitor", local.parent_domain_name[local.environment]])
 }
 
 resource "aws_route53_record" "monitoring_loadbalancer" {
@@ -56,8 +56,13 @@ resource "aws_route53_record" "grafana_loadbalancer" {
 
 resource "aws_acm_certificate" "monitoring" {
   count             = local.is_management_env ? 1 : 0
-  domain_name       = "*.${local.fqdn}"
+  domain_name       = local.fqdn
   validation_method = "DNS"
+  subject_alternative_names = ["thanos.${local.fqdn}", "grafana.${local.fqdn}"]
+  
+  lifecycle {
+    ignore_changes = ["subject_alternative_names"]
+  }
 }
 
 resource "aws_route53_record" "monitoring" {
@@ -70,8 +75,32 @@ resource "aws_route53_record" "monitoring" {
   ttl      = 60
 }
 
+resource "aws_route53_record" "thanos" {
+  provider = aws.management_dns
+  count    = local.is_management_env ? 1 : 0
+  name     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.1.resource_record_name
+  type     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.1.resource_record_type
+  zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
+  records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.1.resource_record_value]
+  ttl      = 60
+}
+
+resource "aws_route53_record" "grafana" {
+  provider = aws.management_dns
+  count    = local.is_management_env ? 1 : 0
+  name     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.2.resource_record_name
+  type     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.2.resource_record_type
+  zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
+  records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.2.resource_record_value]
+  ttl      = 60
+}
+
 resource "aws_acm_certificate_validation" "monitoring" {
   count                   = local.is_management_env ? 1 : 0
   certificate_arn         = aws_acm_certificate.monitoring[local.primary_role_index].arn
-  validation_record_fqdns = [aws_route53_record.monitoring[local.primary_role_index].fqdn]
+  validation_record_fqdns = [
+    aws_route53_record.monitoring[local.primary_role_index].fqdn,
+    aws_route53_record.thanos[local.primary_role_index].fqdn,
+    aws_route53_record.grafana[local.primary_role_index].fqdn
+  ]
 }
