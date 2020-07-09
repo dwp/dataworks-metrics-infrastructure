@@ -9,7 +9,7 @@ provider "aws" {
 }
 
 locals {
-  fqdn = join(".", ["monitor", local.parent_domain_name[local.environment]])
+  fqdn = join(".", [var.name, local.parent_domain_name[local.environment]])
 }
 
 resource "aws_route53_record" "monitoring_loadbalancer" {
