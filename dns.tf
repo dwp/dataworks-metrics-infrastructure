@@ -18,6 +18,7 @@ resource "aws_route53_record" "monitoring_loadbalancer" {
   name     = join(".", [local.roles[local.primary_role_index], local.fqdn])
   type     = "A"
   zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
+
   alias {
     evaluate_target_health = false
     name                   = aws_lb.monitoring[0].dns_name
@@ -31,6 +32,7 @@ resource "aws_route53_record" "thanos_loadbalancer" {
   name     = "thanos.${local.fqdn}"
   type     = "A"
   zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
+
   alias {
     evaluate_target_health = false
     name                   = aws_lb.monitoring[0].dns_name
@@ -44,6 +46,7 @@ resource "aws_route53_record" "grafana_loadbalancer" {
   name     = "grafana.${local.fqdn}"
   type     = "A"
   zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
+
   alias {
     evaluate_target_health = false
     name                   = aws_lb.monitoring[0].dns_name
@@ -56,6 +59,7 @@ resource "aws_acm_certificate" "monitoring" {
   domain_name       = local.fqdn
   validation_method = "DNS"
   subject_alternative_names = ["thanos.${local.fqdn}", "grafana.${local.fqdn}"]
+  
   lifecycle {
     ignore_changes = ["subject_alternative_names"]
   }
