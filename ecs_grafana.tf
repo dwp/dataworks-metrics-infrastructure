@@ -56,7 +56,7 @@ resource "aws_ecs_task_definition" "grafana" {
       },
       {
         "name": "NO_PROXY",
-        "value": "127.0.0.1,s3.${var.region}.amazonaws.com"
+        "value": "127.0.0.1,s3.${var.region}.amazonaws.com,${local.environment}.services.${var.parent_domain_name}"
       }
     ]
   }
@@ -170,6 +170,7 @@ data "aws_iam_policy_document" "grafana_assume_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "grafana_read_config_attachment" {
+  count      = local.is_management_env ? 1 : 0
   role       = aws_iam_role.grafana[local.primary_role_index].name
   policy_arn = aws_iam_policy.grafana_read_config[local.primary_role_index].arn
 }
