@@ -4,7 +4,7 @@ jobs:
       - get: dataworks-metrics-infrastructure
         passed:
         - qa
-        trigger: false
+        trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           TF_WORKSPACE: integration

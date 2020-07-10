@@ -192,6 +192,11 @@ locals {
     production = "management"
   }
 
+  master_peerings = {
+    management-dev = ["management-dev", "development", "qa", "integration"]
+    management = ["management", "preprod", "production"]
+  }
+
   common_workspace = {
     management-dev = "default"
     management     = "preprod"
