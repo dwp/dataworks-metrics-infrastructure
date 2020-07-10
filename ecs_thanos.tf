@@ -52,7 +52,7 @@ resource "aws_ecs_task_definition" "thanos" {
       },
       {
         "name": "STORE_HOSTNAMES",
-        "value": "${var.name}-${var.secondary}.${local.environment}.services.${var.parent_domain_name} ${var.name}-${var.secondary}.development.services.${var.parent_domain_name}"
+        "value": "${join(" ", formatlist("${var.name}-${var.secondary}.%s.services.${var.parent_domain_name}", "${local.master_peerings[local.slave_peerings[local.environment]]}"))}"
       }
     ]
   }
