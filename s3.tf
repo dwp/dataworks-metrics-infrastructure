@@ -16,12 +16,13 @@ resource "random_id" "monitoring_bucket" {
 resource "aws_kms_key" "monitoring_bucket_cmk" {
   count                   = local.is_management_env ? 1 : 0
   description             = "Monitoring Bucket Master Key"
-  deletion_window_in_days = 28
+  deletion_window_in_days = 7
   is_enabled              = true
   enable_key_rotation     = true
   tags = merge(
     local.tags,
-    map("Name", "Monitoring bucket key")
+    map("Name", "Monitoring bucket key"),
+    map("ProtectsSensitiveData", "False")
   )
 }
 
