@@ -113,11 +113,7 @@ data template_file "thanos_query" {
 }
 
 data template_file "thanos_ruler" {
-  template = file("${path.module}/config/thanos/bucket.tpl")
-  vars = {
-    metrics_bucket = local.is_management_env ? aws_s3_bucket.monitoring[local.primary_role_index].id : data.terraform_remote_state.management_dmi.outputs.monitoring_bucket.id
-    s3_endpoint    = "s3-${var.region}.amazonaws.com"
-  }
+  template = file("${path.module}/config/thanos/rules/alert.rules.yaml")
 }
 
 data template_file "grafana" {
@@ -137,7 +133,7 @@ data template_file "grafana" {
 data template_file "grafana_datasource_config" {
   template = file("${path.module}/config/grafana/provisioning/datasources/datasource.tpl")
   vars = {
-    thanos_query_hostname = "thanos.${local.environment}.services.${var.parent_domain_name}"
+    thanos_query_hostname = "thanos-query.${local.environment}.services.${var.parent_domain_name}"
   }
 }
 

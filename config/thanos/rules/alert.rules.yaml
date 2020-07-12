@@ -1,12 +1,10 @@
 groups:
-
-- name: example
+- name: alert.rules
   rules:
-    
-  - alert: simple-alert
-    expr: vector(1)
+  - alert: SimpleAlert
+    annotations:
+      message: Simple alert to ensure query node is running
+    expr: vector(1) < 1
     for: 0s
     labels:
-    - name: simple-alert
-    annotations:
-    - name: simple-alert
+      severity: warning

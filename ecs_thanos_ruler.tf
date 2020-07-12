@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "thanos_ruler" {
 [
   {
     "cpu": ${var.fargate_cpu},
-    "image": "${data.terraform_remote_state.management.outputs.ecr_thanos_url}",
+    "image": "${data.terraform_remote_state.management.outputs.ecr_thanos_url}:ruler",
     "memory": ${var.fargate_memory},
     "name": "thanos-ruler",
     "networkMode": "awsvpc",
@@ -52,7 +52,7 @@ resource "aws_ecs_task_definition" "thanos_ruler" {
       },
       {
         "name": "QUERY_URL",
-        "value": "thanos-query.services.${var.parent_domain_name}"
+        "value": "thanos-query.${local.environment}.services.${var.parent_domain_name}:${var.thanos_port_http}"
       },
       {
         "name": "ALERTMANAGER_URL",
@@ -218,4 +218,9 @@ data "aws_iam_policy_document" "thanos_ruler_read_config" {
       "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn}",
     ]
   }
+}
+
+resource "aws_iam_role_policy_attachment" "thanos_ruler_monitoring_bucket_read_write" {
+  role       = aws_iam_role.thanos_ruler[0].name
+  policy_arn = aws_iam_policy.monitoring_bucket_read_write.arn
 }
