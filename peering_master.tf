@@ -60,7 +60,7 @@ resource "aws_security_group_rule" "prometheus_primary_allow_egress_prometheus_s
   to_port           = var.prometheus_port
   protocol          = "tcp"
   from_port         = var.prometheus_port
-  security_group_id = local.is_management_env ? aws_security_group.thanos[0].id : data.terraform_remote_state.management_dmi.outputs.thanos_security_group
+  security_group_id = local.is_management_env ? aws_security_group.thanos_query[0].id : data.terraform_remote_state.management_dmi.outputs.thanos_security_group
   cidr_blocks       = [local.cidr_block[local.environment].mon-slave-vpc]
 }
 
@@ -81,6 +81,6 @@ resource "aws_security_group_rule" "thanos_query_allow_egress_thanos_sidecar" {
   to_port           = var.thanos_port_grpc
   protocol          = "tcp"
   from_port         = var.thanos_port_grpc
-  security_group_id = local.is_management_env ? aws_security_group.thanos[0].id : data.terraform_remote_state.management_dmi.outputs.thanos_security_group
+  security_group_id = local.is_management_env ? aws_security_group.thanos_query[0].id : data.terraform_remote_state.management_dmi.outputs.thanos_security_group
   cidr_blocks       = [local.cidr_block[local.environment].mon-slave-vpc]
 }
