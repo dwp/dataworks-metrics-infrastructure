@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "thanos_ruler" {
 [
   {
     "cpu": ${var.fargate_cpu},
-    "image": "${data.terraform_remote_state.management.outputs.ecr_thanos_url}:ruler",
+    "image": "${data.terraform_remote_state.management.outputs.ecr_thanos_url}",
     "memory": ${var.fargate_memory},
     "name": "thanos-ruler",
     "networkMode": "awsvpc",
