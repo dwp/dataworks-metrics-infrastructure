@@ -1,0 +1,10 @@
+groups:
+- name: alert.rules
+  rules:
+  - alert: SimpleAlert
+    annotations:
+      message: Simple alert to ensure query node is running
+    expr: vector(1) < 1
+    for: 0s
+    labels:
+      severity: warning

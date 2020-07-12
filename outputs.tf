@@ -7,7 +7,7 @@ output "private_route_tables" {
 }
 
 output "thanos_security_group" {
-  value = local.is_management_env ? aws_security_group.thanos[0].id : null_resource.dummy.id
+  value = local.is_management_env ? aws_security_group.thanos_query[0].id : null_resource.dummy.id
 }
 
 output "monitoring_bucket" {

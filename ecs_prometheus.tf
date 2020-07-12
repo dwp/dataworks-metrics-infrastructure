@@ -310,7 +310,7 @@ data "aws_iam_policy_document" "prometheus_efs" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "monitoring_bucket_read_write" {
+resource "aws_iam_role_policy_attachment" "prometheus_monitoring_bucket_read_write" {
   role       = aws_iam_role.prometheus.name
   policy_arn = aws_iam_policy.monitoring_bucket_read_write.arn
 }
