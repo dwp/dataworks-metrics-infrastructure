@@ -64,9 +64,9 @@ resource "aws_lb_target_group" "prometheus" {
   tags = merge(local.tags, { Name = "prometheus" })
 }
 
-resource "aws_lb_target_group" "thanos" {
+resource "aws_lb_target_group" "thanos_query" {
   count       = local.is_management_env ? 1 : 0
-  name        = "thanos-http"
+  name        = "thanos-query-http"
   port        = var.prometheus_port
   protocol    = "HTTP"
   vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
@@ -83,7 +83,29 @@ resource "aws_lb_target_group" "thanos" {
     type    = "lb_cookie"
   }
 
-  tags = merge(local.tags, { Name = "prometheus" })
+  tags = merge(local.tags, { Name = "thanos-query" })
+}
+
+resource "aws_lb_target_group" "thanos_ruler" {
+  count       = local.is_management_env ? 1 : 0
+  name        = "thanos-ruler-http"
+  port        = var.prometheus_port
+  protocol    = "HTTP"
+  vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
+  target_type = "ip"
+
+  health_check {
+    port    = var.prometheus_port
+    path    = "/-/healthy"
+    matcher = "200"
+  }
+
+  stickiness {
+    enabled = true
+    type    = "lb_cookie"
+  }
+
+  tags = merge(local.tags, { Name = "thanos-ruler" })
 }
 
 resource "aws_lb_target_group" "grafana" {
@@ -105,7 +127,7 @@ resource "aws_lb_target_group" "grafana" {
     type    = "lb_cookie"
   }
 
-  tags = merge(local.tags, { Name = "prometheus" })
+  tags = merge(local.tags, { Name = "grafana" })
 }
 
 resource "aws_lb_listener_rule" "prometheus" {
@@ -123,18 +145,33 @@ resource "aws_lb_listener_rule" "prometheus" {
   }
 }
 
-resource "aws_lb_listener_rule" "thanos" {
+resource "aws_lb_listener_rule" "thanos_query" {
   count        = local.is_management_env ? 1 : 0
   listener_arn = aws_lb_listener.monitoring[local.primary_role_index].arn
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.thanos[local.primary_role_index].arn
+    target_group_arn = aws_lb_target_group.thanos_query[local.primary_role_index].arn
   }
 
   condition {
     field  = "host-header"
-    values = [aws_route53_record.thanos_loadbalancer[local.primary_role_index].fqdn]
+    values = [aws_route53_record.thanos_query_loadbalancer[local.primary_role_index].fqdn]
+  }
+}
+
+resource "aws_lb_listener_rule" "thanos_ruler" {
+  count        = local.is_management_env ? 1 : 0
+  listener_arn = aws_lb_listener.monitoring[local.primary_role_index].arn
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.thanos_ruler[local.primary_role_index].arn
+  }
+
+  condition {
+    field  = "host-header"
+    values = [aws_route53_record.thanos_ruler_loadbalancer[local.primary_role_index].fqdn]
   }
 }
 
@@ -174,15 +211,26 @@ resource "aws_security_group_rule" "allow_ingress_https" {
   cidr_blocks       = var.whitelist_cidr_blocks
 }
 
-resource "aws_security_group_rule" "allow_egress_thanos" {
+resource "aws_security_group_rule" "allow_egress_thanos_query" {
   count                    = local.is_management_env ? 1 : 0
-  description              = "Allow loadbalancer to access thanos http endpoint"
+  description              = "Allow loadbalancer to access thanos query http endpoint"
   type                     = "egress"
   to_port                  = var.thanos_port_http
   protocol                 = "tcp"
   from_port                = var.thanos_port_http
   security_group_id        = aws_security_group.monitoring[local.primary_role_index].id
-  source_security_group_id = aws_security_group.thanos[local.primary_role_index].id
+  source_security_group_id = aws_security_group.thanos_query[local.primary_role_index].id
+}
+
+resource "aws_security_group_rule" "allow_egress_thanos_ruler" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow loadbalancer to access thanos ruler http endpoint"
+  type                     = "egress"
+  to_port                  = var.thanos_port_http
+  protocol                 = "tcp"
+  from_port                = var.thanos_port_http
+  security_group_id        = aws_security_group.monitoring[local.primary_role_index].id
+  source_security_group_id = aws_security_group.thanos_ruler[local.primary_role_index].id
 }
 
 resource "aws_security_group_rule" "allow_egress_grafana" {

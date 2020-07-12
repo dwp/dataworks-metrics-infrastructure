@@ -1,0 +1,12 @@
+groups:
+
+- name: example
+  rules:
+    
+  - alert: simple-alert
+    expr: vector(1)
+    for: 0s
+    labels:
+    - name: simple-alert
+    annotations:
+    - name: simple-alert
