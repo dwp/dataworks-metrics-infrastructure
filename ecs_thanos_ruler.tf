@@ -56,7 +56,7 @@ resource "aws_ecs_task_definition" "thanos_ruler" {
       },
       {
         "name": "ALERTMANAGER_URL",
-        "value": "alertmanager.services.${var.parent_domain_name}"
+        "value": "alertmanager.${local.environment}.services.${var.parent_domain_name}:${var.alertmanager_port}"
       }
     ]
   }
