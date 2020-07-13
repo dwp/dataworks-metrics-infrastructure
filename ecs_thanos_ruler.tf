@@ -160,6 +160,17 @@ resource "aws_security_group_rule" "allow_thanos_ruler_egress_alertmanager" {
   source_security_group_id = aws_security_group.alertmanager[0].id
 }
 
+resource "aws_security_group_rule" "allow_outofband_ingress_thanos_ruler" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allows outofband to access thanos ruler"
+  type                     = "ingress"
+  to_port                  = var.prometheus_port
+  protocol                 = "tcp"
+  from_port                = var.prometheus_port
+  security_group_id        = aws_security_group.thanos_ruler[0].id
+  source_security_group_id = aws_security_group.outofband[0].id
+}
+
 resource "aws_iam_role" "thanos_ruler" {
   count              = local.is_management_env ? 1 : 0
   name               = "thanos-ruler"

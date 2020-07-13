@@ -62,7 +62,7 @@ resource "aws_ecs_task_definition" "outofband" {
       },
       {
         "name": "PROMETHEUS_CONFIG_S3_PREFIX",
-        "value": "${var.name}/outofband"
+        "value": "${var.name}/prometheus"
       },
       {
         "name": "PROMETHEUS_ROLE",
@@ -129,7 +129,13 @@ resource "aws_ecs_service" "outofband" {
 
   network_configuration {
     security_groups = [aws_security_group.outofband[local.primary_role_index].id]
-    subnets         = module.vpc.outputs.private_subnets[local.secondary_role_index]
+    subnets         = module.vpc.outputs.private_subnets[local.primary_role_index]
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.outofband[local.primary_role_index].arn
+    container_name   = "outofband"
+    container_port   = var.prometheus_port
   }
 
   service_registries {
@@ -156,7 +162,7 @@ resource "aws_security_group" "outofband" {
   count       = local.is_management_env ? 1 : 0
   name        = "outofband"
   description = "Rules necesary for pulling container image and accessing other thanos ruler instance"
-  vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
+  vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
   tags        = merge(local.tags, { Name = "outofband" })
 
   lifecycle {
@@ -170,7 +176,7 @@ resource "aws_security_group_rule" "allow_outofband_egress_https" {
   type              = "egress"
   to_port           = 443
   protocol          = "tcp"
-  prefix_list_ids   = [module.vpc.outputs.s3_prefix_list_ids[local.secondary_role_index]]
+  prefix_list_ids   = [module.vpc.outputs.s3_prefix_list_ids[local.primary_role_index]]
   from_port         = 443
   security_group_id = aws_security_group.outofband[local.primary_role_index].id
 }
@@ -195,6 +201,28 @@ resource "aws_security_group_rule" "outofband_allow_egress_thanos_ruler" {
   type                     = "egress"
   security_group_id        = aws_security_group.outofband[local.primary_role_index].id
   source_security_group_id = aws_security_group.thanos_ruler[0].id
+}
+
+resource "aws_security_group_rule" "outofband_allow_egress_alertmanager" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow outofband to access alertmanager"
+  from_port                = var.alertmanager_port
+  protocol                 = "tcp"
+  to_port                  = var.alertmanager_port
+  type                     = "egress"
+  security_group_id        = aws_security_group.outofband[local.primary_role_index].id
+  source_security_group_id = aws_security_group.alertmanager[0].id
+}
+
+resource "aws_security_group_rule" "allow_loadbalancer_ingress_outofband_http" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allows loadbalancer to access outofbands user interface"
+  type                     = "ingress"
+  to_port                  = var.prometheus_port
+  protocol                 = "tcp"
+  from_port                = var.prometheus_port
+  security_group_id        = aws_security_group.outofband[0].id
+  source_security_group_id = aws_security_group.monitoring[0].id
 }
 
 resource "aws_iam_role" "outofband" {
@@ -251,8 +279,8 @@ data "aws_iam_policy_document" "outofband_read_config" {
     ]
 
     resources = [
-      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/thanos/*",
-      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/prometheus/*",
+      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/thanos/*",
+      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/prometheus/*",
     ]
   }
 

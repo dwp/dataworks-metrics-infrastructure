@@ -53,9 +53,9 @@ resource "aws_efs_file_system" "outofband" {
 }
 
 resource "aws_efs_mount_target" "outofband" {
-  count           = local.is_management_env ? length(module.vpc.outputs.private_subnets[local.secondary_role_index]) : 0
+  count           = local.is_management_env ? length(module.vpc.outputs.private_subnets[local.primary_role_index]) : 0
   file_system_id  = aws_efs_file_system.outofband[local.primary_role_index].id
-  subnet_id       = module.vpc.outputs.private_subnets[local.secondary_role_index][count.index]
+  subnet_id       = module.vpc.outputs.private_subnets[local.primary_role_index][count.index]
   security_groups = [aws_security_group.outofband_efs[local.primary_role_index].id]
 }
 
@@ -80,7 +80,7 @@ resource "aws_security_group" "outofband_efs" {
   count       = local.is_management_env ? 1 : 0
   name        = "outofband_efs"
   description = "Rules necesary for accessing EFS"
-  vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
+  vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
   tags        = merge(local.tags, { Name = "outofband_efs" })
 
   lifecycle {
