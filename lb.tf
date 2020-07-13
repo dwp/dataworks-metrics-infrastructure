@@ -147,6 +147,27 @@ resource "aws_lb_target_group" "alertmanager" {
   tags = merge(local.tags, { Name = "alertmanager" })
 }
 
+resource "aws_lb_target_group" "outofband" {
+  count       = local.is_management_env ? 1 : 0
+  name        = "outofband-http"
+  port        = var.prometheus_port
+  protocol    = "HTTP"
+  vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
+  target_type = "ip"
+
+  health_check {
+    port    = var.prometheus_port
+    path    = "/-/healthy"
+    matcher = "200"
+  }
+
+  stickiness {
+    enabled = true
+    type    = "lb_cookie"
+  }
+  tags = merge(local.tags, { Name = "outofband" })
+}
+
 resource "aws_lb_listener_rule" "prometheus" {
   count        = local.is_management_env ? 1 : 0
   listener_arn = aws_lb_listener.monitoring[local.primary_role_index].arn
@@ -222,6 +243,21 @@ resource "aws_lb_listener_rule" "alertmanager" {
   }
 }
 
+resource "aws_lb_listener_rule" "outofband" {
+  count        = local.is_management_env ? 1 : 0
+  listener_arn = aws_lb_listener.monitoring[local.primary_role_index].arn
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.outofband[local.primary_role_index].arn
+  }
+
+  condition {
+    field  = "host-header"
+    values = [aws_route53_record.outofband_loadbalancer[local.primary_role_index].fqdn]
+  }
+}
+
 resource "aws_security_group" "monitoring" {
   count  = local.is_management_env ? 1 : 0
   vpc_id = module.vpc.outputs.vpcs[local.primary_role_index].id
@@ -285,4 +321,15 @@ resource "aws_security_group_rule" "allow_egress_alertmanager" {
   from_port                = var.alertmanager_port
   security_group_id        = aws_security_group.monitoring[local.primary_role_index].id
   source_security_group_id = aws_security_group.alertmanager[local.primary_role_index].id
+}
+
+resource "aws_security_group_rule" "allow_egress_outofband" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow loadbalancer to access outofband user interface"
+  type                     = "egress"
+  to_port                  = var.prometheus_port
+  protocol                 = "tcp"
+  from_port                = var.prometheus_port
+  security_group_id        = aws_security_group.monitoring[local.primary_role_index].id
+  source_security_group_id = aws_security_group.outofband[local.primary_role_index].id
 }

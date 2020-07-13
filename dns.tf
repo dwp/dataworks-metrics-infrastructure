@@ -82,11 +82,25 @@ resource "aws_route53_record" "alertmanager_loadbalancer" {
   }
 }
 
+resource "aws_route53_record" "outofband_loadbalancer" {
+  provider = aws.management_dns
+  count    = local.is_management_env ? 1 : 0
+  name     = "outofband.${local.fqdn}"
+  type     = "A"
+  zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
+
+  alias {
+    evaluate_target_health = false
+    name                   = aws_lb.monitoring[0].dns_name
+    zone_id                = aws_lb.monitoring[0].zone_id
+  }
+}
+
 resource "aws_acm_certificate" "monitoring" {
   count                     = local.is_management_env ? 1 : 0
   domain_name               = local.fqdn
   validation_method         = "DNS"
-  subject_alternative_names = ["thanos-query.${local.fqdn}", "thanos-ruler.${local.fqdn}", "grafana.${local.fqdn}", "alertmanager.${local.fqdn}"]
+  subject_alternative_names = ["thanos-query.${local.fqdn}", "thanos-ruler.${local.fqdn}", "grafana.${local.fqdn}", "alertmanager.${local.fqdn}", "outofband.${local.fqdn}"]
 
   lifecycle {
     ignore_changes = [subject_alternative_names]
@@ -143,6 +157,16 @@ resource "aws_route53_record" "alertmanager" {
   ttl      = 60
 }
 
+resource "aws_route53_record" "outofband" {
+  provider = aws.management_dns
+  count    = local.is_management_env ? 1 : 0
+  name     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.5.resource_record_name
+  type     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.5.resource_record_type
+  zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
+  records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.5.resource_record_value]
+  ttl      = 60
+}
+
 resource "aws_acm_certificate_validation" "monitoring" {
   count           = local.is_management_env ? 1 : 0
   certificate_arn = aws_acm_certificate.monitoring[local.primary_role_index].arn
@@ -151,6 +175,7 @@ resource "aws_acm_certificate_validation" "monitoring" {
     aws_route53_record.thanos_query[local.primary_role_index].fqdn,
     aws_route53_record.thanos_ruler[local.primary_role_index].fqdn,
     aws_route53_record.grafana[local.primary_role_index].fqdn,
-    aws_route53_record.alertmanager[local.primary_role_index].fqdn
+    aws_route53_record.alertmanager[local.primary_role_index].fqdn,
+    aws_route53_record.outofband[local.primary_role_index].fqdn
   ]
 }

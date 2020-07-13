@@ -97,8 +97,7 @@ resource "aws_s3_bucket_policy" "monitoring" {
 }
 
 data template_file "prometheus" {
-  count    = length(local.roles)
-  template = file("${path.module}/config/prometheus/prometheus-${local.roles[count.index]}.tpl")
+  template = file("${path.module}/config/prometheus/prometheus-slave.tpl")
   vars = {
     parent_domain_name = var.parent_domain_name
   }
@@ -149,11 +148,18 @@ data template_file "alertmanager" {
   template = file("${path.module}/config/alertmanager/config.yml")
 }
 
+data template_file "outofband" {
+  template = file("${path.module}/config/prometheus/prometheus-outofband.tpl")
+  vars = {
+    parent_domain_name = var.parent_domain_name
+    environment        = local.environment
+  }
+}
+
 resource "aws_s3_bucket_object" "prometheus" {
-  count      = length(local.roles)
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
-  key        = "${var.name}/prometheus/prometheus-${local.roles[count.index]}.yml"
-  content    = data.template_file.prometheus[count.index].rendered
+  key        = "${var.name}/prometheus/prometheus-slave.yml"
+  content    = data.template_file.prometheus.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
 
@@ -208,5 +214,13 @@ resource "aws_s3_bucket_object" "alertmanager" {
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/alertmanager/config.yml"
   content    = data.template_file.alertmanager.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+}
+
+resource "aws_s3_bucket_object" "outofband" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/prometheus/prometheus-outofband.yaml"
+  content    = data.template_file.outofband.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
