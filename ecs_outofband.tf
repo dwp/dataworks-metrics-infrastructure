@@ -38,7 +38,7 @@ resource "aws_ecs_task_definition" "outofband" {
     "mountPoints": [
       {
         "containerPath": "/prometheus",
-        "sourceVolume": "prometheus"
+        "sourceVolume": "outofband"
       }
     ],
     "logConfiguration": {
@@ -86,7 +86,7 @@ resource "aws_ecs_task_definition" "outofband" {
     "mountPoints": [
       {
         "containerPath": "/prometheus",
-        "sourceVolume": "prometheus"
+        "sourceVolume": "outofband"
       }
     ],
     "logConfiguration": {
