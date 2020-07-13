@@ -136,7 +136,7 @@ resource "aws_lb_target_group" "alertmanager" {
 
   health_check {
     port    = var.alertmanager_port
-    path    = "/api/health"
+    path    = "/-/healthy"
     matcher = "200"
   }
 
