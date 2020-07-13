@@ -145,6 +145,10 @@ data template_file "grafana_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/dashboard.json")
 }
 
+data template_file "alertmanager" {
+  template = file("${path.module}/config/alertmanager/config.yaml")
+}
+
 resource "aws_s3_bucket_object" "prometheus" {
   count      = length(local.roles)
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
@@ -196,5 +200,13 @@ resource "aws_s3_bucket_object" "grafana_dashboard" {
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/grafana/provisioning/dashboards/dashboard.json"
   content    = data.template_file.grafana_dashboard.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+}
+
+resource "aws_s3_bucket_object" "alertmanager" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/alertmanager/config.yaml"
+  content    = data.template_file.alertmanager.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }

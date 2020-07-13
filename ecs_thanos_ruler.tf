@@ -149,6 +149,17 @@ resource "aws_security_group_rule" "allow_thanos_ruler_egress_thanos_query_http"
   source_security_group_id = aws_security_group.thanos_query[0].id
 }
 
+resource "aws_security_group_rule" "allow_thanos_ruler_egress_alertmanager" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allows thanos ruler to access alertmanager"
+  type                     = "egress"
+  to_port                  = var.alertmanager_port
+  protocol                 = "tcp"
+  from_port                = var.alertmanager_port
+  security_group_id        = aws_security_group.thanos_ruler[0].id
+  source_security_group_id = aws_security_group.alertmanager[0].id
+}
+
 resource "aws_iam_role" "thanos_ruler" {
   count              = local.is_management_env ? 1 : 0
   name               = "thanos-ruler"
