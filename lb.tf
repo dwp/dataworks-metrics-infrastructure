@@ -60,7 +60,6 @@ resource "aws_lb_target_group" "prometheus" {
     enabled = true
     type    = "lb_cookie"
   }
-
   tags = merge(local.tags, { Name = "prometheus" })
 }
 
@@ -82,7 +81,6 @@ resource "aws_lb_target_group" "thanos_query" {
     enabled = true
     type    = "lb_cookie"
   }
-
   tags = merge(local.tags, { Name = "thanos-query" })
 }
 
@@ -104,20 +102,19 @@ resource "aws_lb_target_group" "thanos_ruler" {
     enabled = true
     type    = "lb_cookie"
   }
-
   tags = merge(local.tags, { Name = "thanos-ruler" })
 }
 
 resource "aws_lb_target_group" "grafana" {
   count       = local.is_management_env ? 1 : 0
   name        = "grafana-http"
-  port        = 3000
+  port        = var.grafana_port
   protocol    = "HTTP"
   vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
   target_type = "ip"
 
   health_check {
-    port    = 3000
+    port    = var.grafana_port
     path    = "/api/health"
     matcher = "200"
   }
@@ -126,8 +123,28 @@ resource "aws_lb_target_group" "grafana" {
     enabled = true
     type    = "lb_cookie"
   }
-
   tags = merge(local.tags, { Name = "grafana" })
+}
+
+resource "aws_lb_target_group" "alertmanager" {
+  count       = local.is_management_env ? 1 : 0
+  name        = "alertmanager-http"
+  port        = var.alertmanager_port
+  protocol    = "HTTP"
+  vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
+  target_type = "ip"
+
+  health_check {
+    port    = var.alertmanager_port
+    path    = "/-/healthy"
+    matcher = "200"
+  }
+
+  stickiness {
+    enabled = true
+    type    = "lb_cookie"
+  }
+  tags = merge(local.tags, { Name = "alertmanager" })
 }
 
 resource "aws_lb_listener_rule" "prometheus" {
@@ -190,6 +207,21 @@ resource "aws_lb_listener_rule" "grafana" {
   }
 }
 
+resource "aws_lb_listener_rule" "alertmanager" {
+  count        = local.is_management_env ? 1 : 0
+  listener_arn = aws_lb_listener.monitoring[local.primary_role_index].arn
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.alertmanager[local.primary_role_index].arn
+  }
+
+  condition {
+    field  = "host-header"
+    values = [aws_route53_record.alertmanager_loadbalancer[local.primary_role_index].fqdn]
+  }
+}
+
 resource "aws_security_group" "monitoring" {
   count  = local.is_management_env ? 1 : 0
   vpc_id = module.vpc.outputs.vpcs[local.primary_role_index].id
@@ -242,4 +274,15 @@ resource "aws_security_group_rule" "allow_egress_grafana" {
   from_port                = var.grafana_port
   security_group_id        = aws_security_group.monitoring[local.primary_role_index].id
   source_security_group_id = aws_security_group.grafana[local.primary_role_index].id
+}
+
+resource "aws_security_group_rule" "allow_egress_alertmanager" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow loadbalancer to access alertmanager user interface"
+  type                     = "egress"
+  to_port                  = var.alertmanager_port
+  protocol                 = "tcp"
+  from_port                = var.alertmanager_port
+  security_group_id        = aws_security_group.monitoring[local.primary_role_index].id
+  source_security_group_id = aws_security_group.alertmanager[local.primary_role_index].id
 }

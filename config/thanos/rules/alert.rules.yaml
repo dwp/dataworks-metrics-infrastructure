@@ -4,7 +4,7 @@ groups:
   - alert: SimpleAlert
     annotations:
       message: Simple alert to ensure query node is running
-    expr: vector(1) < 1
+    expr: vector(1)
     for: 0s
     labels:
       severity: warning
