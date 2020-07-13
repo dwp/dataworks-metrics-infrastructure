@@ -26,7 +26,7 @@ resource "aws_efs_access_point" "prometheus" {
 }
 
 resource "aws_security_group" "prometheus_efs" {
-  name        = "efs"
+  name        = "prometheus_efs"
   description = "Rules necesary for accessing EFS"
   vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
   tags        = merge(local.tags, { Name = "prometheus_efs" })
@@ -78,7 +78,7 @@ resource "aws_efs_access_point" "outofband" {
 
 resource "aws_security_group" "outofband_efs" {
   count       = local.is_management_env ? 1 : 0
-  name        = "efs"
+  name        = "outofband_efs"
   description = "Rules necesary for accessing EFS"
   vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
   tags        = merge(local.tags, { Name = "outofband_efs" })
