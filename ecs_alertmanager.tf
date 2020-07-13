@@ -69,7 +69,7 @@ resource "aws_ecs_service" "alertmanager" {
   load_balancer {
     target_group_arn = aws_lb_target_group.alertmanager[local.primary_role_index].arn
     container_name   = "alertmanager"
-    container_port   = var.prometheus_port
+    container_port   = var.alertmanager_port
   }
 
   service_registries {
