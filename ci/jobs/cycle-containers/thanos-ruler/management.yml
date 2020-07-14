@@ -1,8 +1,6 @@
 jobs:
-  - name: mgmt-thanos-ruler
+  - name: cycle-thanos-ruler-management
     plan:
-      - get: dataworks-metrics-infrastructure
-        trigger: false
       - .: (( inject meta.plan.cycle-containers ))
         params:
           AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci

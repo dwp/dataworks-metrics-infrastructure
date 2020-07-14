@@ -1,8 +1,6 @@
 jobs:
-  - name: development-prometheus
+  - name: cycle-prometheus-development
     plan:
-      - get: dataworks-metrics-infrastructure
-        trigger: false
       - .: (( inject meta.plan.cycle-containers ))
         params:
           AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci

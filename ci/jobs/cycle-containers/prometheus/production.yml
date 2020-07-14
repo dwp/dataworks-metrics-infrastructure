@@ -1,10 +1,6 @@
 jobs:
-  - name: production-prometheus
+  - name: cycle-prometheus-production
     plan:
-      - get: dataworks-metrics-infrastructure
-        trigger: false
-        passed:
-          - preprod-prometheus
       - .: (( inject meta.plan.cycle-containers ))
         params:
           AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
