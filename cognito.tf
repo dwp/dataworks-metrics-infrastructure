@@ -11,3 +11,9 @@ resource "aws_cognito_user_pool_client" "grafana" {
   allowed_oauth_scopes                 = ["phone", "aws.cognito.signin.user.admin", "email", "openid", "profile"]
   supported_identity_providers         = ["COGNITO"]
 }
+
+resource "aws_cognito_user_group" "grafana_editor" {
+  name         = "grafana-editor"
+  user_pool_id = data.terraform_remote_state.aws_concourse.outputs.cognito.user_pool_id
+  description  = "Grafana Editors"
+}
