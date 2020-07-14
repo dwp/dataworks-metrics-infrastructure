@@ -115,7 +115,7 @@ resource "aws_ecs_task_definition" "prometheus" {
   },
   {
     "cpu": ${var.fargate_cpu},
-    "image": "${data.terraform_remote_state.management.outputs.ecr_ecs_service_discovery_url}:debug",
+    "image": "${data.terraform_remote_state.management.outputs.ecr_ecs_service_discovery_url}",
     "memory": ${var.fargate_memory},
     "name": "ecs-service-discovery",
     "networkMode": "awsvpc",
