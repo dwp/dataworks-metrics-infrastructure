@@ -66,9 +66,10 @@ allow_sign_up = true
 client_id = ${client_id}
 client_secret = ${client_secret}
 scopes = openid profile email
-auth_url = https://${cognito_domain}.auth.${region}.amazoncognito.com/oauth2/authorize
-token_url = https://${cognito_domain}.auth.${region}.amazoncognito.com/oauth2/token
-api_url = https://${cognito_domain}.auth.${region}.amazoncognito.com/oauth2/userinfo
+auth_url = ${cognito_domain}/oauth2/authorize
+token_url = ${cognito_domain}/oauth2/token
+api_url = ${cognito_domain}/oauth2/userinfo
+role_attribute_path = "cognito:groups" | contains([*], 'grafana-editor') && 'Editor' || 'Viewer'
 
 #################################### Basic Auth ##########################
 [auth.basic]

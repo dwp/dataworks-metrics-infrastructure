@@ -124,7 +124,7 @@ data template_file "grafana" {
     grafana_domain   = aws_route53_record.grafana_loadbalancer[0].fqdn
     client_id        = aws_cognito_user_pool_client.grafana[0].id
     client_secret    = aws_cognito_user_pool_client.grafana[0].client_secret
-    cognito_domain   = aws_cognito_user_pool_domain.grafana[0].domain
+    cognito_domain   = data.terraform_remote_state.aws_concourse.outputs.cognito.user_pool_domain
     region           = var.region
   }
 }
