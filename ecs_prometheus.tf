@@ -187,7 +187,7 @@ resource "aws_security_group_rule" "prometheus_allow_egress_efs" {
   to_port                  = 2049
   type                     = "egress"
   security_group_id        = aws_security_group.prometheus.id
-  source_security_group_id = aws_security_group.efs.id
+  source_security_group_id = aws_security_group.prometheus_efs.id
 }
 
 resource "aws_iam_role" "prometheus" {
@@ -241,7 +241,8 @@ data "aws_iam_policy_document" "prometheus_read_config" {
     ]
 
     resources = [
-      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/*",
+      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/thanos/*",
+      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/prometheus/*",
     ]
   }
 
