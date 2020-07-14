@@ -307,10 +307,11 @@ resource "aws_iam_policy" "outofband_efs" {
   count       = local.is_management_env ? 1 : 0
   name        = "OutofbandEFSPolicy"
   description = "Allow Prometheus to access EFS volume"
-  policy      = data.aws_iam_policy_document.outofband_efs.json
+  policy      = data.aws_iam_policy_document.outofband_efs[local.primary_role_index].json
 }
 
 data "aws_iam_policy_document" "outofband_efs" {
+  count = local.is_management_env ? 1 : 0
   statement {
     effect = "Allow"
 
