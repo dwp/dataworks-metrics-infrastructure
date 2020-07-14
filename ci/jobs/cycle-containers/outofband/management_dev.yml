@@ -1,0 +1,10 @@
+jobs:
+  - name: mgmt-dev-outofband
+    plan:
+      - get: dataworks-metrics-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.cycle-containers ))
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management-dev)):role/ci
+          CLUSTER: main
+          SERVICE: outofband

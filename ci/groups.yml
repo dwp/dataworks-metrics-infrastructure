@@ -11,3 +11,44 @@ groups:
       - production
       - management-dev
       - management
+  - name: cycle-prometheus-nonprod
+    jobs:
+      - mgmt-dev-prometheus
+      - development-prometheus
+      - qa-prometheus
+      - integration-prometheus
+  - name: cycle-prometheus-prod
+    jobs:
+      - mgmt-prometheus
+      - preprod-prometheus
+      - production-prometheus
+  - name: cycle-grafana-mgmt-dev
+    jobs:
+      - mgmt-dev-grafana
+  - name: cycle-grafana-mgmt
+    jobs:
+      - mgmt-grafana
+  - name: cycle-outofband-mgmt-dev
+    jobs:
+      - mgmt-dev-outofband
+  - name: cycle-outofband-mgmt
+    jobs:
+      - mgmt-outofband
+  - name: cycle-tanos-ruler-mgmt-dev
+    jobs:
+      - mgmt-dev-thanos-ruler
+  - name: cycle-thanos-ruler-mgmt
+    jobs:
+      - mgmt-thanos-ruler
+  - name: cycle-thanos-query-mgmt-dev
+    jobs:
+      - mgmt-dev-thanos-query
+  - name: cycle-thanos-query-mgmt
+    jobs:
+      - mgmt-thanos-query
+  - name: cycle-alertmanager-mgmt-dev
+    jobs:
+      - mgmt-dev-alertmanager
+  - name: cycle-alertmanager-mgmt
+    jobs:
+      - mgmt-alertmanager

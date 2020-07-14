@@ -1,16 +1,16 @@
 jobs:
-  - name: production
+  - name: management
     plan:
       - get: dataworks-metrics-infrastructure
         passed:
-        - preprod
+        - management-dev
         trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
-          TF_WORKSPACE: production
+          TF_WORKSPACE: management
       - .: (( inject meta.plan.terraform-apply ))
         params:
-          TF_WORKSPACE: production
+          TF_WORKSPACE: management
       - .: (( inject meta.plan.terraform-plan ))
         params:
-          TF_WORKSPACE: production
+          TF_WORKSPACE: management

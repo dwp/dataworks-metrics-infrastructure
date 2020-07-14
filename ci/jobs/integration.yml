@@ -1,16 +1,16 @@
 jobs:
-  - name: preprod
+  - name: integration
     plan:
       - get: dataworks-metrics-infrastructure
         passed:
-        - integration
+        - qa
         trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
-          TF_WORKSPACE: preprod
+          TF_WORKSPACE: integration
       - .: (( inject meta.plan.terraform-apply ))
         params:
-          TF_WORKSPACE: preprod
+          TF_WORKSPACE: integration
       - .: (( inject meta.plan.terraform-plan ))
         params:
-          TF_WORKSPACE: preprod
+          TF_WORKSPACE: integration

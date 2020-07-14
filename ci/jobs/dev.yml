@@ -1,0 +1,8 @@
+jobs:
+  - name: development
+    plan:
+      - get: dataworks-metrics-infrastructure
+        trigger: true
+      - .: (( inject meta.plan.terraform-bootstrap ))
+      - .: (( inject meta.plan.terraform-apply ))
+      - .: (( inject meta.plan.terraform-plan ))

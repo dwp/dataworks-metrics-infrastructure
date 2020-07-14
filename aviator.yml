@@ -7,6 +7,20 @@ spruce:
         regexp: ".*.yml"
       - with_in: ci/jobs/
         regexp: ".*.yml"
+      - with_in: ci/jobs/cycle-containers/
+        regexp: ".*.yml"
+      - with_in: ci/jobs/cycle-containers/alertmanager/
+        regexp: ".*.yml"
+      - with_in: ci/jobs/cycle-containers/grafana/
+        regexp: ".*.yml"
+      - with_in: ci/jobs/cycle-containers/outofband/
+        regexp: ".*.yml"
+      - with_in: ci/jobs/cycle-containers/prometheus/
+        regexp: ".*.yml"
+      - with_in: ci/jobs/cycle-containers/thanos-query/
+        regexp: ".*.yml"
+      - with_in: ci/jobs/cycle-containers/thanos-ruler/
+        regexp: ".*.yml"
     to: aviator_pipeline.yml
 fly:
   name: metrics-infrastructure
