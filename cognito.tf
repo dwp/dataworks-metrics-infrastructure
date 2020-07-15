@@ -13,6 +13,7 @@ resource "aws_cognito_user_pool_client" "grafana" {
 }
 
 resource "aws_cognito_user_group" "grafana_editor" {
+  count        = local.is_management_env ? 1 : 0
   name         = "grafana-editor"
   user_pool_id = data.terraform_remote_state.aws_concourse.outputs.cognito.user_pool_id
   description  = "Grafana Editors"
