@@ -232,7 +232,7 @@ resource "aws_s3_bucket_object" "alertmanager" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/alertmanager/config.yml"
-  content    = data.template_file.alertmanager.rendered
+  content    = data.template_file.alertmanager[local.primary_role_index].rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
 
