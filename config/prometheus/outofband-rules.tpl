@@ -3,7 +3,8 @@ groups:
   rules:
   - alert: ThanosRulerAlertSendFailure
     annotations:
-      message: Thanos ruler failed to send alert to alertmanager
+      title: Thanos Ruler alert dropped
+      description: Thanos ruler failed to send alert to alertmanager, possible connectivity issue.
     expr: rate(thanos_alert_sender_alerts_dropped_total[30s]) > 0
     for: 0s
     labels:
@@ -11,7 +12,8 @@ groups:
 
   - alert: ThanosRulerEvaluationFailure
     annotations:
-      message: Thanos ruler failed to evaluate rule indication possible query API issue
+      title: Thanos Ruler failed to evaluate rule
+      description: Thanos ruler failed to evaluate a rule indicating possible query API issue on Thanos query node. 
     expr: rate(prometheus_rule_evaluation_failures_total[30s]) > 0
     for: 0s
     labels:
@@ -19,7 +21,8 @@ groups:
 
   - alert: ThanosRulerSlowEvaluation
     annotations:
-      message: Thanos ruler is taking longer to evaluate than specified evaluation interval
+      title: Thanos Ruler is performing slow evaluation
+      description: Thanos ruler is taking too long to evaluate rules, so not all rules are being evaluated, correct issue or increate evaluation interval.
     expr: prometheus_rule_group_interval_seconds < prometheus_rule_group_last_duration_seconds
     for: 0s
     labels:
@@ -27,7 +30,8 @@ groups:
 
   - alert: ThanosRulerEvaluationWarnings
     annotations:
-      message: Thanos ruler failed to send alert to alertmanager
+      title: Thanos ruler failed to send alert to alertmanager
+      description: Thanos ruler failed to send alert to alertmanager, possible connectivity issue.
     expr: rate(thanos_rule_evaluation_with_warnings_total[30s]) > 0
     for: 0s
     labels:
