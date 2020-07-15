@@ -1,12 +1,7 @@
-resource "aws_cognito_user_pool" "monitoring" {
-  count = local.is_management_env ? 1 : 0
-  name  = "monitoring"
-}
-
 resource "aws_cognito_user_pool_client" "grafana" {
   count                                = local.is_management_env ? 1 : 0
   name                                 = "grafana"
-  user_pool_id                         = aws_cognito_user_pool.monitoring[0].id
+  user_pool_id                         = data.terraform_remote_state.aws_concourse.outputs.cognito.user_pool_id
   generate_secret                      = true
   callback_urls                        = ["https://${aws_route53_record.grafana_loadbalancer[0].fqdn}/login/generic_oauth"]
   logout_urls                          = ["https://${aws_route53_record.grafana_loadbalancer[0].fqdn}"]
@@ -17,8 +12,8 @@ resource "aws_cognito_user_pool_client" "grafana" {
   supported_identity_providers         = ["COGNITO"]
 }
 
-resource "aws_cognito_user_pool_domain" "grafana" {
-  count        = local.is_management_env ? 1 : 0
-  domain       = "grafana-${local.environment}"
-  user_pool_id = aws_cognito_user_pool.monitoring[0].id
+resource "aws_cognito_user_group" "grafana_editor" {
+  name         = "grafana-editor"
+  user_pool_id = data.terraform_remote_state.aws_concourse.outputs.cognito.user_pool_id
+  description  = "Grafana Editors"
 }
