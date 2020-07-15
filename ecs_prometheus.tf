@@ -2,7 +2,7 @@ resource "aws_ecs_task_definition" "prometheus" {
   family                   = "prometheus"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "512"
+  cpu                      = "1024"
   memory                   = "4096"
   task_role_arn            = aws_iam_role.prometheus.arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
@@ -110,6 +110,40 @@ resource "aws_ecs_task_definition" "prometheus" {
       {
         "name": "THANOS_CONFIG_S3_PREFIX",
         "value": "${var.name}/thanos"
+      }
+    ]
+  },
+  {
+    "cpu": ${var.fargate_cpu},
+    "image": "${data.terraform_remote_state.management.outputs.ecr_ecs_service_discovery_url}",
+    "memory": ${var.fargate_memory},
+    "name": "ecs-service-discovery",
+    "networkMode": "awsvpc",
+    "user": "nobody",
+    "mountPoints": [
+      {
+        "containerPath": "/prometheus",
+        "sourceVolume": "prometheus"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${aws_cloudwatch_log_group.monitoring.name}",
+        "awslogs-region": "${data.aws_region.current.name}",
+        "awslogs-stream-prefix": "ecs-service-discovery"
+      }
+    },
+    "placementStrategy": [
+      {
+        "field": "attribute:ecs.availability-zone",
+        "type": "spread"
+      }
+    ],
+    "environment": [
+      {
+        "name": "SERVICE_DISCOVERY_DIRECTORY",
+        "value": "/prometheus/ecs"
       }
     ]
   }
@@ -276,7 +310,9 @@ data "aws_iam_policy_document" "prometheus_service_discovery" {
 
     actions = [
       "ec2:DescribeInstances",
-      "ec2:DescribeTags"
+      "ec2:DescribeTags",
+      "ecs:Describe*",
+      "ecs:List*"
     ]
 
     resources = [

@@ -29,3 +29,13 @@ scrape_configs:
     target_label: instance
     replacement: $1
     action: replace
+- job_name: 'ecs-service-discovery'
+  scrape_interval: 1m
+  file_sd_configs:
+    - files:
+        - /prometheus/ecs/1m-tasks.json
+  relabel_configs:
+    - source_labels: [metrics_path]
+      action: replace
+      target_label: __metrics_path__
+      regex: (.+)
