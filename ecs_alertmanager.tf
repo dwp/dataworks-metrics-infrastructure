@@ -45,6 +45,10 @@ resource "aws_ecs_task_definition" "alertmanager" {
       {
         "name": "ALERTMANAGER_CONFIG_S3_PREFIX",
         "value": "${var.name}/alertmanager"
+      },
+      {
+        "name": "ALERTMANAGER_DOMAIN",
+        "value": "https://${aws_route53_record.alertmanager_loadbalancer[0].fqdn}"
       }
     ]
   }

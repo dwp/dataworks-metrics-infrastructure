@@ -69,9 +69,9 @@ resource "aws_vpc_endpoint" "internet_proxy" {
   private_dns_enabled = false
 }
 
-resource "aws_security_group_rule" "egress_internet_proxy" {
+resource "aws_security_group_rule" "grafana_egress_internet_proxy" {
   count                    = local.is_management_env ? 1 : 0
-  description              = "Allow Internet access via the proxy"
+  description              = "Allow Grafana internet access via the proxy"
   type                     = "egress"
   from_port                = 3128
   to_port                  = 3128
@@ -80,13 +80,35 @@ resource "aws_security_group_rule" "egress_internet_proxy" {
   security_group_id        = aws_security_group.grafana[0].id
 }
 
-resource "aws_security_group_rule" "ingress_internet_proxy" {
+resource "aws_security_group_rule" "grafana_ingress_internet_proxy" {
   count                    = local.is_management_env ? 1 : 0
-  description              = "Allow proxy access from grafana"
+  description              = "Allow proxy access from Grafana"
   type                     = "ingress"
   from_port                = 3128
   to_port                  = 3128
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.grafana[0].id
+  security_group_id        = aws_security_group.internet_proxy_endpoint[0].id
+}
+
+resource "aws_security_group_rule" "alertmanager_egress_internet_proxy" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow Alertmanager internet access via the proxy"
+  type                     = "egress"
+  from_port                = 3128
+  to_port                  = 3128
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.internet_proxy_endpoint[0].id
+  security_group_id        = aws_security_group.alertmanager[0].id
+}
+
+resource "aws_security_group_rule" "alertmanager_ingress_internet_proxy" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow proxy access from Alertmanager"
+  type                     = "ingress"
+  from_port                = 3128
+  to_port                  = 3128
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.alertmanager[0].id
   security_group_id        = aws_security_group.internet_proxy_endpoint[0].id
 }

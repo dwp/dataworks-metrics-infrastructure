@@ -1,11 +1,21 @@
-data "aws_secretsmanager_secret" "dataworks-secrets" {
+data "aws_secretsmanager_secret" "dataworks_secrets" {
   count = local.is_management_env ? 1 : 0
   name  = "/concourse/dataworks/dataworks-secrets"
 }
 
-data "aws_secretsmanager_secret_version" "dataworks-secrets" {
+data "aws_secretsmanager_secret_version" "dataworks_secrets" {
   count     = local.is_management_env ? 1 : 0
-  secret_id = data.aws_secretsmanager_secret.dataworks-secrets[local.primary_role_index].id
+  secret_id = data.aws_secretsmanager_secret.dataworks_secrets[local.primary_role_index].id
+}
+
+data "aws_secretsmanager_secret" "dataworks" {
+  count = local.is_management_env ? 1 : 0
+  name  = "/concourse/dataworks/dataworks"
+}
+
+data "aws_secretsmanager_secret_version" "dataworks" {
+  count     = local.is_management_env ? 1 : 0
+  secret_id = data.aws_secretsmanager_secret.dataworks[local.primary_role_index].id
 }
 
 resource "random_id" "monitoring_bucket" {
@@ -119,8 +129,8 @@ data template_file "grafana" {
   count    = local.is_management_env ? 1 : 0
   template = file("${path.module}/config/grafana/grafana.tpl")
   vars = {
-    grafana_user     = jsondecode(data.aws_secretsmanager_secret_version.dataworks-secrets[local.primary_role_index].secret_binary)["grafana_user"]
-    grafana_password = jsondecode(data.aws_secretsmanager_secret_version.dataworks-secrets[local.primary_role_index].secret_binary)["grafana_password"]
+    grafana_user     = jsondecode(data.aws_secretsmanager_secret_version.dataworks_secrets[local.primary_role_index].secret_binary)["grafana_user"]
+    grafana_password = jsondecode(data.aws_secretsmanager_secret_version.dataworks_secrets[local.primary_role_index].secret_binary)["grafana_password"]
     grafana_domain   = aws_route53_record.grafana_loadbalancer[0].fqdn
     client_id        = aws_cognito_user_pool_client.grafana[0].id
     client_secret    = aws_cognito_user_pool_client.grafana[0].client_secret
@@ -145,7 +155,12 @@ data template_file "grafana_dashboard" {
 }
 
 data template_file "alertmanager" {
+  count    = local.is_management_env ? 1 : 0
   template = file("${path.module}/config/alertmanager/config.yml")
+  vars = {
+    slack_api_url = jsondecode(data.aws_secretsmanager_secret_version.dataworks[local.primary_role_index].secret_binary)["slack_webhook_url"]
+    http_proxy    = "http://${aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name}:3128"
+  }
 }
 
 data template_file "outofband" {
@@ -217,7 +232,7 @@ resource "aws_s3_bucket_object" "alertmanager" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/alertmanager/config.yml"
-  content    = data.template_file.alertmanager.rendered
+  content    = data.template_file.alertmanager[local.primary_role_index].rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
 
