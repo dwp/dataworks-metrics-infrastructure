@@ -175,6 +175,10 @@ data template_file "outofband_rules" {
   template = file("${path.module}/config/prometheus/outofband-rules.tpl")
 }
 
+data template_file "cloudwatch_exporter" {
+  template = file("${path.module}/config/cloudwatch-exporter/config.tpl")
+}
+
 resource "aws_s3_bucket_object" "prometheus" {
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/prometheus/prometheus-slave.yml"
@@ -249,5 +253,12 @@ resource "aws_s3_bucket_object" "outofband_rules" {
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/prometheus/outofband-rules.yml"
   content    = data.template_file.outofband_rules.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+}
+
+resource "aws_s3_bucket_object" "cloudwatch_exporter" {
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/cloudwatch-exporter/config.yml"
+  content    = data.template_file.cloudwatch_exporter.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
