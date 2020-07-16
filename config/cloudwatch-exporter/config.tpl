@@ -1,5 +1,5 @@
 ---
-region: eu-west-2
+region: ${region}
 metrics:
 - aws_namespace: AWS/ELB
   aws_metric_name: HealthyHostCount

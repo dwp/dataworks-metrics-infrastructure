@@ -177,6 +177,9 @@ data template_file "outofband_rules" {
 
 data template_file "cloudwatch_exporter" {
   template = file("${path.module}/config/cloudwatch-exporter/config.tpl")
+  vars = {
+    region = var.region
+  }
 }
 
 resource "aws_s3_bucket_object" "prometheus" {
