@@ -57,7 +57,7 @@ DEFINITION
 
 resource "aws_ecs_service" "cloudwatch_exporter" {
   name             = "cloudwatch-exporter"
-  cluster          = data.terraform_remote_state.management.outputs.ecs_cluster_main.id
+  cluster          = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_cluster_main.id : data.terraform_remote_state.common.outputs.ecs_cluster_main.id
   task_definition  = aws_ecs_task_definition.cloudwatch_exporter.arn
   platform_version = "1.4.0"
   desired_count    = 1
