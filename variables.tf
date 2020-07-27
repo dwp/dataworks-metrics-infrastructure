@@ -49,7 +49,7 @@ variable "alertmanager_port" {
 }
 
 variable "cloudwatch_exporter_port" {
-  default = 9106
+  default = 5000
 }
 
 variable "subnets" {
