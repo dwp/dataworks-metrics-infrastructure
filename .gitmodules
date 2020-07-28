@@ -1,0 +1,3 @@
+[submodule "config/grafana/provisioning/dashboards"]
+	path = config/grafana/provisioning/dashboards
+	url = https://github.ucds.io/dip/dataworks-dashboards.git
