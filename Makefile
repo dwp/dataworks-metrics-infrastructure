@@ -2,6 +2,7 @@ SHELL:=bash
 
 aws_profile=default
 aws_region=eu-west-2
+enterprise_github_url=`aws secretsmanager get-secret-value --secret-id /concourse/dataworks/dataworks | jq .SecretBinary | tr -d "\"" | base64 -D | jq .enterprise_github_url | tr -d "\""`
 
 default: help
 
@@ -18,7 +19,8 @@ bootstrap: ## Bootstrap local environment for first use
 		export AWS_REGION=$(aws_region); \
 		python3 bootstrap_terraform.py; \
 	}
-	terraform fmt -recursive
+	@if [ ! -d "config/grafana/provisioning/dashboards" ]; then git clone https://$(enterprise_github_url)/dip/dataworks-dashboards.git config/grafana/provisioning/dashboards; fi
+	@terraform fmt -recursive
 
 .PHONY: git-hooks
 git-hooks: ## Set up hooks in .git/hooks

@@ -5,6 +5,7 @@ jobs:
         passed:
         - development
         trigger: true
+      - get: dataworks-dashboards
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           TF_WORKSPACE: qa

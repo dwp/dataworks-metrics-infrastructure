@@ -4,6 +4,7 @@ jobs:
   - get: dataworks-metrics-infrastructure-pr
     trigger: true
     version: every
+  - get: dataworks-dashboards
   - put: dataworks-metrics-infrastructure-pr
     params:
       path: dataworks-metrics-infrastructure-pr
@@ -30,6 +31,7 @@ jobs:
         args:
         - -exc
         - |
+          cp -r ../dataworks-dashboards config/grafana/provisioning/dashboards
           cp ../terraform-config/terraform.tf .
           cp ../terraform-config/terraform.tfvars .
           cp ../terraform-config/vpc.tf modules/vpc/vpc.tf
@@ -40,6 +42,7 @@ jobs:
       inputs:
       - name: dataworks-metrics-infrastructure-pr
       - name: terraform-config
+      - name: dataworks-dashboards
     on_failure:
       put: dataworks-metrics-infrastructure-pr
       params:
