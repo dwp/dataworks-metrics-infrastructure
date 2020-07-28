@@ -1,12 +1,11 @@
-discovery:
-  jobs:
-  - regions:
+static:
+  - namespace: EMR/Collections
+    name: collections
+    regions:
       - ${region}
-    type: elb
-    enableMetricData: true
     metrics:
-      - name: ActiveConnectionCount
+      - name: AllCollectionsProcessingTime
         statistics:
-        - Sum
-        period: 300
-        length: 600
+        - Minimum
+        period: 60
+        length: 300
