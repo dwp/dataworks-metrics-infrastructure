@@ -151,7 +151,7 @@ data template_file "grafana_dashboard_config" {
 }
 
 data template_file "grafana_dashboard" {
-  template = file("${path.module}/config/grafana/provisioning/dashboards/dashboard.json")
+  template = file("${path.module}/config/grafana/provisioning/dashboards/security_dashboard.json")
 }
 
 data template_file "alertmanager" {
@@ -230,7 +230,7 @@ resource "aws_s3_bucket_object" "grafana_dashboard_config" {
 resource "aws_s3_bucket_object" "grafana_dashboard" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
-  key        = "${var.name}/grafana/provisioning/dashboards/dashboard.json"
+  key        = "${var.name}/grafana/provisioning/dashboards/security_dashboard.json"
   content    = data.template_file.grafana_dashboard.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }

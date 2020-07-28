@@ -1,10 +1,10 @@
 groups:
 - name: alert.rules
   rules:
-  - alert: SimpleAlert
+  - alert: MetadataNoToken
     annotations:
-      message: Simple alert to ensure query node is running
-    expr: vector(1) < 1
+      message: IMDSv1 has been left enabled, please disable.
+    expr: aws_ec2_metadata_no_token_maximum > 0
     for: 0s
     labels:
       severity: warning
