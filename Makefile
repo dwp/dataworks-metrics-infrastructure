@@ -19,7 +19,7 @@ bootstrap: ## Bootstrap local environment for first use
 		export AWS_REGION=$(aws_region); \
 		python3 bootstrap_terraform.py; \
 	}
-	@git clone https://$(enterprise_github_url)/dip/dataworks-dashboards.git config/grafana/provisioning/dashboards
+	@if [ ! -d "config/grafana/provisioning/dashboards" ]; then git clone https://$(enterprise_github_url)/dip/dataworks-dashboards.git config/grafana/provisioning/dashboards; fi
 	@terraform fmt -recursive
 
 .PHONY: git-hooks
