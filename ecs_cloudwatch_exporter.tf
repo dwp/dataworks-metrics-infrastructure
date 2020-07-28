@@ -108,6 +108,16 @@ resource "aws_security_group_rule" "allow_cloudwatch_exporter_egress_https" {
   security_group_id = aws_security_group.cloudwatch_exporter.id
 }
 
+resource "aws_security_group_rule" "allow_prometheus_ingress_cloudwatch_exporter" {
+  description              = "Allows prometheus to access exporter metrics"
+  type                     = "ingress"
+  to_port                  = var.cloudwatch_exporter_port
+  protocol                 = "tcp"
+  from_port                = var.cloudwatch_exporter_port
+  security_group_id        = aws_security_group.cloudwatch_exporter.id
+  source_security_group_id = aws_security_group.prometheus.id
+}
+
 resource "aws_iam_role" "cloudwatch_exporter" {
   name               = "cloudwatch-exporter"
   assume_role_policy = data.aws_iam_policy_document.cloudwatch_exporter_assume_role.json
@@ -193,6 +203,8 @@ data "aws_iam_policy_document" "cloudwatch_exporter_read_cloudwatch" {
 
     actions = [
       "cloudwatch:ListMetrics",
+      "cloudwatch:GetMetricData",
+      "cloudwatch:GetMetricStatistics"
     ]
 
     resources = [
