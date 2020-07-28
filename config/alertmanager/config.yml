@@ -13,7 +13,8 @@ route:
 
   routes:
   - match:
-    alertname: MetadataNoToken
+      alertname: MetadataNoToken
+    receiver: "null"
 
 receivers:
 - name: 'null'
