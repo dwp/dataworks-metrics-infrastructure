@@ -11,10 +11,16 @@ route:
   repeat_interval: 3h 
   receiver: slack-notifications
 
+  routes:
+  - match:
+      alertname: MetadataNoToken
+    receiver: "null"
+
 receivers:
+- name: 'null'
 - name: 'slack-notifications'
   slack_configs:
-  - channel: '#dataworks-alerts
+  - channel: '#dataworks-alerts'
     send_resolved: true
     icon_url: 'https://avatars3.githubusercontent.com/u/3380462'
     title: |-
