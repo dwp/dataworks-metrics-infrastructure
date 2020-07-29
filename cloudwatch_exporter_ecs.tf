@@ -6,11 +6,10 @@ resource "aws_ecs_task_definition" "cloudwatch_exporter" {
   memory                   = "4096"
   task_role_arn            = aws_iam_role.cloudwatch_exporter.arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
-  container_definitions    = "[${data.template_file.cloudwatch_exporter_definition[local.primary_role_index].rendered}]"
+  container_definitions    = "[${data.template_file.cloudwatch_exporter_definition.rendered}]"
 }
 
 data "template_file" "cloudwatch_exporter_definition" {
-  count    = local.is_management_env ? 1 : 0
   template = file("${path.module}/container_definition.tpl")
   vars = {
     name          = "cloudwatch-exporter"
