@@ -19,6 +19,7 @@ groups:
       - cycle-thanos-query-management
       - cycle-alertmanager-management
       - cycle-prometheus-management
+      - cycle-cloudwatch-exporter-management
   - name: admin-management-dev
     jobs:
       - cycle-grafana-management-dev
@@ -27,18 +28,24 @@ groups:
       - cycle-thanos-query-management-dev
       - cycle-alertmanager-management-dev
       - cycle-prometheus-management-dev
+      - cycle-cloudwatch-exporter-management-dev
   - name: admin-development
     jobs:
       - cycle-prometheus-development
+      - cycle-cloudwatch-exporter-development
   - name: admin-qa
     jobs:
       - cycle-prometheus-qa
+      - cycle-cloudwatch-exporter-qa
   - name: admin-integration
     jobs:
       - cycle-prometheus-integration
+      - cycle-cloudwatch-exporter-integration
   - name: admin-preprod
     jobs:
       - cycle-prometheus-preprod
+      - cycle-cloudwatch-exporter-preprod
   - name: admin-production
     jobs:
       - cycle-prometheus-production
+      - cycle-cloudwatch-exporter-production
