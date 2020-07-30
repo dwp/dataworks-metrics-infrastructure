@@ -10,6 +10,10 @@ output "thanos_security_group" {
   value = local.is_management_env ? aws_security_group.thanos_query[0].id : null_resource.dummy.id
 }
 
+output "adg_pushgateway_security_group" {
+  value = local.is_management_env ? null_resource.dummy.id : aws_security_group.adg_pushgateway[0].id
+}
+
 output "monitoring_bucket" {
   value = {
     id  = local.is_management_env ? aws_s3_bucket.monitoring[local.primary_role_index].id : null_resource.dummy.id
