@@ -109,7 +109,7 @@ resource "aws_ecs_service" "prometheus" {
   name             = "prometheus"
   cluster          = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_cluster_main.id : data.terraform_remote_state.common.outputs.ecs_cluster_main.id
   task_definition  = aws_ecs_task_definition.prometheus.arn
-  platform_version = "1.4.0"
+  platform_version = var.platform_version
   desired_count    = 1
   launch_type      = "FARGATE"
 

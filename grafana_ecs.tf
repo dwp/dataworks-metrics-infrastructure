@@ -30,11 +30,11 @@ data "template_file" "grafana_definition" {
     environment_variables = jsonencode([
       {
         "name" : "HTTP_PROXY",
-        "value" : "http://${aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name}:3128"
+        "value" : "http://${aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name}:${var.internet_proxy_port}"
       },
       {
         "name" : "HTTPS_PROXY",
-        "value" : "http://${aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name}:3128"
+        "value" : "http://${aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name}:${var.internet_proxy_port}"
       },
       {
         "name" : "NO_PROXY",
@@ -49,7 +49,7 @@ resource "aws_ecs_service" "grafana" {
   name             = "grafana"
   cluster          = data.terraform_remote_state.management.outputs.ecs_cluster_main.id
   task_definition  = aws_ecs_task_definition.grafana[local.primary_role_index].arn
-  platform_version = "1.4.0"
+  platform_version = var.platform_version
   desired_count    = 1
   launch_type      = "FARGATE"
 

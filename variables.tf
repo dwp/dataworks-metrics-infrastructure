@@ -32,6 +32,12 @@ variable "secondary" {
   default     = "slave"
 }
 
+variable "platform_version" {
+  description = "ECS Service platform version"
+  type        = string
+  default     = "1.4.0"
+}
+
 variable "fargate_cpu" {
   default = "256"
 }
@@ -40,6 +46,11 @@ variable "fargate_memory" {
   default = "512"
 }
 
+variable "https_port" {
+  default = 443
+}
+
+variable "internet_proxy_port" {}
 variable "grafana_port" {}
 variable "prometheus_port" {}
 variable "thanos_port_grpc" {}

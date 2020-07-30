@@ -12,10 +12,10 @@ resource "aws_security_group" "prometheus" {
 resource "aws_security_group_rule" "allow_prometheus_egress_https" {
   description       = "Allows ECS to pull container from S3"
   type              = "egress"
-  to_port           = 443
+  to_port           = var.https_port
   protocol          = "tcp"
   prefix_list_ids   = [module.vpc.outputs.s3_prefix_list_ids[local.secondary_role_index]]
-  from_port         = 443
+  from_port         = var.https_port
   security_group_id = aws_security_group.prometheus.id
 }
 
