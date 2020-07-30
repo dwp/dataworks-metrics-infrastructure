@@ -6,6 +6,9 @@ jobs:
         - management-dev
         trigger: true
       - get: dataworks-dashboards
+        passed:
+        - management-dev
+        trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           TF_WORKSPACE: management
