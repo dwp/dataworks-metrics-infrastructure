@@ -26,7 +26,7 @@ resource "aws_wafregional_web_acl_association" "lb" {
 resource "aws_lb_listener" "monitoring" {
   count             = local.is_management_env ? 1 : 0
   load_balancer_arn = aws_lb.monitoring[0].arn
-  port              = 443
+  port              = var.https_port
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
   certificate_arn   = aws_acm_certificate.monitoring[0].arn
@@ -271,10 +271,10 @@ resource "aws_security_group" "monitoring" {
 resource "aws_security_group_rule" "allow_ingress_https" {
   count             = local.is_management_env ? 1 : 0
   description       = "Enable inbound connectivity from whitelisted endpoints"
-  from_port         = 443
+  from_port         = var.https_port
   protocol          = "tcp"
   security_group_id = aws_security_group.monitoring[local.primary_role_index].id
-  to_port           = 443
+  to_port           = var.https_port
   type              = "ingress"
   cidr_blocks       = var.whitelist_cidr_blocks
 }

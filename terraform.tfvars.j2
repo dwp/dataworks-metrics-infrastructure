@@ -1,7 +1,10 @@
-assume_role           = "administrator"
-parent_domain_name    = "{{dataworks_domain_name}}"
-whitelist_cidr_blocks = ["{{ucfs['team_cidr_block']}}"]
-grafana_port          = "{{ports.grafana_port}}"
-prometheus_port       = "{{ports.prometheus_port}}"
-thanos_port_grpc      = "{{ports.thanos_port_grpc}}"
-thanos_port_http      = "{{ports.thanos_port_http}}"
+assume_role              = "administrator"
+parent_domain_name       = "{{dataworks_domain_name}}"
+whitelist_cidr_blocks    = ["{{ucfs['team_cidr_block']}}"]
+internet_proxy_port      = {{ports.internet_proxy_port}}
+grafana_port             = {{ports.grafana_port}}
+prometheus_port          = {{ports.prometheus_port}}
+thanos_port_grpc         = {{ports.thanos_port_grpc}}
+thanos_port_http         = {{ports.thanos_port_http}}
+alertmanager_port        = {{ports.alertmanager_port}}
+cloudwatch_exporter_port = {{ports.cloudwatch_exporter_port}}

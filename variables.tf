@@ -32,6 +32,12 @@ variable "secondary" {
   default     = "slave"
 }
 
+variable "platform_version" {
+  description = "ECS Service platform version"
+  type        = string
+  default     = "1.4.0"
+}
+
 variable "fargate_cpu" {
   default = "256"
 }
@@ -40,17 +46,17 @@ variable "fargate_memory" {
   default = "512"
 }
 
+variable "https_port" {
+  default = 443
+}
+
+variable "internet_proxy_port" {}
 variable "grafana_port" {}
 variable "prometheus_port" {}
 variable "thanos_port_grpc" {}
 variable "thanos_port_http" {}
-variable "alertmanager_port" {
-  default = 9093
-}
-
-variable "cloudwatch_exporter_port" {
-  default = 5000
-}
+variable "alertmanager_port" {}
+variable "cloudwatch_exporter_port" {}
 
 variable "subnets" {
   description = "define sizes for subnets using Terraform cidrsubnet function. For an empty /24 VPC, the defaults will create /28 public subnets and /26 private subnets, one of each in each AZ."
