@@ -4,6 +4,23 @@ jobs:
       - get: dataworks-metrics-infrastructure
         trigger: true
       - get: dataworks-dashboards
+
       - .: (( inject meta.plan.terraform-bootstrap ))
+
       - .: (( inject meta.plan.terraform-apply ))
+
       - .: (( inject meta.plan.terraform-plan ))
+
+      - .: (( inject meta.plan.cycle-containers ))
+        task: trigger-prometheus-deployment
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+          CLUSTER: main
+          SERVICE: prometheus
+
+      - .: (( inject meta.plan.trigger-deployment ))
+        task: trigger-cloudwatch-exporter-deployment
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+          CLUSTER: main
+          SERVICE: cloudwatch-exporter
