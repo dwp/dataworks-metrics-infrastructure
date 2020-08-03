@@ -1,5 +1,5 @@
 data template_file "hive_exporter" {
-  count = local.is_management_env ? 0 : 1
+  count    = local.is_management_env ? 0 : 1
   template = file("${path.module}/config/hive_exporter/config.yml")
   vars = {
     metrics_bucket = data.terraform_remote_state.aws_analytical_dataset_generation.outputs.published_bucket.id

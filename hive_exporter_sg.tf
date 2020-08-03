@@ -2,7 +2,7 @@ resource "aws_security_group" "hive_exporter" {
   count       = local.is_management_env ? 0 : 1
   name        = "hive-exporter"
   description = "Rules necesary for pulling container image"
-  vpc_id      = data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.vpc.id
+  vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
   tags        = merge(local.tags, { Name = "hive-exporter" })
 
   lifecycle {
@@ -16,7 +16,7 @@ resource "aws_security_group_rule" "allow_hive_exporter_egress_https" {
   type              = "egress"
   to_port           = var.https_port
   protocol          = "tcp"
-  prefix_list_ids   = [data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.s3_prefix_list_id]
+  prefix_list_ids   = [module.vpc.outputs.s3_prefix_list_ids[local.secondary_role_index]]
   from_port         = var.https_port
   security_group_id = aws_security_group.hive_exporter[local.primary_role_index].id
 }

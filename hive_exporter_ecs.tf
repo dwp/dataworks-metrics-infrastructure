@@ -46,8 +46,8 @@ resource "aws_ecs_service" "hive_exporter" {
   launch_type      = "FARGATE"
 
   network_configuration {
-    security_groups = [aws_security_group.adg_pushgateway[local.primary_role_index].id, aws_security_group.hive_exporter[local.primary_role_index].id]
-    subnets         = data.terraform_remote_state.aws_internal_compute.outputs.pdm_subnet.ids
+    security_groups = [aws_security_group.hive_exporter[local.primary_role_index].id]
+    subnets         = module.vpc.outputs.private_subnets[local.secondary_role_index]
   }
 
   service_registries {
@@ -56,18 +56,12 @@ resource "aws_ecs_service" "hive_exporter" {
   }
 }
 
-resource "aws_service_discovery_private_dns_namespace" "pdm_services" {
-  count = local.is_management_env ? 0 : 1
-  name  = "${local.environment}.pdm.services.${var.parent_domain_name}"
-  vpc   = data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.vpc.id
-}
-
 resource "aws_service_discovery_service" "hive_exporter" {
   count = local.is_management_env ? 0 : 1
   name  = "hive-exporter"
 
   dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.pdm_services[0].id
+    namespace_id = aws_service_discovery_private_dns_namespace.monitoring.id
 
     dns_records {
       ttl  = 10
