@@ -1,0 +1,19 @@
+
+exporter_port: 3392
+log_level: info
+metrics_bucket: ${metrics_bucket}
+metrics_key: ${metrics_key}
+metric_name_prefix: hive
+metrics:
+- name: buffers_direct_capacity
+  path: $.gauges.'buffers.direct.capacity'.value
+- name: buffers_direct_count
+  path: $.gauges.'buffers.direct.count'.value
+- name: buffers_direct_used
+  path: $.gauges.'buffers.direct.used'.value
+- name: buffers_mapped_capacity
+  path: $.gauges.'buffers.mapped.capacity'.value
+- name: buffers_mapped_count
+  path: $.gauges.'buffers.mapped.count'.value
+- name: buffers_mapped_used
+  path: $.gauges.'buffers.mapped.used'.value
