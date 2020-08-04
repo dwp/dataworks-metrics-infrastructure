@@ -6,8 +6,8 @@ resource "aws_vpc_peering_connection" "analytical_env" {
 }
 
 resource "aws_route" "analytical_env_prometheus_secondary" {
-  count                     = local.is_management_env ? 0 : 2
-  route_table_id            = data.terraform_remote_state.aws_analytical_env_infra.outputs.vpc_main.vpc.main_route_table_id
+  count                     = local.is_management_env ? 0 : length(data.terraform_remote_state.aws_analytical_env_infra.outputs.route_table_ids)
+  route_table_id            = data.terraform_remote_state.aws_analytical_env_infra.outputs.route_table_ids[count.index]
   destination_cidr_block    = local.cidr_block[local.environment].mon-slave-vpc
   vpc_peering_connection_id = aws_vpc_peering_connection.analytical_env[0].id
 }
