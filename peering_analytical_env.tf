@@ -6,8 +6,8 @@ resource "aws_vpc_peering_connection" "analytical_env" {
 }
 
 resource "aws_route" "analytical_env_prometheus_secondary" {
-  count                     = local.is_management_env ? 0 : length(data.terraform_remote_state.aws_analytical_env_infra.outputs.route_table_ids)
-  route_table_id            = data.terraform_remote_state.aws_analytical_env_infra.outputs.route_table_ids[count.index]
+  count                     = local.is_management_env ? 0 : length(data.terraform_remote_state.aws_analytical_env_infra.outputs.vpc.aws_route_table_private_ids)
+  route_table_id            = data.terraform_remote_state.aws_analytical_env_infra.outputs.vpc.aws_route_table_private_ids[count.index]
   destination_cidr_block    = local.cidr_block[local.environment].mon-slave-vpc
   vpc_peering_connection_id = aws_vpc_peering_connection.analytical_env[0].id
 }
@@ -31,7 +31,7 @@ resource "aws_security_group_rule" "analytical_env_allow_ingress_prometheus" {
 }
 
 resource "aws_security_group_rule" "prometheus_allow_egress_analytical_env" {
-  count             = local.is_management_env ? 1 : 0
+  count             = local.is_management_env ? 0 : 1
   type              = "egress"
   to_port           = var.pushgateway_port
   protocol          = "tcp"
