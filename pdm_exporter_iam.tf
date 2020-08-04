@@ -1,11 +1,11 @@
-resource "aws_iam_role" "hive_exporter" {
+resource "aws_iam_role" "pdm_exporter" {
   count              = local.is_management_env ? 0 : 1
-  name               = "hive-exporter"
-  assume_role_policy = data.aws_iam_policy_document.hive_exporter_assume_role[0].json
-  tags               = merge(local.tags, { Name = "hive-exporter" })
+  name               = "pdm-exporter"
+  assume_role_policy = data.aws_iam_policy_document.pdm_exporter_assume_role[0].json
+  tags               = merge(local.tags, { Name = "pdm-exporter" })
 }
 
-data "aws_iam_policy_document" "hive_exporter_assume_role" {
+data "aws_iam_policy_document" "pdm_exporter_assume_role" {
   count = local.is_management_env ? 0 : 1
   statement {
     actions = [
@@ -19,20 +19,20 @@ data "aws_iam_policy_document" "hive_exporter_assume_role" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "hive_exporter_read_config_attachment" {
+resource "aws_iam_role_policy_attachment" "pdm_exporter_read_config_attachment" {
   count      = local.is_management_env ? 0 : 1
-  role       = aws_iam_role.hive_exporter[local.primary_role_index].name
-  policy_arn = aws_iam_policy.hive_exporter_read_config[local.primary_role_index].arn
+  role       = aws_iam_role.pdm_exporter[local.primary_role_index].name
+  policy_arn = aws_iam_policy.pdm_exporter_read_config[local.primary_role_index].arn
 }
 
-resource "aws_iam_policy" "hive_exporter_read_config" {
+resource "aws_iam_policy" "pdm_exporter_read_config" {
   count       = local.is_management_env ? 0 : 1
-  name        = "GrafanaReadConfigPolicy"
+  name        = "PDMReadConfigPolicy"
   description = "Allow Grafana to read from config bucket"
-  policy      = data.aws_iam_policy_document.hive_exporter_read_config[0].json
+  policy      = data.aws_iam_policy_document.pdm_exporter_read_config[0].json
 }
 
-data "aws_iam_policy_document" "hive_exporter_read_config" {
+data "aws_iam_policy_document" "pdm_exporter_read_config" {
   count = local.is_management_env ? 0 : 1
   statement {
     effect = "Allow"
@@ -54,7 +54,7 @@ data "aws_iam_policy_document" "hive_exporter_read_config" {
     ]
 
     resources = [
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/hive_exporter/*",
+      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/pdm_exporter/*",
     ]
   }
 
@@ -71,20 +71,20 @@ data "aws_iam_policy_document" "hive_exporter_read_config" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "hive_exporter_read_metrics_attachment" {
+resource "aws_iam_role_policy_attachment" "pdm_exporter_read_metrics_attachment" {
   count      = local.is_management_env ? 0 : 1
-  role       = aws_iam_role.hive_exporter[local.primary_role_index].name
-  policy_arn = aws_iam_policy.hive_exporter_read_metrics[local.primary_role_index].arn
+  role       = aws_iam_role.pdm_exporter[local.primary_role_index].name
+  policy_arn = aws_iam_policy.pdm_exporter_read_metrics[local.primary_role_index].arn
 }
 
-resource "aws_iam_policy" "hive_exporter_read_metrics" {
+resource "aws_iam_policy" "pdm_exporter_read_metrics" {
   count       = local.is_management_env ? 0 : 1
-  name        = "HiveExporterReadMetricsPolicy"
-  description = "Allow Hive Exporter to read from published bucket"
-  policy      = data.aws_iam_policy_document.hive_exporter_read_metrics[0].json
+  name        = "PDMExporterReadMetricsPolicy"
+  description = "Allow PDM Exporter to read from published bucket"
+  policy      = data.aws_iam_policy_document.pdm_exporter_read_metrics[0].json
 }
 
-data "aws_iam_policy_document" "hive_exporter_read_metrics" {
+data "aws_iam_policy_document" "pdm_exporter_read_metrics" {
   count = local.is_management_env ? 0 : 1
   statement {
     effect = "Allow"
