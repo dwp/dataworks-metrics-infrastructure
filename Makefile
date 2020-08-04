@@ -1,4 +1,4 @@
-SHELL:=bash
+SHELL:=bash 
 
 aws_profile=default
 aws_region=eu-west-2
