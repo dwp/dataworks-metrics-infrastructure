@@ -20,23 +20,23 @@ resource "aws_route" "prometheus_secondary_analytical_env" {
 }
 
 resource "aws_security_group_rule" "analytical_env_allow_ingress_prometheus" {
-  count                    = local.is_management_env ? 0 : 1
-  description              = "Allow prometheus ${var.secondary} to access analytical_env metrics"
-  from_port                = var.prometheus_port
-  protocol                 = "tcp"
-  security_group_id        = data.terraform_remote_state.aws_analytical_env_infra.outputs.alb_sg.id
-  to_port                  = var.prometheus_port
-  type                     = "ingress"
-  cidr_blocks              = [data.terraform_remote_state.aws_analytical_env_infra.outputs.vpc_main.vpc.cidr_block]
+  count             = local.is_management_env ? 0 : 1
+  description       = "Allow prometheus ${var.secondary} to access analytical_env metrics"
+  from_port         = var.prometheus_port
+  protocol          = "tcp"
+  security_group_id = data.terraform_remote_state.aws_analytical_env_infra.outputs.alb_sg.id
+  to_port           = var.prometheus_port
+  type              = "ingress"
+  cidr_blocks       = [data.terraform_remote_state.aws_analytical_env_infra.outputs.vpc_main.vpc.cidr_block]
 }
 
 resource "aws_security_group_rule" "prometheus_allow_egress_analytical_env" {
-  count                    = local.is_management_env ? 0 : 1
-  description              = "Allow prometheus ${var.secondary} to access analytical_env metrics"
-  from_port                = var.prometheus_port
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.prometheus.id
-  to_port                  = var.prometheus_port
-  type                     = "egress"
-  cidr_blocks              = [data.terraform_remote_state.aws_analytical_env_infra.outputs.vpc_main.vpc.cidr_block]
+  count             = local.is_management_env ? 0 : 1
+  description       = "Allow prometheus ${var.secondary} to access analytical_env metrics"
+  from_port         = var.prometheus_port
+  protocol          = "tcp"
+  security_group_id = aws_security_group.prometheus.id
+  to_port           = var.prometheus_port
+  type              = "egress"
+  cidr_blocks       = [data.terraform_remote_state.aws_analytical_env_infra.outputs.vpc_main.vpc.cidr_block]
 }
