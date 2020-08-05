@@ -15,12 +15,12 @@ data "template_file" "hbase_exporter_definition" {
   template = file("${path.module}/container_definition.tpl")
   vars = {
     name          = "hbase-exporter"
-    group_name    = "hbase_exporter"
+    group_name    = "json_exporter"
     cpu           = var.fargate_cpu
     image_url     = data.terraform_remote_state.management.outputs.ecr_hive_exporter_url
     memory        = var.fargate_memory
     user          = "nobody"
-    ports         = jsonencode([var.hive_exporter_port])
+    ports         = jsonencode([var.json_exporter_port])
     log_group     = aws_cloudwatch_log_group.monitoring.name
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
@@ -31,6 +31,10 @@ data "template_file" "hbase_exporter_definition" {
       {
         "name" : "PROMETHEUS",
         "value" : "true"
+      },
+      {
+        "name" : "CONFIG_FILE",
+        "value" : "hbase_config.yml"
       }
     ])
   }

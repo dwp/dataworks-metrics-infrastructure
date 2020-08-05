@@ -62,8 +62,12 @@ variable "pushgateway_port" {
   default = 9091
 }
 
-variable "hive_exporter_port" {
+variable "json_exporter_port" {
   default = 3392
+}
+
+variable "jmx_port" {
+  default = 16010
 }
 
 variable "subnets" {

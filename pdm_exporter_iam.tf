@@ -54,7 +54,7 @@ data "aws_iam_policy_document" "pdm_exporter_read_config" {
     ]
 
     resources = [
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/pdm_exporter/*",
+      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/json_exporter/*",
     ]
   }
 
