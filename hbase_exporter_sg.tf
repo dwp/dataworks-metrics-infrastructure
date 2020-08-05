@@ -23,11 +23,11 @@ resource "aws_security_group_rule" "allow_hbase_exporter_egress_https" {
 
 resource "aws_security_group_rule" "allow_prometheus_ingress_hbase_exporter" {
   count                    = local.is_management_env ? 0 : 1
-  description              = "Allows prometheus to access ADG hbase_exporter"
+  description              = "Allows prometheus to access Hbase exporter"
   type                     = "ingress"
-  to_port                  = var.hive_exporter_port
+  to_port                  = var.json_exporter_port
   protocol                 = "tcp"
-  from_port                = var.hive_exporter_port
+  from_port                = var.json_exporter_port
   security_group_id        = aws_security_group.hbase_exporter[0].id
   source_security_group_id = aws_security_group.prometheus.id
 }

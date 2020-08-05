@@ -20,22 +20,22 @@ resource "aws_route" "prometheus_secondary_analytical_env" {
 }
 
 resource "aws_security_group_rule" "analytical_env_allow_ingress_prometheus" {
-  count             = local.is_management_env ? 0 : 1
-  description       = "Allow prometheus ${var.secondary} to access analytical_env metrics"
-  from_port         = var.pushgateway_port
-  protocol          = "tcp"
-  security_group_id = data.terraform_remote_state.aws_analytical_env_app.outputs.push_gateway_sg
-  to_port           = var.pushgateway_port
-  type              = "ingress"
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allow prometheus ${var.secondary} to access analytical_env metrics"
+  from_port                = var.pushgateway_port
+  protocol                 = "tcp"
+  security_group_id        = data.terraform_remote_state.aws_analytical_env_app.outputs.push_gateway_sg
+  to_port                  = var.pushgateway_port
+  type                     = "ingress"
   source_security_group_id = aws_security_group.prometheus.id
 }
 
 resource "aws_security_group_rule" "prometheus_allow_egress_analytical_env" {
-  count             = local.is_management_env ? 0 : 1
-  type              = "egress"
-  to_port           = var.pushgateway_port
-  protocol          = "tcp"
-  from_port         = var.pushgateway_port
-  security_group_id = aws_security_group.prometheus.id
+  count                    = local.is_management_env ? 0 : 1
+  type                     = "egress"
+  to_port                  = var.pushgateway_port
+  protocol                 = "tcp"
+  from_port                = var.pushgateway_port
+  security_group_id        = aws_security_group.prometheus.id
   source_security_group_id = data.terraform_remote_state.aws_analytical_env_app.outputs.push_gateway_sg
 }

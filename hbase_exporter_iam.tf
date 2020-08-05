@@ -54,7 +54,7 @@ data "aws_iam_policy_document" "hbase_exporter_read_config" {
     ]
 
     resources = [
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/hbase_exporter/*",
+      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/json_exporter/*",
     ]
   }
 
@@ -90,35 +90,12 @@ data "aws_iam_policy_document" "hbase_exporter_read_metrics" {
     effect = "Allow"
 
     actions = [
-      "s3:ListBucket",
+      "elasticmapreduce:DescribeCluster",
+      "elasticmapreduce:ListClusters"
     ]
 
     resources = [
-      data.terraform_remote_state.aws_analytical_dataset_generation.outputs.published_bucket.arn,
-    ]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:GetObject",
-    ]
-
-    resources = [
-      "${data.terraform_remote_state.aws_analytical_dataset_generation.outputs.published_bucket.arn}/metrics/hbase-metrics.json",
-    ]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "kms:Decrypt",
-    ]
-
-    resources = [
-      data.terraform_remote_state.aws_analytical_dataset_generation.outputs.published_bucket_cmk.arn,
+      "*",
     ]
   }
 }
