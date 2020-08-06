@@ -1,6 +1,6 @@
 global:
   external_labels:
-    role: slave
+    role: ${environment}
   scrape_interval: 1m
   scrape_timeout: 10s
   evaluation_interval: 1m
@@ -39,3 +39,10 @@ scrape_configs:
       action: replace
       target_label: __metrics_path__
       regex: (.+)
+  metric_relabel_configs:
+    - source_labels: [__name__]
+      regex: 'application_[0-9]+_[0-9]+_(.*)'
+      replacement: adg_$${1}
+      target_label: __name__
+      action: replace
+      
