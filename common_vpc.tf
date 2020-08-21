@@ -13,11 +13,6 @@ module "vpc" {
   common_tags                              = merge(local.tags, { Name = var.name })
 }
 
-resource "aws_eip" "prometheus_master_nat" {
-  count = local.is_management_env ? local.zone_count : 0
-  tags  = merge(local.tags, { Name = "${var.name}-nat-${local.zone_names[count.index]}" })
-}
-
 resource "aws_internet_gateway" "igw" {
   count  = local.is_management_env ? 1 : 0
   vpc_id = module.vpc.outputs.vpcs[local.primary_role_index].id
