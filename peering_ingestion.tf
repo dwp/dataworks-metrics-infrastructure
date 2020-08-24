@@ -15,7 +15,7 @@ resource "aws_route" "ingestion_prometheus_secondary" {
 resource "aws_route" "prometheus_secondary_ingestion" {
   count                     = local.is_management_env ? 0 : local.zone_count
   route_table_id            = module.vpc.outputs.private_route_tables[local.secondary_role_index][count.index]
-  destination_cidr_block    = local.cidr_block[local.environment].ingest-vpc
+  destination_cidr_block    = local.cidr_block_ingest_vpc
   vpc_peering_connection_id = aws_vpc_peering_connection.ingestion[0].id
 }
 
