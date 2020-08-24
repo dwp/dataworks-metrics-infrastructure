@@ -23,8 +23,16 @@ data template_file "grafana_dashboard_config" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/dashboards.tpl")
 }
 
-data template_file "grafana_dashboard" {
+data template_file "security_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/security_dashboard.json")
+}
+
+data template_file "adg_dashboard" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/adg_dashboard.json")
+}
+
+data template_file "analytical_emr_dashboard" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/analytical_emr_dashboard.json")
 }
 
 
@@ -52,10 +60,26 @@ resource "aws_s3_bucket_object" "grafana_dashboard_config" {
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
 
-resource "aws_s3_bucket_object" "grafana_dashboard" {
+resource "aws_s3_bucket_object" "security_dashboard" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/grafana/provisioning/dashboards/security_dashboard.json"
-  content    = data.template_file.grafana_dashboard.rendered
+  content    = data.template_file.security_dashboard.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+}
+
+resource "aws_s3_bucket_object" "adg_dashboard" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/adg_dashboard.json"
+  content    = data.template_file.adg_dashboard.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+}
+
+resource "aws_s3_bucket_object" "analytical_emr_dashboard" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/analytical_emr_dashboard.json"
+  content    = data.template_file.analytical_emr_dashboard.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
