@@ -58,6 +58,8 @@ meta:
           - name: terraform-config
           - name: dataworks-dashboards
       params:
+        TF_VAR_grafana_username: ((dataworks-secrets.grafana_user))
+        TF_VAR_grafana_password: ((dataworks-secrets.grafana_password))
         TF_CLI_ARGS_apply: -lock-timeout=300s
         TF_INPUT: "false"
     terraform-plan:
@@ -89,6 +91,8 @@ meta:
           - name: terraform-config
           - name: dataworks-dashboards
       params:
+        TF_VAR_grafana_username: ((dataworks-secrets.grafana_user))
+        TF_VAR_grafana_password: ((dataworks-secrets.grafana_password))
         TF_CLI_ARGS_plan: -lock-timeout=300s
         TF_INPUT: "false"
     cycle-containers:
