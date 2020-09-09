@@ -6,6 +6,12 @@ resource "aws_lb" "monitoring" {
   subnets            = aws_subnet.public.*.id
   security_groups    = [aws_security_group.monitoring[0].id]
   tags               = merge(local.tags, { Name = "${var.name}-lb" })
+
+  access_logs {
+    bucket  = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
+    prefix  = "ELBLogs/${var.name}-${var.primary}"
+    enabled = true
+  }
 }
 
 module "waf" {
