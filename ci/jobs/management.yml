@@ -13,14 +13,19 @@ jobs:
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           TF_WORKSPACE: management
+          AWS_SECRETS_ROLE: arn:aws:iam::((aws_account.management)):role/ci
 
       - .: (( inject meta.plan.terraform-apply ))
         params:
           TF_WORKSPACE: management
+          TF_VAR_grafana_username: ((dataworks-secrets.grafana_user))
+          TF_VAR_grafana_password: ((dataworks-secrets.grafana_password))
 
       - .: (( inject meta.plan.terraform-plan ))
         params:
           TF_WORKSPACE: management
+          TF_VAR_grafana_username: ((dataworks-secrets.grafana_user))
+          TF_VAR_grafana_password: ((dataworks-secrets.grafana_password))
 
       - .: (( inject meta.plan.cycle-containers ))
         task: trigger-outofband-deployment

@@ -28,6 +28,7 @@ meta:
           - name: terraform-config
       params:
         AWS_REGION: eu-west-2
+        AWS_SECRETS_ROLE: arn:aws:iam::((aws_account.management-dev)):role/ci
     terraform-apply:
       task: terraform-apply
       config:
@@ -58,6 +59,8 @@ meta:
           - name: terraform-config
           - name: dataworks-dashboards
       params:
+        TF_VAR_grafana_username: ((dataworks-secrets.grafana_user_mgt_dev))
+        TF_VAR_grafana_password: ((dataworks-secrets.grafana_password_mgt_dev))
         TF_CLI_ARGS_apply: -lock-timeout=300s
         TF_INPUT: "false"
     terraform-plan:
@@ -89,6 +92,8 @@ meta:
           - name: terraform-config
           - name: dataworks-dashboards
       params:
+        TF_VAR_grafana_username: ((dataworks-secrets.grafana_user_mgt_dev))
+        TF_VAR_grafana_password: ((dataworks-secrets.grafana_password_mgt_dev))
         TF_CLI_ARGS_plan: -lock-timeout=300s
         TF_INPUT: "false"
     cycle-containers:

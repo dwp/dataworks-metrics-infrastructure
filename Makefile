@@ -1,8 +1,9 @@
 SHELL:=bash
 
 aws_profile=default
+aws_profile_mgt_dev=dataworks-management-dev
 aws_region=eu-west-2
-enterprise_github_url=`aws secretsmanager get-secret-value --secret-id /concourse/dataworks/dataworks | jq .SecretBinary | tr -d "\"" | base64 -D | jq .enterprise_github_url | tr -d "\""`
+enterprise_github_url=`aws --region ${aws_region} --profile ${aws_profile_mgt_dev} secretsmanager get-secret-value --secret-id /concourse/dataworks/dataworks | jq .SecretBinary | tr -d "\"" | base64 -D | jq .enterprise_github_url | tr -d "\""`
 
 default: help
 
@@ -16,6 +17,7 @@ bootstrap: ## Bootstrap local environment for first use
 	pip3 install --user Jinja2 PyYAML boto3
 	@{ \
 		export AWS_PROFILE=$(aws_profile); \
+		export AWS_PROFILE_MGT_DEV=$(aws_profile_mgt_dev); \
 		export AWS_REGION=$(aws_region); \
 		python3 bootstrap_terraform.py; \
 	}
