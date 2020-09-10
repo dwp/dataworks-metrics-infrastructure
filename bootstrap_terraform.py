@@ -7,12 +7,17 @@ import os
 import sys
 import yaml
 import json
+import datetime
+from dateutil.tz import tzlocal
 
 
 def main():
     if 'AWS_PROFILE' in os.environ:
         boto3.setup_default_session(profile_name=os.environ['AWS_PROFILE'])
+    if 'AWS_PROFILE_MGT_DEV' in os.environ:
         session_mgt_dev = boto3.Session(profile_name=os.environ['AWS_PROFILE_MGT_DEV'])
+    elif 'AWS_ROLE_MGT_DEV' in os.environ:
+        session_mgt_dev = assumed_role_session(os.environ['AWS_ROLE_MGT_DEV'])
     if 'AWS_REGION' in os.environ:
         ssm = boto3.client('ssm', region_name=os.environ['AWS_REGION'])
         secrets_manager = session_mgt_dev.client('secretsmanager', region_name=os.environ['AWS_REGION'])
@@ -58,6 +63,25 @@ def main():
         terraform_tfvars.write(template.render(config_data))
     print("Terraform config successfully created")
 
+
+def assumed_role_session(role_arn: str, base_session: botocore.session.Session = None):
+    base_session = base_session or boto3.session.Session()._session
+    fetcher = botocore.credentials.AssumeRoleCredentialFetcher(
+        client_creator = base_session.create_client,
+        source_credentials = base_session.get_credentials(),
+        role_arn = role_arn,
+        extra_args = {
+            #    'RoleSessionName': None # set this if you want something non-default
+        }
+    )
+    creds = botocore.credentials.DeferredRefreshableCredentials(
+        method = 'assume-role',
+        refresh_using = fetcher.fetch_credentials,
+        time_fetcher = lambda: datetime.datetime.now(tzlocal())
+    )
+    botocore_session = botocore.session.Session()
+    botocore_session._credentials = creds
+    return boto3.Session(botocore_session = botocore_session)
 
 if __name__ == "__main__":
     main()

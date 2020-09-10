@@ -28,6 +28,7 @@ meta:
           - name: terraform-config
       params:
         AWS_REGION: eu-west-2
+        AWS_ROLE_MGT_DEV: arn:aws:iam::((aws_account.management-dev)):role/ci
     terraform-apply:
       task: terraform-apply
       config:
