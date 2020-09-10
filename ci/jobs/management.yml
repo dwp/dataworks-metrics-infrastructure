@@ -13,6 +13,7 @@ jobs:
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           TF_WORKSPACE: management
+          AWS_ROLE_MGT_DEV: arn:aws:iam::((aws_account.management)):role/ci
 
       - .: (( inject meta.plan.terraform-apply ))
         params:

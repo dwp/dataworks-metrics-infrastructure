@@ -12,6 +12,9 @@ jobs:
   - .: (( inject meta.plan.terraform-bootstrap ))
     input_mapping:
       dataworks-metrics-infrastructure: dataworks-metrics-infrastructure-pr
+    params:
+      TF_WORKSPACE: management
+      AWS_ROLE_MGT_DEV: arn:aws:iam::((aws_account.management)):role/ci
   - task: terraform-plan
     config:
       platform: linux
