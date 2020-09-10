@@ -12,16 +12,18 @@ import json
 def main():
     if 'AWS_PROFILE' in os.environ:
         boto3.setup_default_session(profile_name=os.environ['AWS_PROFILE'])
+        session_mgt_dev = boto3.Session(profile_name=os.environ['AWS_PROFILE_MGT_DEV'])
     if 'AWS_REGION' in os.environ:
         ssm = boto3.client('ssm', region_name=os.environ['AWS_REGION'])
-        secrets_manager = boto3.client('secretsmanager', region_name=os.environ['AWS_REGION'])
+        secrets_manager = session_mgt_dev.client('secretsmanager', region_name=os.environ['AWS_REGION'])
     else:
         ssm = boto3.client('ssm')
-        secrets_manager = boto3.client('secretsmanager')
+        secrets_manager = session_mgt_dev.client('secretsmanager')
 
     try:
         parameter = ssm.get_parameter(Name='terraform_bootstrap_config', WithDecryption=False)
-        response = secrets_manager.get_secret_value(SecretId="/concourse/dataworks/monitoring")
+        monitoring_secret = secrets_manager.get_secret_value(SecretId="/concourse/dataworks/monitoring")
+        dataworks_secret = secrets_manager.get_secret_value(SecretId="/concourse/dataworks/dataworks-secrets")
     except botocore.exceptions.ClientError as e:
         error_message = e.response["Error"]["Message"]
         if "The security token included in the request is invalid" in error_message:
@@ -33,8 +35,10 @@ def main():
     
 
     config_data = yaml.load(parameter['Parameter']['Value'], Loader=yaml.FullLoader)
-    config_data['roles'] = json.loads(response['SecretBinary'])[os.getenv('TF_WORKSPACE', 'development')]
-    config_data['ports'] = json.loads(response['SecretBinary'])["ports"]
+    config_data['roles'] = json.loads(monitoring_secret['SecretBinary'])[os.getenv('TF_WORKSPACE', 'development')]
+    config_data['ports'] = json.loads(monitoring_secret['SecretBinary'])["ports"]
+    config_data['grafana_username'] = json.loads(dataworks_secret['SecretBinary'])["grafana_user"]
+    config_data['grafana_password'] = json.loads(dataworks_secret['SecretBinary'])["grafana_password"]
 
     with open('modules/vpc/vpc.tf.j2') as in_template:
         template = jinja2.Template(in_template.read())
