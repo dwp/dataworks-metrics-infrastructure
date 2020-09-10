@@ -22,6 +22,7 @@ jobs:
           version: ((dataworks.terraform_version))
           tag: ((dataworks.terraform_version))
       params:
+        TF_WORKSPACE: management
         TF_VAR_grafana_username: ((dataworks-secrets.grafana_user))
         TF_VAR_grafana_password: ((dataworks-secrets.grafana_password))
         TF_INPUT: false
