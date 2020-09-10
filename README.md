@@ -1,6 +1,20 @@
 # dataworks-metrics-infrastructure
 Repo for storing the Metrics Infrastructure to be used in AWS
 
+## Local Development
+
+### Requirements
+* Terraform 0.12
+* Python 3
+* JQ
+* Access to DataWorks AWS environments
+
+### Bootstrapping
+Before beginning development you will need to generate some Terraform files from templates and clone the dashboards repo. To do this, simply run the following:
+```bash
+make bootstrap
+```
+You will then be able to develop against the development account (default Terraform workspace). If you want to run a plan against another environment then you will need to change Terraform workspace by **SETTING THE `TF_WORKSPACE` ENVIRONMENT VARIABLE** instead of using `terraform workspace select`. This is due to that environment variable being used within `bootstrap_terraform.py` for variable lookups
 
 ## Basic infrastructure outline
 
