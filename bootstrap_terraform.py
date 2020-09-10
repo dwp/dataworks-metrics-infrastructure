@@ -15,15 +15,15 @@ def main():
     if 'AWS_PROFILE' in os.environ:
         boto3.setup_default_session(profile_name=os.environ['AWS_PROFILE'])
     if 'AWS_PROFILE_MGT_DEV' in os.environ:
-        session_mgt_dev = boto3.Session(profile_name=os.environ['AWS_PROFILE_MGT_DEV'])
-    elif 'AWS_ROLE_MGT_DEV' in os.environ:
-        session_mgt_dev = assumed_role_session(os.environ['AWS_ROLE_MGT_DEV'])
+        secrets_session = boto3.Session(profile_name=os.environ['AWS_PROFILE_MGT_DEV'])
+    elif 'AWS_SECRETS_ROLE' in os.environ:
+        secrets_session = assumed_role_session(os.environ['AWS_SECRETS_ROLE'])
     if 'AWS_REGION' in os.environ:
         ssm = boto3.client('ssm', region_name=os.environ['AWS_REGION'])
-        secrets_manager = session_mgt_dev.client('secretsmanager', region_name=os.environ['AWS_REGION'])
+        secrets_manager = secrets_session.client('secretsmanager', region_name=os.environ['AWS_REGION'])
     else:
         ssm = boto3.client('ssm')
-        secrets_manager = session_mgt_dev.client('secretsmanager')
+        secrets_manager = secrets_session.client('secretsmanager')
 
     try:
         parameter = ssm.get_parameter(Name='terraform_bootstrap_config', WithDecryption=False)
