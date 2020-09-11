@@ -1,7 +1,4 @@
 groups:
-  - name: pull-request
-    jobs:
-      - dataworks-metrics-infrastructure-pr
   - name: master
     jobs:
       - development
@@ -11,6 +8,9 @@ groups:
       - production
       - management-dev
       - management
+  - name: pull-request
+    jobs:
+      - dataworks-metrics-infrastructure-pr
   - name: admin-management
     jobs:
       - cycle-grafana-management
