@@ -3,28 +3,30 @@ data "aws_availability_zones" "current" {}
 {% for value in roles %}
 module "monitoring_{{value}}_vpc" {
   source                                     = "dwp/vpc/aws"
-  version                                    = "2.0.14"
+  version                                    = "3.0.8"
   vpc_name                                   = "monitoring-{{value}}"
   region                                     = var.region
   vpc_cidr_block                             = var.vpc_cidr_block.mon-{{value}}-vpc
-  interface_vpce_source_security_group_count = {% if value == "master" %}5{% else %}{% if roles[0] == "slave" %}4{% else %}2{% endif %}{% endif %}
   interface_vpce_source_security_group_ids   = [{% if value == "master" %}var.interface_vpce_source_security_group_ids[0], var.interface_vpce_source_security_group_ids[1], var.interface_vpce_source_security_group_ids[2], var.interface_vpce_source_security_group_ids[3], var.interface_vpce_source_security_group_ids[4]{% else %}{% if roles[0] == "slave" %}var.interface_vpce_source_security_group_ids[0], var.interface_vpce_source_security_group_ids[1], var.interface_vpce_source_security_group_ids[2], var.interface_vpce_source_security_group_ids[3]{% else %}var.interface_vpce_source_security_group_ids[5], var.interface_vpce_source_security_group_ids[6]{% endif %}{% endif %}]
   interface_vpce_subnet_ids                  = aws_subnet.monitoring_{{value}}_private.*.id
   gateway_vpce_route_table_ids               = aws_route_table.monitoring_{{value}}_private.*.id
-  ec2_endpoint                               = true
-  ec2messages_endpoint                       = true
-  kms_endpoint                               = true
-  logs_endpoint                              = true
-  monitoring_endpoint                        = true
-  s3_endpoint                                = true
-  ssm_endpoint                               = true
-  ssmmessages_endpoint                       = true
-  secretsmanager_endpoint                    = true
-  ecrapi_endpoint                            = true
-  ecrdkr_endpoint                            = true
-  ecs_endpoint                               = true
-  emr_endpoint                               = true
   common_tags                                = var.common_tags
+
+  aws_vpce_services = [
+   "ec2",
+   "ec2messages",
+   "kms",
+   "logs",
+   "monitoring",
+   "s3",
+   "ssm",
+   "ssmmessages",
+   "secretsmanager",
+   "ecr.api",
+   "ecr.dkr",
+   "ecs",
+   "elasticmapreduce"
+  ]
 }
 
 resource "aws_subnet" "monitoring_{{value}}_private" {
