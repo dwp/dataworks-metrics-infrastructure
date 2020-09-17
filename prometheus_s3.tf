@@ -2,7 +2,7 @@ data template_file "prometheus" {
   template = file("${path.module}/config/prometheus/prometheus-slave.tpl")
   vars = {
     parent_domain_name = var.parent_domain_name
-    environment = local.environment
+    environment        = local.environment
   }
 }
 

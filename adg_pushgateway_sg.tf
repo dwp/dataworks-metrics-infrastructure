@@ -16,7 +16,7 @@ resource "aws_security_group_rule" "allow_adg_pushgateway_egress_https" {
   type              = "egress"
   to_port           = var.https_port
   protocol          = "tcp"
-  prefix_list_ids   = [data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.s3_prefix_list_id]
+  prefix_list_ids   = [data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.prefix_list_ids.s3]
   from_port         = var.https_port
   security_group_id = aws_security_group.adg_pushgateway[local.primary_role_index].id
 }
