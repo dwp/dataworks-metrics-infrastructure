@@ -58,6 +58,11 @@ resource "aws_s3_bucket" "monitoring" {
       }
     }
   }
+
+  logging {
+    target_bucket = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
+    target_prefix = "S3Logs/${local.tags.Name}-monitoring-bucket"
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "monitoring" {
