@@ -1,0 +1,57 @@
+name: 'Terraform GitHub Actions'
+on:
+  - pull_request
+jobs:
+  terraform:
+    name: 'Terraform fmt'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@master
+      - name: 'Terraform Format'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.19
+          tf_actions_subcommand: 'fmt'
+          tf_actions_working_dir: '.'
+          tf_actions_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: tflint
+        run: |
+          pwd
+          ls
+          curl https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+          output=""
+
+          section=$(tflint -f json --force --disable-rule=aws_cloudwatch_log_group_invalid_name --config=./.tflint.hcl $d |jq -c '.issues[] | "ISSUE FOUND: (\(.rule.name)) in \(.range.filename) line \(.range.start.line) - \(.range.end.line)¡"')
+          output+=$(if [ ${#section} -gt 1 ] ; then echo "***ISSUE(S) FOUND IN ${d}***:¡${section}¢"; fi);
+
+          for d in $(find ./modules -type d) ;do
+            section=$(tflint -f json --force --disable-rule=aws_cloudwatch_log_group_invalid_name --config=./.tflint.hcl $d |jq -c '.issues[] | "ISSUE FOUND: (\(.rule.name)) in \(.range.filename) line \(.range.start.line) - \(.range.end.line)¡"')
+            output+=$(if [ ${#section} -gt 1 ] ; then echo "***ISSUE(S) FOUND IN ${d}***:¡${section}¢"; fi);
+          done
+
+          output=$( echo $output | sed -e 's/"//g' )
+
+          IFS='¢' read -r -a array <<< "$output"
+
+          for i in "${array[@]}"
+            do
+              IFS='¡' read -r -a comment_sections <<< "$i"
+              echo "${comment_sections[0]}" >> .github/workflows/comment.md
+              echo "\`\`\`" >> .github/workflows/comment.md
+              for p in "${comment_sections[@]:1}"
+                do
+                  echo $p >> .github/workflows/comment.md
+                done
+              echo -e "\`\`\` \n" >> .github/workflows/comment.md
+            done
+
+      - name: Add checkout commands
+        uses: harupy/comment-on-pr@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          filename: comment.md
