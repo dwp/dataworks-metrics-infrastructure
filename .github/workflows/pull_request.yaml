@@ -26,7 +26,7 @@ jobs:
           output=""
 
           section=$(tflint -f json --force --disable-rule=aws_cloudwatch_log_group_invalid_name --config=./.tflint.hcl $d |jq -c '.issues[] | "ISSUE FOUND: (\(.rule.name)) in \(.range.filename) line \(.range.start.line) - \(.range.end.line)¡"')
-          output+=$(if [ ${#section} -gt 1 ] ; then echo "***ISSUE(S) FOUND IN ${d}***:¡${section}¢"; fi);
+          output+=$(if [ ${#section} -gt 1 ] ; then echo "***ISSUE(S) FOUND IN ROOT FOLDER***:¡${section}¢"; fi);
 
           for d in $(find ./modules -type d) ;do
             section=$(tflint -f json --force --disable-rule=aws_cloudwatch_log_group_invalid_name --config=./.tflint.hcl $d |jq -c '.issues[] | "ISSUE FOUND: (\(.rule.name)) in \(.range.filename) line \(.range.start.line) - \(.range.end.line)¡"')
