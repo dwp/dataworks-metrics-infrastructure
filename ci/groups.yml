@@ -33,19 +33,34 @@ groups:
     jobs:
       - cycle-prometheus-development
       - cycle-cloudwatch-exporter-development
+      - cycle-hbase-exporter-development
+      - cycle-pdm-exporter-development
+      - cycle-adg-pushgateway-development
   - name: admin-qa
     jobs:
       - cycle-prometheus-qa
       - cycle-cloudwatch-exporter-qa
+      - cycle-hbase-exporter-qa
+      - cycle-pdm-exporter-qa
+      - cycle-adg-pushgateway-qa
   - name: admin-integration
     jobs:
       - cycle-prometheus-integration
       - cycle-cloudwatch-exporter-integration
+      - cycle-hbase-exporter-integration
+      - cycle-pdm-exporter-integration
+      - cycle-adg-pushgateway-integration
   - name: admin-preprod
     jobs:
       - cycle-prometheus-preprod
       - cycle-cloudwatch-exporter-preprod
+      - cycle-hbase-exporter-preprod
+      - cycle-pdm-exporter-preprod
+      - cycle-adg-pushgateway-preprod
   - name: admin-production
     jobs:
       - cycle-prometheus-production
       - cycle-cloudwatch-exporter-production
+      - cycle-hbase-exporter-production
+      - cycle-pdm-exporter-production
+      - cycle-adg-pushgateway-production
