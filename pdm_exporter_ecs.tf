@@ -8,6 +8,7 @@ resource "aws_ecs_task_definition" "pdm_exporter" {
   task_role_arn            = aws_iam_role.pdm_exporter[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.pdm_exporter_definition[local.primary_role_index].rendered}]"
+  tags                     = merge(local.tags, { Name = var.name })
 }
 
 data "template_file" "pdm_exporter_definition" {
@@ -58,6 +59,8 @@ resource "aws_ecs_service" "pdm_exporter" {
     registry_arn   = aws_service_discovery_service.pdm_exporter[local.primary_role_index].arn
     container_name = "pdm-exporter"
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_service_discovery_service" "pdm_exporter" {
@@ -72,4 +75,6 @@ resource "aws_service_discovery_service" "pdm_exporter" {
       type = "A"
     }
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }

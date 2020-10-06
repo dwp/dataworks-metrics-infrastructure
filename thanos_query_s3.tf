@@ -11,4 +11,5 @@ resource "aws_s3_bucket_object" "thanos_query" {
   key        = "${var.name}/thanos/bucket.yml"
   content    = data.template_file.thanos_query.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
 }

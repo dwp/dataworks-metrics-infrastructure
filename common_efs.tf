@@ -11,6 +11,7 @@ resource "aws_efs_mount_target" "prometheus" {
 
 resource "aws_efs_access_point" "prometheus" {
   file_system_id = aws_efs_file_system.prometheus.id
+
   root_directory {
     path = "/prometheus"
     creation_info {
@@ -19,10 +20,13 @@ resource "aws_efs_access_point" "prometheus" {
       permissions = 600
     }
   }
+
   posix_user {
     uid = 0
     gid = 0
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_security_group" "prometheus_efs" {
@@ -57,6 +61,7 @@ resource "aws_efs_mount_target" "outofband" {
   file_system_id  = aws_efs_file_system.outofband[local.primary_role_index].id
   subnet_id       = module.vpc.outputs.private_subnets[local.primary_role_index][count.index]
   security_groups = [aws_security_group.outofband_efs[local.primary_role_index].id]
+  tags            = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_efs_access_point" "outofband" {

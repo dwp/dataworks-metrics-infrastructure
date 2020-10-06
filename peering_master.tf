@@ -12,6 +12,7 @@ resource "aws_vpc_peering_connection" "prometheus" {
   peer_owner_id = lookup(local.account, lookup(local.slave_peerings, local.environment))
   peer_vpc_id   = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
   vpc_id        = module.vpc.outputs.vpcs[local.secondary_role_index].id
+  tags          = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_route" "management_prometheus_secondary_prometheus_primary" {

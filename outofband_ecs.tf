@@ -8,6 +8,7 @@ resource "aws_ecs_task_definition" "outofband" {
   task_role_arn            = aws_iam_role.outofband[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.outofband_definition[local.primary_role_index].rendered}, ${data.template_file.thanos_sidecar_outofband_definition[local.primary_role_index].rendered}]"
+
   volume {
     name = "outofband"
     efs_volume_configuration {
@@ -19,6 +20,8 @@ resource "aws_ecs_task_definition" "outofband" {
       }
     }
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }
 
 data "template_file" "outofband_definition" {
@@ -102,6 +105,8 @@ resource "aws_ecs_service" "outofband" {
     registry_arn   = aws_service_discovery_service.outofband[local.primary_role_index].arn
     container_name = "outofband"
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_service_discovery_service" "outofband" {
@@ -116,4 +121,6 @@ resource "aws_service_discovery_service" "outofband" {
       type = "A"
     }
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }

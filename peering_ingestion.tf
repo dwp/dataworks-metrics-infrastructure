@@ -3,6 +3,7 @@ resource "aws_vpc_peering_connection" "ingestion" {
   peer_vpc_id = data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.id
   vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
   auto_accept = true
+  tags        = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_route" "ingestion_prometheus_secondary" {

@@ -7,6 +7,7 @@ resource "aws_ecs_task_definition" "prometheus" {
   task_role_arn            = aws_iam_role.prometheus.arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.prometheus_definition.rendered}, ${data.template_file.thanos_sidecar_prometheus_definition.rendered}, ${data.template_file.ecs_service_discovery_definition.rendered}]"
+
   volume {
     name = "prometheus"
     efs_volume_configuration {
@@ -18,6 +19,8 @@ resource "aws_ecs_task_definition" "prometheus" {
       }
     }
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }
 
 data "template_file" "prometheus_definition" {
@@ -122,6 +125,8 @@ resource "aws_ecs_service" "prometheus" {
     registry_arn   = aws_service_discovery_service.prometheus.arn
     container_name = "prometheus"
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_cloudwatch_log_group" "monitoring" {
@@ -132,6 +137,7 @@ resource "aws_cloudwatch_log_group" "monitoring" {
 resource "aws_service_discovery_private_dns_namespace" "monitoring" {
   name = "${local.environment}.services.${var.parent_domain_name}"
   vpc  = module.vpc.outputs.vpcs[0].id
+  tags = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_service_discovery_service" "prometheus" {
@@ -145,4 +151,6 @@ resource "aws_service_discovery_service" "prometheus" {
       type = "A"
     }
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }

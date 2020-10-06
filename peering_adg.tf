@@ -3,6 +3,7 @@ resource "aws_vpc_peering_connection" "adg" {
   peer_vpc_id = data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.vpc.id
   vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
   auto_accept = true
+  tags        = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_route" "adg_prometheus_secondary" {
