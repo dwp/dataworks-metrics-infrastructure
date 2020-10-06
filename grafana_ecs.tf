@@ -55,7 +55,7 @@ resource "aws_ecs_service" "grafana" {
   launch_type      = "FARGATE"
 
   network_configuration {
-    security_groups = [aws_security_group.grafana[0].id]
+    security_groups = [aws_security_group.grafana[0].id, aws_security_group.monitoring_common[local.primary_role_index].id]
     subnets         = module.vpc.outputs.private_subnets[local.primary_role_index]
   }
 

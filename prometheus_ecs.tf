@@ -117,7 +117,7 @@ resource "aws_ecs_service" "prometheus" {
   launch_type      = "FARGATE"
 
   network_configuration {
-    security_groups = [aws_security_group.prometheus.id]
+    security_groups = [aws_security_group.prometheus.id, aws_security_group.monitoring_common[local.secondary_role_index].id]
     subnets         = module.vpc.outputs.private_subnets[local.secondary_role_index]
   }
 

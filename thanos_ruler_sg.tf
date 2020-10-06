@@ -10,17 +10,6 @@ resource "aws_security_group" "thanos_ruler" {
   }
 }
 
-resource "aws_security_group_rule" "allow_thanos_ruler_egress_https" {
-  count             = local.is_management_env ? 1 : 0
-  description       = "Allows ECS to pull container from S3"
-  type              = "egress"
-  protocol          = "tcp"
-  from_port         = var.https_port
-  to_port           = var.https_port
-  security_group_id = aws_security_group.thanos_ruler[0].id
-  prefix_list_ids   = [module.vpc.outputs.s3_prefix_list_ids[local.primary_role_index]]
-}
-
 resource "aws_security_group_rule" "allow_loadbalancer_ingress_thanos_ruler_http" {
   count                    = local.is_management_env ? 1 : 0
   description              = "Allows loadbalancer to access thanos user interface"

@@ -10,17 +10,6 @@ resource "aws_security_group" "outofband" {
   }
 }
 
-resource "aws_security_group_rule" "allow_outofband_egress_https" {
-  count             = local.is_management_env ? 1 : 0
-  description       = "Allows ECS to pull container from S3"
-  type              = "egress"
-  protocol          = "tcp"
-  from_port         = var.https_port
-  to_port           = var.https_port
-  security_group_id = aws_security_group.outofband[local.primary_role_index].id
-  prefix_list_ids   = [module.vpc.outputs.s3_prefix_list_ids[local.primary_role_index]]
-}
-
 resource "aws_security_group_rule" "outofband_allow_egress_efs" {
   count                    = local.is_management_env ? 1 : 0
   description              = "Allow outofband to access efs mount target"

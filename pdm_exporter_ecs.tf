@@ -51,7 +51,7 @@ resource "aws_ecs_service" "pdm_exporter" {
   launch_type      = "FARGATE"
 
   network_configuration {
-    security_groups = [aws_security_group.pdm_exporter[local.primary_role_index].id]
+    security_groups = [aws_security_group.pdm_exporter[local.primary_role_index].id, aws_security_group.monitoring_common[local.secondary_role_index].id]
     subnets         = module.vpc.outputs.private_subnets[local.secondary_role_index]
   }
 
