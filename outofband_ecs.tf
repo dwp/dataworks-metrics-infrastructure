@@ -52,8 +52,8 @@ data "template_file" "outofband_definition" {
         "value" : "outofband"
       },
       {
-        "name": "OUTOFBAND_CONFIG_CHANGE_DEPENDENCY",
-        "value": "${md5(data.template_file.outofband.rendered)}"
+        "name" : "OUTOFBAND_CONFIG_CHANGE_DEPENDENCY",
+        "value" : "${md5(data.template_file.outofband.rendered)}"
       }
     ])
   }

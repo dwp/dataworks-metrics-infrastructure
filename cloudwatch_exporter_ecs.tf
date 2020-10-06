@@ -32,8 +32,8 @@ data "template_file" "cloudwatch_exporter_definition" {
         "value" : "true"
       },
       {
-        "name": "CLOUDWATCH_EXPORTER_CONFIG_CHANGE_DEPENDENCY",
-        "value": "${md5(data.template_file.cloudwatch_exporter.rendered)}"
+        "name" : "CLOUDWATCH_EXPORTER_CONFIG_CHANGE_DEPENDENCY",
+        "value" : "${md5(data.template_file.cloudwatch_exporter.rendered)}"
       }
     ])
   }

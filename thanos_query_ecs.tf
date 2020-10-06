@@ -38,8 +38,8 @@ data "template_file" "thanos_query_definition" {
         "value" : "${join(" ", formatlist("${var.name}-${var.secondary}.%s.services.${var.parent_domain_name}", "${local.master_peerings[local.slave_peerings[local.environment]]}"))}"
       },
       {
-        "name": "THANOS_QUERY_CONFIG_CHANGE_DEPENDENCY",
-        "value": "${md5(data.template_file.thanos_query.rendered)}"
+        "name" : "THANOS_QUERY_CONFIG_CHANGE_DEPENDENCY",
+        "value" : "${md5(data.template_file.thanos_query.rendered)}"
       }
     ])
   }

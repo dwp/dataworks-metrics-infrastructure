@@ -42,8 +42,8 @@ data "template_file" "grafana_definition" {
         "value" : "127.0.0.1,s3.${var.region}.amazonaws.com,${local.environment}.services.${var.parent_domain_name}"
       },
       {
-        "name": "GRAFANA_CONFIG_CHANGE_DEPENDENCY",
-        "value": "${md5(data.template_file.grafana[local.primary_role_index].rendered)}"
+        "name" : "GRAFANA_CONFIG_CHANGE_DEPENDENCY",
+        "value" : "${md5(data.template_file.grafana[local.primary_role_index].rendered)}"
       }
     ])
   }

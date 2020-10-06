@@ -38,8 +38,8 @@ data "template_file" "hbase_exporter_definition" {
         "value" : "hbase_config.yml"
       },
       {
-        "name": "HBASE_CONFIG_CHANGE_DEPENDENCY",
-        "value": "${md5(data.template_file.hbase_exporter[local.secondary_role_index].rendered)}"
+        "name" : "HBASE_CONFIG_CHANGE_DEPENDENCY",
+        "value" : "${md5(data.template_file.hbase_exporter[local.secondary_role_index].rendered)}"
       }
     ])
   }

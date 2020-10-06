@@ -42,8 +42,8 @@ data "template_file" "thanos_ruler_definition" {
         "value" : "alertmanager.${local.environment}.services.${var.parent_domain_name}:${var.alertmanager_port}"
       },
       {
-        "name": "THANOS_RULER_CONFIG_CHANGE_DEPENDENCY",
-        "value": "${md5(data.template_file.thanos_ruler.rendered)}"
+        "name" : "THANOS_RULER_CONFIG_CHANGE_DEPENDENCY",
+        "value" : "${md5(data.template_file.thanos_ruler.rendered)}"
       }
     ])
   }

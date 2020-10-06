@@ -38,8 +38,8 @@ data "template_file" "pdm_exporter_definition" {
         "value" : "pdm_config.yml"
       },
       {
-        "name": "PDM_EXPORTER_CONFIG_CHANGE_DEPENDENCY",
-        "value": "${md5(data.template_file.pdm_exporter[local.secondary_role_index].rendered)}"
+        "name" : "PDM_EXPORTER_CONFIG_CHANGE_DEPENDENCY",
+        "value" : "${md5(data.template_file.pdm_exporter[local.secondary_role_index].rendered)}"
       }
     ])
   }
