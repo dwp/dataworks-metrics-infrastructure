@@ -37,6 +37,8 @@ jobs:
 
           IFS='¢' read -r -a array <<< "$output"
 
+          touch .github/workflows/comment.md
+
           for i in "${array[@]}"
             do
               IFS='¡' read -r -a comment_sections <<< "$i"
