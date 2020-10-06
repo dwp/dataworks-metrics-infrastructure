@@ -1,5 +1,5 @@
 data template_file "thanos_query" {
-  template = file("${path.module}/config/thanos/bucket.tpl")
+  template = file("${path.module}/config/thanos/bucket.yml")
   vars = {
     metrics_bucket = local.is_management_env ? aws_s3_bucket.monitoring[local.primary_role_index].id : data.terraform_remote_state.management_dmi.outputs.monitoring_bucket.id
     s3_endpoint    = "s3-${var.region}.amazonaws.com"

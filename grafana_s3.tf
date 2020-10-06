@@ -1,6 +1,6 @@
 data template_file "grafana" {
   count    = local.is_management_env ? 1 : 0
-  template = file("${path.module}/config/grafana/grafana.tpl")
+  template = file("${path.module}/config/grafana/grafana.ini")
   vars = {
     grafana_user     = var.grafana_username
     grafana_password = var.grafana_password
@@ -13,7 +13,7 @@ data template_file "grafana" {
 }
 
 data template_file "grafana_datasource_config" {
-  template = file("${path.module}/config/grafana/provisioning/datasources/datasource.tpl")
+  template = file("${path.module}/config/grafana/provisioning/datasources/datasource.yaml")
   vars = {
     thanos_query_hostname = "thanos-query.${local.environment}.services.${var.parent_domain_name}"
   }

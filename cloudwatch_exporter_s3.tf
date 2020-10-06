@@ -1,5 +1,5 @@
 data template_file "cloudwatch_exporter" {
-  template = file("${path.module}/config/cloudwatch_exporter/config.tpl")
+  template = file("${path.module}/config/cloudwatch_exporter/config.yml")
   vars = {
     region = var.region
   }
