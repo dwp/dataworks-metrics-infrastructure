@@ -50,6 +50,10 @@ data "template_file" "outofband_definition" {
       {
         "name" : "PROMETHEUS_ROLE",
         "value" : "outofband"
+      },
+      {
+        "name": "OUTOFBAND_CONFIG_CHANGE_DEPENDENCY",
+        "value": "${md5(data.template_file.outofband.rendered)}"
       }
     ])
   }

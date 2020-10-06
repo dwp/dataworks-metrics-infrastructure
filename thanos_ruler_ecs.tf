@@ -40,6 +40,10 @@ data "template_file" "thanos_ruler_definition" {
       {
         "name" : "ALERTMANAGER_URL",
         "value" : "alertmanager.${local.environment}.services.${var.parent_domain_name}:${var.alertmanager_port}"
+      },
+      {
+        "name": "THANOS_RULER_CONFIG_CHANGE_DEPENDENCY",
+        "value": "${md5(data.template_file.thanos_ruler.rendered)}"
       }
     ])
   }

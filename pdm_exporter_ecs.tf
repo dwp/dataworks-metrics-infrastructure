@@ -36,6 +36,10 @@ data "template_file" "pdm_exporter_definition" {
       {
         "name" : "CONFIG_FILE",
         "value" : "pdm_config.yml"
+      },
+      {
+        "name": "PDM_EXPORTER_CONFIG_CHANGE_DEPENDENCY",
+        "value": "${md5(data.template_file.pdm_exporter.rendered)}"
       }
     ])
   }

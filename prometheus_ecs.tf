@@ -78,6 +78,10 @@ data "template_file" "ecs_service_discovery_definition" {
       {
         "name" : "SERVICE_DISCOVERY_DIRECTORY",
         "value" : "/prometheus/ecs"
+      },
+      {
+        "name": "PROMETHEUS_CONFIG_CHANGE_DEPENDENCY",
+        "value": "${md5(data.template_file.prometheus.rendered)}"
       }
     ])
   }

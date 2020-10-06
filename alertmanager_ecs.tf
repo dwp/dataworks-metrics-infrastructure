@@ -32,6 +32,10 @@ data "template_file" "alertmanager_definition" {
       {
         name  = "ALERTMANAGER_DOMAIN",
         value = "https://${aws_route53_record.alertmanager_loadbalancer[0].fqdn}"
+      },
+      {
+        "name": "ALERTMANAGER_CONFIG_CHANGE_DEPENDENCY",
+        "value": "${md5(data.template_file.alertmanager.rendered)}"
       }
     ])
   }

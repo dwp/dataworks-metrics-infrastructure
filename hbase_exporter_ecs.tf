@@ -36,6 +36,10 @@ data "template_file" "hbase_exporter_definition" {
       {
         "name" : "CONFIG_FILE",
         "value" : "hbase_config.yml"
+      },
+      {
+        "name": "HBASE_CONFIG_CHANGE_DEPENDENCY",
+        "value": "${md5(data.template_file.hbase_exporter.rendered)}"
       }
     ])
   }
