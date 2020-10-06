@@ -43,7 +43,7 @@ data "template_file" "grafana_definition" {
       },
       {
         "name": "GRAFANA_CONFIG_CHANGE_DEPENDENCY",
-        "value": "${md5(data.template_file.grafana.rendered)}"
+        "value": "${md5(data.template_file.grafana[local.primary_role_index].rendered)}"
       }
     ])
   }

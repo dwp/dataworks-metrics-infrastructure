@@ -39,7 +39,7 @@ data "template_file" "pdm_exporter_definition" {
       },
       {
         "name": "PDM_EXPORTER_CONFIG_CHANGE_DEPENDENCY",
-        "value": "${md5(data.template_file.pdm_exporter.rendered)}"
+        "value": "${md5(data.template_file.pdm_exporter[local.secondary_role_index].rendered)}"
       }
     ])
   }
