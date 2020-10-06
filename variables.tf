@@ -57,18 +57,9 @@ variable "thanos_port_grpc" {}
 variable "thanos_port_http" {}
 variable "alertmanager_port" {}
 variable "cloudwatch_exporter_port" {}
-
-variable "pushgateway_port" {
-  default = 9091
-}
-
-variable "json_exporter_port" {
-  default = 3392
-}
-
-variable "jmx_port" {
-  default = 16010
-}
+variable "pushgateway_port" {}
+variable "json_exporter_port" {}
+variable "jmx_port" {}
 
 variable "subnets" {
   description = "define sizes for subnets using Terraform cidrsubnet function. For an empty /24 VPC, the defaults will create /28 public subnets and /26 private subnets, one of each in each AZ."

@@ -32,7 +32,7 @@ resource "aws_wafregional_rule" "detect_rfi_lfi_traversal" {
     type    = "ByteMatch"
   }
 
-  tags = merge(local.tags, { Name = var.name })
+  tags = merge(var.tags, { Name = var.name })
 }
 
 resource "aws_wafregional_rule" "detect_ssi" {
