@@ -1,5 +1,5 @@
 resource "aws_security_group" "monitoring_common" {
-  count       = length(module.vpc.outputs.vpcs.*.id)
+  count       = length(local.roles)
   name        = "monitoring-common-pull-s3-${local.roles[count.index]}"
   description = "Rules necesary for pulling container image"
   vpc_id      = module.vpc.outputs.vpcs[count.index].id
@@ -11,7 +11,7 @@ resource "aws_security_group" "monitoring_common" {
 }
 
 resource "aws_security_group_rule" "allow_cloudwatch_exporter_egress_https" {
-  count             = length(module.vpc.outputs.vpcs.*.id)
+  count             = length(local.roles)
   description       = "Allows ECS to pull container from S3"
   type              = "egress"
   protocol          = "tcp"
