@@ -37,8 +37,6 @@ jobs:
 
           IFS='¢' read -r -a array <<< "$output"
 
-          touch .github/workflows/comment.md
-
           for i in "${array[@]}"
             do
               IFS='¡' read -r -a comment_sections <<< "$i"
@@ -51,8 +49,15 @@ jobs:
               echo -e "\`\`\` \n" >> .github/workflows/comment.md
             done
 
+      - name: Check file existence
+        id: check_files
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "comment.md"
+
       - name: Add checkout commands
         uses: harupy/comment-on-pr@master
+        if: steps.check_files.outputs.files_exists == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
