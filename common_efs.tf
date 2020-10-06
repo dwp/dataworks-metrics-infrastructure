@@ -67,6 +67,7 @@ resource "aws_efs_mount_target" "outofband" {
 resource "aws_efs_access_point" "outofband" {
   count          = local.is_management_env ? 1 : 0
   file_system_id = aws_efs_file_system.outofband[local.primary_role_index].id
+
   root_directory {
     path = "/prometheus"
     creation_info {
@@ -75,10 +76,13 @@ resource "aws_efs_access_point" "outofband" {
       permissions = 600
     }
   }
+
   posix_user {
     uid = 0
     gid = 0
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_security_group" "outofband_efs" {
