@@ -61,7 +61,6 @@ resource "aws_efs_mount_target" "outofband" {
   file_system_id  = aws_efs_file_system.outofband[local.primary_role_index].id
   subnet_id       = module.vpc.outputs.private_subnets[local.primary_role_index][count.index]
   security_groups = [aws_security_group.outofband_efs[local.primary_role_index].id]
-  tags            = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_efs_access_point" "outofband" {
