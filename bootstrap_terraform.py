@@ -42,8 +42,6 @@ def main():
     config_data = yaml.load(parameter['Parameter']['Value'], Loader=yaml.FullLoader)
     config_data['roles'] = json.loads(monitoring_secret['SecretBinary'])[os.getenv('TF_WORKSPACE', 'development')]
     config_data['ports'] = json.loads(monitoring_secret['SecretBinary'])["ports"]
-    config_data['grafana_username'] = json.loads(dataworks_secret['SecretBinary'])["grafana_user"]
-    config_data['grafana_password'] = json.loads(dataworks_secret['SecretBinary'])["grafana_password"]
 
     with open('modules/vpc/vpc.tf.j2') as in_template:
         template = jinja2.Template(in_template.read())
