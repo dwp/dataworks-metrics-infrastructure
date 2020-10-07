@@ -75,13 +75,3 @@ variable "subnets" {
     }
   }
 }
-
-variable "grafana_username" {
-  type        = string
-  description = "Username for local admin user"
-}
-
-variable "grafana_password" {
-  type        = string
-  description = "password for local admin user"
-}

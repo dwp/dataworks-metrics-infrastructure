@@ -18,14 +18,10 @@ jobs:
       - .: (( inject meta.plan.terraform-apply ))
         params:
           TF_WORKSPACE: management
-          TF_VAR_grafana_username: ((dataworks-secrets.grafana_user))
-          TF_VAR_grafana_password: ((dataworks-secrets.grafana_password))
 
       - .: (( inject meta.plan.terraform-plan ))
         params:
           TF_WORKSPACE: management
-          TF_VAR_grafana_username: ((dataworks-secrets.grafana_user))
-          TF_VAR_grafana_password: ((dataworks-secrets.grafana_password))
 
       - .: (( inject meta.plan.cycle-containers ))
         task: trigger-outofband-deployment
@@ -40,38 +36,4 @@ jobs:
           AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
           CLUSTER: main
           SERVICE: prometheus
-      
-      - .: (( inject meta.plan.trigger-deployment ))
-        task: trigger-grafana-deployment
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
-          CLUSTER: main
-          SERVICE: grafana
 
-      - .: (( inject meta.plan.trigger-deployment ))
-        task: trigger-thanos-query-deployment
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
-          CLUSTER: main
-          SERVICE: thanos-query
-
-      - .: (( inject meta.plan.trigger-deployment ))
-        task: trigger-thanos-ruler-deployment
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
-          CLUSTER: main
-          SERVICE: thanos-ruler
-
-      - .: (( inject meta.plan.trigger-deployment ))
-        task: trigger-alertmanager-deployment
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
-          CLUSTER: main
-          SERVICE: alertmanager
-
-      - .: (( inject meta.plan.trigger-deployment ))
-        task: trigger-cloudwatch-exporter-deployment
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
-          CLUSTER: main
-          SERVICE: cloudwatch-exporter

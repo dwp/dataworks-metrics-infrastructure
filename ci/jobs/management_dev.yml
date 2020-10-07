@@ -31,38 +31,3 @@ jobs:
           AWS_ROLE_ARN: arn:aws:iam::((aws_account.management-dev)):role/ci
           CLUSTER: main
           SERVICE: prometheus
-      
-      - .: (( inject meta.plan.trigger-deployment ))
-        task: trigger-grafana-deployment
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management-dev)):role/ci
-          CLUSTER: main
-          SERVICE: grafana
-
-      - .: (( inject meta.plan.trigger-deployment ))
-        task: trigger-thanos-query-deployment
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management-dev)):role/ci
-          CLUSTER: main
-          SERVICE: thanos-query
-
-      - .: (( inject meta.plan.trigger-deployment ))
-        task: trigger-thanos-ruler-deployment
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management-dev)):role/ci
-          CLUSTER: main
-          SERVICE: thanos-ruler
-
-      - .: (( inject meta.plan.trigger-deployment ))
-        task: trigger-alertmanager-deployment
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management-dev)):role/ci
-          CLUSTER: main
-          SERVICE: alertmanager
-
-      - .: (( inject meta.plan.trigger-deployment ))
-        task: trigger-cloudwatch-exporter-deployment
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management-dev)):role/ci
-          CLUSTER: main
-          SERVICE: cloudwatch-exporter
