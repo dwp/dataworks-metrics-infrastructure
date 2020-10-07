@@ -62,6 +62,7 @@ resource "aws_vpc_endpoint" "internet_proxy" {
   security_group_ids  = [aws_security_group.internet_proxy_endpoint[local.primary_role_index].id]
   subnet_ids          = module.vpc.outputs.private_subnets[local.primary_role_index]
   private_dns_enabled = false
+  tags                = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_security_group_rule" "grafana_egress_internet_proxy" {

@@ -17,9 +17,9 @@ resource "aws_kinesis_firehose_delivery_stream" "extended_s3_stream" {
 }
 
 resource "aws_iam_role" "log_role" {
-  name = "${var.name}-logs"
-
+  name               = "${var.name}-logs"
   assume_role_policy = data.aws_iam_policy_document.firehose_assume_role.json
+  tags               = merge(var.tags, { Name = var.name })
 }
 
 resource "aws_iam_policy" "write_waf_logs" {

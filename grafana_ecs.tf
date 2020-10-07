@@ -8,6 +8,7 @@ resource "aws_ecs_task_definition" "grafana" {
   task_role_arn            = aws_iam_role.grafana[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.grafana_definition[local.primary_role_index].rendered}]"
+  tags                     = merge(local.tags, { Name = var.name })
 }
 
 data "template_file" "grafana_definition" {
@@ -39,6 +40,10 @@ data "template_file" "grafana_definition" {
       {
         "name" : "NO_PROXY",
         "value" : "127.0.0.1,s3.${var.region}.amazonaws.com,${local.environment}.services.${var.parent_domain_name}"
+      },
+      {
+        "name" : "GRAFANA_CONFIG_CHANGE_DEPENDENCY",
+        "value" : "${md5(data.template_file.grafana[local.primary_role_index].rendered)}"
       }
     ])
   }
@@ -54,7 +59,7 @@ resource "aws_ecs_service" "grafana" {
   launch_type      = "FARGATE"
 
   network_configuration {
-    security_groups = [aws_security_group.grafana[0].id]
+    security_groups = [aws_security_group.grafana[0].id, aws_security_group.monitoring_common[local.primary_role_index].id]
     subnets         = module.vpc.outputs.private_subnets[local.primary_role_index]
   }
 
@@ -68,6 +73,8 @@ resource "aws_ecs_service" "grafana" {
     registry_arn   = aws_service_discovery_service.grafana[local.primary_role_index].arn
     container_name = "grafana"
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_service_discovery_service" "grafana" {
@@ -82,4 +89,6 @@ resource "aws_service_discovery_service" "grafana" {
       type = "A"
     }
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }

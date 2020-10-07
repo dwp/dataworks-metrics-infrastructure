@@ -27,7 +27,7 @@ data "terraform_remote_state" "internet_egress" {
 
 data "terraform_remote_state" "security-tools" {
   backend = "s3"
-  workspace = lookup(local.slave_peerings, local.environment) == "management-dev" ? "default" : "management"
+  workspace = terraform.workspace
 
   config = {
     bucket         = "{{state_file_bucket}}"

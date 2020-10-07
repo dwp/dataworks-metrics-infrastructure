@@ -105,6 +105,8 @@ resource "aws_acm_certificate" "monitoring" {
   lifecycle {
     ignore_changes = [subject_alternative_names]
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_route53_record" "monitoring" {

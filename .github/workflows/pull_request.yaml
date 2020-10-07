@@ -38,6 +38,8 @@ jobs:
 
           IFS='¢' read -r -a array <<< "$output"
 
+          if [ ${#array[@]} -gt 0 ]; then echo '::set-output name=COMMENT::true'; else echo '::set-output name=COMMENT::false'; fi
+
           for i in "${array[@]}"
             do
               IFS='¡' read -r -a comment_sections <<< "$i"
@@ -52,6 +54,7 @@ jobs:
 
       - name: Add checkout commands
         uses: harupy/comment-on-pr@master
+        if: steps.tflint.outputs.COMMENT == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

@@ -7,6 +7,7 @@ resource "aws_ecs_task_definition" "cloudwatch_exporter" {
   task_role_arn            = aws_iam_role.cloudwatch_exporter.arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.cloudwatch_exporter_definition.rendered}]"
+  tags                     = merge(local.tags, { Name = var.name })
 }
 
 data "template_file" "cloudwatch_exporter_definition" {
@@ -29,6 +30,10 @@ data "template_file" "cloudwatch_exporter_definition" {
       {
         "name" : "PROMETHEUS",
         "value" : "true"
+      },
+      {
+        "name" : "CLOUDWATCH_EXPORTER_CONFIG_CHANGE_DEPENDENCY",
+        "value" : "${md5(data.template_file.cloudwatch_exporter.rendered)}"
       }
     ])
   }
@@ -43,7 +48,7 @@ resource "aws_ecs_service" "cloudwatch_exporter" {
   launch_type      = "FARGATE"
 
   network_configuration {
-    security_groups = [aws_security_group.cloudwatch_exporter.id]
+    security_groups = [aws_security_group.cloudwatch_exporter.id, aws_security_group.monitoring_common[local.secondary_role_index].id]
     subnets         = module.vpc.outputs.private_subnets[local.secondary_role_index]
   }
 
@@ -51,6 +56,8 @@ resource "aws_ecs_service" "cloudwatch_exporter" {
     registry_arn   = aws_service_discovery_service.cloudwatch_exporter.arn
     container_name = "cloudwatch-exporter"
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_service_discovery_service" "cloudwatch_exporter" {
@@ -64,4 +71,6 @@ resource "aws_service_discovery_service" "cloudwatch_exporter" {
       type = "A"
     }
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }

@@ -8,6 +8,7 @@ resource "aws_ecs_task_definition" "alertmanager" {
   task_role_arn            = aws_iam_role.alertmanager[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.alertmanager_definition[local.primary_role_index].rendered}]"
+  tags                     = merge(local.tags, { Name = var.name })
 }
 
 data "template_file" "alertmanager_definition" {
@@ -31,6 +32,10 @@ data "template_file" "alertmanager_definition" {
       {
         name  = "ALERTMANAGER_DOMAIN",
         value = "https://${aws_route53_record.alertmanager_loadbalancer[0].fqdn}"
+      },
+      {
+        "name" : "ALERTMANAGER_CONFIG_CHANGE_DEPENDENCY",
+        "value" : "${md5(data.template_file.alertmanager[local.primary_role_index].rendered)}"
       }
     ])
   }
@@ -46,7 +51,7 @@ resource "aws_ecs_service" "alertmanager" {
   launch_type      = "FARGATE"
 
   network_configuration {
-    security_groups = [aws_security_group.alertmanager[0].id]
+    security_groups = [aws_security_group.alertmanager[0].id, aws_security_group.monitoring_common[local.primary_role_index].id]
     subnets         = module.vpc.outputs.private_subnets[local.primary_role_index]
   }
 
@@ -60,6 +65,8 @@ resource "aws_ecs_service" "alertmanager" {
     registry_arn   = aws_service_discovery_service.alertmanager[local.primary_role_index].arn
     container_name = "alertmanager"
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_service_discovery_service" "alertmanager" {
@@ -74,4 +81,6 @@ resource "aws_service_discovery_service" "alertmanager" {
       type = "A"
     }
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }

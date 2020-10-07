@@ -13,4 +13,5 @@ resource "aws_s3_bucket_object" "pdm_exporter" {
   key        = "${var.name}/json_exporter/pdm_config.yml"
   content    = data.template_file.pdm_exporter[0].rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
 }

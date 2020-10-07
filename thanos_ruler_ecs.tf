@@ -8,6 +8,7 @@ resource "aws_ecs_task_definition" "thanos_ruler" {
   task_role_arn            = aws_iam_role.thanos_ruler[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.thanos_ruler_definition[local.primary_role_index].rendered}]"
+  tags                     = merge(local.tags, { Name = var.name })
 }
 
 data "template_file" "thanos_ruler_definition" {
@@ -39,6 +40,10 @@ data "template_file" "thanos_ruler_definition" {
       {
         "name" : "ALERTMANAGER_URL",
         "value" : "alertmanager.${local.environment}.services.${var.parent_domain_name}:${var.alertmanager_port}"
+      },
+      {
+        "name" : "THANOS_RULER_CONFIG_CHANGE_DEPENDENCY",
+        "value" : "${md5(data.template_file.thanos_ruler.rendered)}"
       }
     ])
   }
@@ -54,7 +59,7 @@ resource "aws_ecs_service" "thanos_ruler" {
   launch_type      = "FARGATE"
 
   network_configuration {
-    security_groups = [aws_security_group.thanos_ruler[0].id]
+    security_groups = [aws_security_group.thanos_ruler[0].id, aws_security_group.monitoring_common[local.primary_role_index].id]
     subnets         = module.vpc.outputs.private_subnets[local.primary_role_index]
   }
 
@@ -68,6 +73,8 @@ resource "aws_ecs_service" "thanos_ruler" {
     registry_arn   = aws_service_discovery_service.thanos_ruler[local.primary_role_index].arn
     container_name = "thanos-ruler"
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_service_discovery_service" "thanos_ruler" {
@@ -82,4 +89,6 @@ resource "aws_service_discovery_service" "thanos_ruler" {
       type = "A"
     }
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }

@@ -8,6 +8,7 @@ resource "aws_ecs_task_definition" "adg_pushgateway" {
   task_role_arn            = aws_iam_role.adg_pushgateway[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.adg_pushgateway_definition[local.primary_role_index].rendered}]"
+  tags                     = merge(local.tags, { Name = var.name })
 }
 
 data "template_file" "adg_pushgateway_definition" {
@@ -54,12 +55,15 @@ resource "aws_ecs_service" "adg_pushgateway" {
     registry_arn   = aws_service_discovery_service.adg_pushgateway[local.primary_role_index].arn
     container_name = "adg-pushgateway"
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_service_discovery_private_dns_namespace" "adg_services" {
   count = local.is_management_env ? 0 : 1
   name  = "${local.environment}.adg.services.${var.parent_domain_name}"
   vpc   = data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.vpc.id
+  tags  = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_service_discovery_service" "adg_pushgateway" {
@@ -74,4 +78,6 @@ resource "aws_service_discovery_service" "adg_pushgateway" {
       type = "A"
     }
   }
+
+  tags = merge(local.tags, { Name = var.name })
 }
