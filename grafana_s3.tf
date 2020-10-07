@@ -2,8 +2,6 @@ data template_file "grafana" {
   count    = local.is_management_env ? 1 : 0
   template = file("${path.module}/config/grafana/grafana.ini")
   vars = {
-    grafana_user     = var.grafana_username
-    grafana_password = var.grafana_password
     grafana_domain   = aws_route53_record.grafana_loadbalancer[0].fqdn
     client_id        = aws_cognito_user_pool_client.grafana[0].id
     client_secret    = aws_cognito_user_pool_client.grafana[0].client_secret
