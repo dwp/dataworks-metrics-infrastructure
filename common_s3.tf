@@ -47,7 +47,8 @@ resource "aws_s3_bucket" "monitoring" {
   )
 
   versioning {
-    enabled = true
+    # explictly disabled; Thanos manages its own data lifecycle so there is no to version objects or add lifecycle rules
+    enabled = false
   }
 
   lifecycle_rule {
