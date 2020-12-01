@@ -45,7 +45,7 @@ scrape_configs:
         replacement: adg_$${1}
         target_label: __name__
         action: replace
-  - job_name: node
+  - job_name: concourse-worker
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -60,7 +60,7 @@ scrape_configs:
     relabel_configs:
       - source_labels: [__meta_ec2_tag_Name]
         separator: ;
-        regex: concourse
+        regex: concourse-worker
         replacement: $1
         action: keep
       - source_labels: [__meta_ec2_tag_Name, __meta_ec2_availability_zone]
