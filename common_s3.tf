@@ -50,6 +50,19 @@ resource "aws_s3_bucket" "monitoring" {
     enabled = true
   }
 
+  lifecycle_rule {
+    id      = "6 months log retention"
+    enabled = true
+
+    expiration {
+      days = 180
+    }
+
+    noncurrent_version_expiration {
+      days = 30
+    }
+  }
+
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
