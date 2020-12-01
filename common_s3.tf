@@ -47,7 +47,7 @@ resource "aws_s3_bucket" "monitoring" {
   )
 
   versioning {
-    enabled = false
+    enabled = true
   }
 
   server_side_encryption_configuration {
