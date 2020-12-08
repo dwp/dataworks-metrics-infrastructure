@@ -19,3 +19,56 @@ static:
         - Maximum
         period: 60
         length: 300
+  - namespace: AWS/Events
+    name: adgTerminatedWithErrorsRule
+    regions:
+      - ${region}
+    dimensions:
+      - name: RuleName
+        value: adg_terminated_with_errors_rule
+    metrics:
+      - name: TriggeredRules
+        statistics:
+          - Sum
+        period: 60
+        length: 300
+  - namespace: AWS/Events
+    name: adgSuccess
+    regions:
+      - ${region}
+    dimensions:
+      - name: RuleName
+        value: adg_success
+    metrics:
+      - name: TriggeredRules
+        statistics:
+          - Sum
+        period: 60
+        length: 300
+  - namespace: AWS/Events
+    name: pdmTerminatedWithErrorsRule
+    regions:
+      - ${region}
+    dimensions:
+      - name: RuleName
+        value: pdm_terminated_with_errors_rule
+    metrics:
+      - name: TriggeredRules
+        statistics:
+          - Sum
+        period: 60
+        length: 300
+  - namespace: AWS/Events
+    name: pdmSuccess
+    regions:
+      - ${region}
+    dimensions:
+      - name: RuleName
+        value: pdm_success
+    metrics:
+      - name: TriggeredRules
+        statistics:
+          - Sum
+        period: 60
+        length: 300
+        
