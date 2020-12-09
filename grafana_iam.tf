@@ -41,7 +41,7 @@ resource "aws_iam_policy" "grafana_read_secret" {
   count       = local.is_management_env ? 1 : 0
   name        = "GrafanaReadSecretPolicy"
   description = "Allow Grafana to read from secrets manager"
-  policy      = data.aws_iam_policy_document.grafana_read_secret.json
+  policy      = data.aws_iam_policy_document.grafana_read_secret[0].json
 }
 
 data "aws_iam_policy_document" "grafana_read_config" {
@@ -83,6 +83,7 @@ data "aws_iam_policy_document" "grafana_read_config" {
 }
 
 data "aws_secretsmanager_secret" "monitoring_secret" {
+  count       = local.is_management_env ? 1 : 0
   name = "/concourse/dataworks/monitoring"
 }
 
@@ -94,7 +95,7 @@ data "aws_iam_policy_document" "grafana_read_secret" {
       "secretsmanager:GetSecretValue",
     ]
     resources = [
-      "${local.is_management_env ? data.aws_secretsmanager_secret.monitoring_secret.arn : 0}",
+      "${local.is_management_env ? data.aws_secretsmanager_secret.monitoring_secret[0].arn : 0}",
     ]
   }
 }
