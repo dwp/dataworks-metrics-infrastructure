@@ -95,5 +95,6 @@ data "aws_iam_policy_document" "grafana_read_secret" {
     ]
     resources = [
       "${local.is_management_env ? data.aws_secretsmanager_secret.monitoring_secret.arn : 0}",
-    ]  }
+    ]
+  }
 }
