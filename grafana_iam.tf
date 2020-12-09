@@ -83,7 +83,7 @@ data "aws_iam_policy_document" "grafana_read_config" {
 }
 
 data "aws_secretsmanager_secret" "monitoring_secret" {
-  name  = "/concourse/dataworks/monitoring"
+  name = "/concourse/dataworks/monitoring"
 }
 
 data "aws_iam_policy_document" "grafana_read_secret" {
