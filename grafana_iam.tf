@@ -94,7 +94,6 @@ data "aws_iam_policy_document" "grafana_read_secret" {
       "secretsmanager:GetSecretValue",
     ]
     resources = [
-      data.aws_secretsmanager_secret.monitoring_secret.arn,
-    ]
-  }
+      "${local.is_management_env ? data.aws_secretsmanager_secret.monitoring_secret.arn : 0}",
+    ]  }
 }
