@@ -83,19 +83,17 @@ data "aws_iam_policy_document" "grafana_read_config" {
 }
 
 data "aws_secretsmanager_secret" "monitoring_secret" {
-  count = local.is_management_env ? 0 : 1
+  count = local.is_management_env ? 1 : 0
   name  = "/concourse/dataworks/monitoring"
 }
 
 data "aws_iam_policy_document" "grafana_read_secret" {
-  count = local.is_management_env ? 0 : 1
   statement {
     effect = "Allow"
 
     actions = [
       "secretsmanager:GetSecretValue",
     ]
-
     resources = [
       data.aws_secretsmanager_secret.monitoring_secret.arn,
     ]
