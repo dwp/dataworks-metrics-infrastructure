@@ -87,6 +87,7 @@ data "aws_secretsmanager_secret" "monitoring_secret" {
 }
 
 data "aws_iam_policy_document" "grafana_read_secret" {
+  count = local.is_management_env ? 0 : 1
   statement {
     effect = "Allow"
 
