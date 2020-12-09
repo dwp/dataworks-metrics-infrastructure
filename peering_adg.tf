@@ -43,7 +43,7 @@ resource "aws_security_group_rule" "prometheus_allow_egress_adg" {
 }
 
 resource "aws_security_group_rule" "adg_node_allow_ingress_prometheus" {
-  count                    = local.is_management_env ? 1 : 0
+  count                    = local.is_management_env ? 0 : 1
   description              = "Allow prometheus ${var.secondary} to access adg node metrics"
   type                     = "ingress"
   protocol                 = "tcp"
@@ -54,7 +54,7 @@ resource "aws_security_group_rule" "adg_node_allow_ingress_prometheus" {
 }
 
 resource "aws_security_group_rule" "prometheus_allow_egress_adg_node" {
-  count                    = local.is_management_env ? 1 : 0
+  count                    = local.is_management_env ? 0 : 1
   description              = "Allow prometheus ${var.secondary} to access adg node metrics"
   type                     = "egress"
   protocol                 = "tcp"
