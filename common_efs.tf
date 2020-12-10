@@ -134,7 +134,7 @@ resource "aws_efs_access_point" "prometheus_new" {
   file_system_id = aws_efs_file_system.prometheus_new.id
 
   root_directory {
-    path = "/prometheus_new"
+    path = "/prometheus"
     creation_info {
       owner_gid   = 0
       owner_uid   = 0
