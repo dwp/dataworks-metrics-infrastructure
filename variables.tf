@@ -7,7 +7,7 @@ variable "name" {
 variable "prometheus_version" {
   description = "prometheus version to use"
   type        = string
-  default     = "2.18.1"
+  default     = "2.23.0"
 }
 
 variable "parent_domain_name" {
