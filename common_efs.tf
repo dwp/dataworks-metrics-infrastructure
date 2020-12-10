@@ -149,3 +149,24 @@ resource "aws_efs_access_point" "prometheus_new" {
 
   tags = merge(local.tags, { Name = var.name })
 }
+
+resource "aws_security_group" "prometheus_efs_new" {
+  name        = "prometheus_efs_new"
+  description = "Rules necesary for accessing EFS"
+  vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
+  tags        = merge(local.tags, { Name = "prometheus_efs_new" })
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+//
+//resource "aws_security_group_rule" "efs_allow_ingress_prometheus_new" {
+//  description              = "Allow prometheus to access efs mount target"
+//  from_port                = 2049
+//  protocol                 = "tcp"
+//  security_group_id        = aws_security_group.prometheus_efs.id
+//  to_port                  = 2049
+//  type                     = "ingress"
+//  source_security_group_id = aws_security_group.prometheus.id
+//}
