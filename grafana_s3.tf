@@ -33,6 +33,9 @@ data template_file "analytical_emr_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/analytical_emr_dashboard.json")
 }
 
+data template_file "concourse_dashboard" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/concourse.json")
+}
 
 resource "aws_s3_bucket_object" "grafana" {
   count      = local.is_management_env ? 1 : 0
