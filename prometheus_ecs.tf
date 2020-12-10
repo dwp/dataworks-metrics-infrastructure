@@ -9,7 +9,7 @@ resource "aws_ecs_task_definition" "prometheus" {
   container_definitions    = "[${data.template_file.prometheus_definition.rendered}, ${data.template_file.thanos_sidecar_prometheus_definition.rendered}, ${data.template_file.ecs_service_discovery_definition.rendered}]"
 
   volume {
-    name = "prometheus"
+    name = "prometheus-new"
     efs_volume_configuration {
       file_system_id     = aws_efs_file_system.prometheus.id
       root_directory     = "/"
@@ -40,7 +40,7 @@ data "template_file" "prometheus_definition" {
     mount_points = jsonencode([
       {
         "container_path" : "/prometheus",
-        "source_volume" : "prometheus"
+        "source_volume" : "prometheus-new"
       }
     ])
 
@@ -70,7 +70,7 @@ data "template_file" "ecs_service_discovery_definition" {
     mount_points = jsonencode([
       {
         "container_path" : "/prometheus",
-        "source_volume" : "prometheus"
+        "source_volume" : "prometheus-new"
       }
     ])
 
@@ -104,7 +104,7 @@ data "template_file" "thanos_sidecar_prometheus_definition" {
     mount_points = jsonencode([
       {
         "container_path" : "/prometheus",
-        "source_volume" : "prometheus"
+        "source_volume" : "prometheus-new"
       }
     ])
 
