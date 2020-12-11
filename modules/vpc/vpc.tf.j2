@@ -13,6 +13,7 @@ module "monitoring_{{value}}_vpc" {
   common_tags                                = var.common_tags
 
   aws_vpce_services = [
+   "cloudwatch",
    "ec2",
    "ec2messages",
    "kms",
