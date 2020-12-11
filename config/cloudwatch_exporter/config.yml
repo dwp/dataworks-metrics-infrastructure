@@ -6,7 +6,7 @@ static:
     metrics:
       - name: AllCollectionsProcessingTime
         statistics:
-        - Minimum
+          - Minimum
         period: 60
         length: 300
   - namespace: AWS/EC2
@@ -16,7 +16,7 @@ static:
     metrics:
       - name: MetadataNoToken
         statistics:
-        - Maximum
+          - Maximum
         period: 60
         length: 300
   - namespace: AWS/Events
@@ -71,15 +71,13 @@ static:
           - Sum
         period: 60
         length: 300
-discovery:
-  jobs:
-  - type: emr
+  - namespace: AWS/EMR
+    name: EMRCoreNodes
     regions:
-      - eu-west-2
+      - ${region}
     metrics:
       - name: CoreNodesRunning
         statistics:
-        - Sum
-        period: 120
-        length: 240
-              
+          - Sum
+        period: 60
+        length: 300
