@@ -81,4 +81,5 @@ discovery:
         statistics:
         - Sum
         period: 120
-        length: 240      
+        length: 240
+              
