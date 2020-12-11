@@ -71,4 +71,14 @@ static:
           - Sum
         period: 60
         length: 300
-        
+discovery:
+  jobs:
+  - type: emr
+    regions:
+      - eu-west-2
+    metrics:
+      - name: CoreNodesRunning
+        statistics:
+        - Sum
+        period: 120
+        length: 240      
