@@ -111,6 +111,27 @@ resource "aws_lb_target_group" "thanos_ruler" {
   tags = merge(local.tags, { Name = "thanos-ruler" })
 }
 
+resource "aws_lb_target_group" "thanos_store" {
+  count       = local.is_management_env ? 1 : 0
+  name        = "thanos-store-http"
+  port        = var.prometheus_port
+  protocol    = "HTTP"
+  vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
+  target_type = "ip"
+
+  health_check {
+    port    = var.prometheus_port
+    path    = "/-/healthy"
+    matcher = "200"
+  }
+
+  stickiness {
+    enabled = true
+    type    = "lb_cookie"
+  }
+  tags = merge(local.tags, { Name = "thanos-store" })
+}
+
 resource "aws_lb_target_group" "grafana" {
   count       = local.is_management_env ? 1 : 0
   name        = "grafana-http"
