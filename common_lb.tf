@@ -384,5 +384,5 @@ resource "aws_security_group_rule" "allow_egress_thanos_store" {
   protocol                 = "tcp"
   from_port                = var.thanos_port_http
   security_group_id        = aws_security_group.monitoring[local.primary_role_index].id
-  source_security_group_id = aws_security_group.thanos_query[local.primary_role_index].id
+  source_security_group_id = aws_security_group.thanos_store[local.primary_role_index].id
 }
