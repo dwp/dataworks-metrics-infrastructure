@@ -8,17 +8,17 @@ resource "aws_ecs_task_definition" "prometheus" {
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.prometheus_definition.rendered}, ${data.template_file.thanos_sidecar_prometheus_definition.rendered}, ${data.template_file.ecs_service_discovery_definition.rendered}]"
 
-  volume {
-    name = "prometheus-new"
-    efs_volume_configuration {
-      file_system_id     = aws_efs_file_system.prometheus_new.id
-      root_directory     = "/"
-      transit_encryption = "ENABLED"
-      authorization_config {
-        access_point_id = aws_efs_access_point.prometheus_new.id
-      }
-    }
-  }
+  //  volume {
+  //    name = "prometheus-new"
+  //    efs_volume_configuration {
+  //      file_system_id     = aws_efs_file_system.prometheus_new.id
+  //      root_directory     = "/"
+  //      transit_encryption = "ENABLED"
+  //      authorization_config {
+  //        access_point_id = aws_efs_access_point.prometheus_new.id
+  //      }
+  //    }
+  //  }
 
   tags = merge(local.tags, { Name = var.name })
 }
