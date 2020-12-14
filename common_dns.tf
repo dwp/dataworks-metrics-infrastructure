@@ -129,6 +129,16 @@ resource "aws_route53_record" "thanos_query" {
   ttl      = 60
 }
 
+resource "aws_route53_record" "thanos_store" {
+  provider = aws.management_dns
+  count    = local.is_management_env ? 1 : 0
+  name     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.1.resource_record_name
+  type     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.1.resource_record_type
+  zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
+  records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.1.resource_record_value]
+  ttl      = 60
+}
+
 resource "aws_route53_record" "thanos_ruler" {
   provider = aws.management_dns
   count    = local.is_management_env ? 1 : 0
