@@ -114,7 +114,7 @@ resource "aws_acm_certificate" "monitoring" {
   count                     = local.is_management_env ? 1 : 0
   domain_name               = local.fqdn
   validation_method         = "DNS"
-  subject_alternative_names = ["thanos-query.${local.fqdn}", "thanos-ruler.${local.fqdn}", "grafana.${local.fqdn}", "alertmanager.${local.fqdn}", "outofband.${local.fqdn}"]
+  subject_alternative_names = ["thanos-query.${local.fqdn}", "thanos-ruler.${local.fqdn}", "grafana.${local.fqdn}", "alertmanager.${local.fqdn}", "outofband.${local.fqdn}", "thanos-store.${local.fqdn}"]
 
   lifecycle {
     ignore_changes = [subject_alternative_names]
