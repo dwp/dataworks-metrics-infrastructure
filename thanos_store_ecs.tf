@@ -39,7 +39,7 @@ data "template_file" "thanos_store_definition" {
       },
       {
         "name" : "THANOS_STORE_CONFIG_CHANGE_DEPENDENCY",
-        "value" : "${md5(data.template_file.thanos_store.rendered)}"
+        "value" : "${md5(data.template_file.thanos_query.rendered)}"
       }
     ])
   }
