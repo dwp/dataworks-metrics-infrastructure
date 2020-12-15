@@ -31,3 +31,14 @@ resource "aws_security_group_rule" "thanos_store_allow_ingress_thanos_query" {
   security_group_id        = aws_security_group.thanos_store[0].id
   source_security_group_id = aws_security_group.thanos_query[0].id
 }
+
+resource "aws_security_group_rule" "allow_loadbalancer_ingress_thanos_ruler_http" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allows loadbalancer to access thanos user interface"
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = var.thanos_port_http
+  to_port                  = var.thanos_port_http
+  security_group_id        = aws_security_group.thanos_store[0].id
+  source_security_group_id = aws_security_group.monitoring[0].id
+}
