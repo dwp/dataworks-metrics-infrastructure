@@ -21,7 +21,7 @@ data "template_file" "thanos_store_definition" {
     image_url     = data.terraform_remote_state.management.outputs.ecr_thanos_url
     memory        = var.fargate_memory
     user          = "nobody"
-    ports         = jsonencode([var.thanos_port_http])
+    ports         = 10902
     log_group     = aws_cloudwatch_log_group.monitoring.name
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
