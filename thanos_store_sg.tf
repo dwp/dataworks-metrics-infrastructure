@@ -21,24 +21,13 @@ resource "aws_security_group_rule" "allow_loadbalancer_ingress_thanos_store_http
   source_security_group_id = aws_security_group.monitoring[0].id
 }
 
-resource "aws_security_group_rule" "allow_grafana_ingress_thanos_store_http" {
+resource "aws_security_group_rule" "allow_thanos_query_ingress_thanos_store_http" {
   count                    = local.is_management_env ? 1 : 0
-  description              = "Allows grafana to access thanos store api"
+  description              = "Allows thanos query to access thanos store"
   type                     = "ingress"
   protocol                 = "tcp"
-  from_port                = var.thanos_port_http
-  to_port                  = var.thanos_port_http
+  from_port                = var.thanos_port_grpc
+  to_port                  = var.thanos_port_grpc
   security_group_id        = aws_security_group.thanos_store[0].id
-  source_security_group_id = aws_security_group.grafana[0].id
-}
-
-resource "aws_security_group_rule" "allow_thanos_ruler_ingress_thanos_store_http" {
-  count                    = local.is_management_env ? 1 : 0
-  description              = "Allows thanos ruler to access thanos store"
-  type                     = "ingress"
-  protocol                 = "tcp"
-  from_port                = var.thanos_port_http
-  to_port                  = var.thanos_port_http
-  security_group_id        = aws_security_group.thanos_store[0].id
-  source_security_group_id = aws_security_group.thanos_ruler[0].id
+  source_security_group_id = aws_security_group.thanos_query[0].id
 }

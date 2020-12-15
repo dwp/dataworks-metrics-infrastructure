@@ -34,10 +34,6 @@ data "template_file" "thanos_store_definition" {
         "value" : "store"
       },
       {
-        "name" : "STORE_HOSTNAMES",
-        "value" : "${join(" ", formatlist("${var.name}-${var.secondary}.%s.services.${var.parent_domain_name}", "${local.master_peerings[local.slave_peerings[local.environment]]}"))}"
-      },
-      {
         "name" : "THANOS_STORE_CONFIG_CHANGE_DEPENDENCY",
         "value" : "${md5(data.template_file.thanos_store.rendered)}"
       }
