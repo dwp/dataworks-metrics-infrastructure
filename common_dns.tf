@@ -131,6 +131,8 @@ resource "aws_route53_record" "monitoring" {
   zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
   records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.0.resource_record_value]
   ttl      = 60
+  allow_overwrite = true
+
 }
 
 resource "aws_route53_record" "thanos_query" {
@@ -141,6 +143,7 @@ resource "aws_route53_record" "thanos_query" {
   zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
   records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.1.resource_record_value]
   ttl      = 60
+  allow_overwrite = true
 }
 
 resource "aws_route53_record" "thanos_ruler" {
@@ -151,6 +154,7 @@ resource "aws_route53_record" "thanos_ruler" {
   zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
   records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.2.resource_record_value]
   ttl      = 60
+  allow_overwrite = true
 }
 
 resource "aws_route53_record" "grafana" {
@@ -161,6 +165,7 @@ resource "aws_route53_record" "grafana" {
   zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
   records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.3.resource_record_value]
   ttl      = 60
+  allow_overwrite = true
 }
 
 resource "aws_route53_record" "alertmanager" {
@@ -171,6 +176,7 @@ resource "aws_route53_record" "alertmanager" {
   zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
   records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.4.resource_record_value]
   ttl      = 60
+  allow_overwrite = true
 }
 
 resource "aws_route53_record" "outofband" {
@@ -181,6 +187,7 @@ resource "aws_route53_record" "outofband" {
   zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
   records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.5.resource_record_value]
   ttl      = 60
+  allow_overwrite = true
 }
 
 resource "aws_acm_certificate_validation" "monitoring" {
