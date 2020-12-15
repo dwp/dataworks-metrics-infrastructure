@@ -21,6 +21,17 @@ resource "aws_security_group_rule" "allow_egress_grafana_thanos_query_http" {
   source_security_group_id = aws_security_group.thanos_query[0].id
 }
 
+resource "aws_security_group_rule" "allow_egress_grafana_thanos_store_http" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow grafana to access thanos store api"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = var.thanos_port_http
+  to_port                  = var.thanos_port_http
+  security_group_id        = aws_security_group.grafana[0].id
+  source_security_group_id = aws_security_group.thanos_store[0].id
+}
+
 resource "aws_security_group_rule" "allow_loadbalancer_ingress_grafana_http" {
   count                    = local.is_management_env ? 1 : 0
   description              = "Allows loadbalancer to access grafanas user interface"
