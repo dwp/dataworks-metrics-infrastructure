@@ -42,14 +42,3 @@ resource "aws_security_group_rule" "thanos_query_allow_egress_thanos_store" {
   security_group_id        = aws_security_group.thanos_query[0].id
   source_security_group_id = aws_security_group.thanos_store[0].id
 }
-
-resource "aws_security_group_rule" "thanos_query_allow_egress_thanos_store" {
-  count                    = local.is_management_env ? 1 : 0
-  description              = "Allow thanos store node to access thanos query"
-  type                     = "egress"
-  protocol                 = "tcp"
-  from_port                = var.thanos_port_grpc
-  to_port                  = var.thanos_port_grpc
-  security_group_id        = aws_security_group.thanos_store[0].id
-  source_security_group_id = aws_security_group.thanos_query[0].id
-}
