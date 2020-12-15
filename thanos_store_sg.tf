@@ -39,6 +39,6 @@ resource "aws_security_group_rule" "thanos_query_allow_egress_thanos_store" {
   protocol                 = "tcp"
   from_port                = var.thanos_port_grpc
   to_port                  = var.thanos_port_grpc
-  security_group_id        = aws_security_group.thanos_query[0].id
-  source_security_group_id = aws_security_group.thanos_store[0].id
+  security_group_id        = aws_security_group.thanos_store[0].id
+  source_security_group_id = aws_security_group.thanos_query[0].id
 }
