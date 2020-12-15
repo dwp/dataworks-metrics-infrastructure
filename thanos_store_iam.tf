@@ -68,3 +68,9 @@ data "aws_iam_policy_document" "thanos_store_read_config" {
     ]
   }
 }
+
+resource "aws_iam_role_policy_attachment" "thanos_store_monitoring_bucket_read_write" {
+  count      = local.is_management_env ? 1 : 0
+  role       = aws_iam_role.thanos_store[0].name
+  policy_arn = aws_iam_policy.monitoring_bucket_read_write.arn
+}
