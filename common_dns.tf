@@ -116,9 +116,9 @@ resource "aws_acm_certificate" "monitoring" {
   validation_method         = "DNS"
   subject_alternative_names = ["thanos-query.${local.fqdn}", "thanos-ruler.${local.fqdn}", "grafana.${local.fqdn}", "alertmanager.${local.fqdn}", "outofband.${local.fqdn}", "thanos-store.${local.fqdn}"]
 
-  lifecycle {
-    ignore_changes = [subject_alternative_names]
-  }
+  //  lifecycle {
+  //    ignore_changes = [subject_alternative_names]
+  //  }
 
   tags = merge(local.tags, { Name = var.name })
 }
@@ -202,7 +202,7 @@ resource "aws_acm_certificate_validation" "monitoring" {
     aws_route53_record.thanos_ruler[local.primary_role_index].fqdn,
     aws_route53_record.grafana[local.primary_role_index].fqdn,
     aws_route53_record.alertmanager[local.primary_role_index].fqdn,
-    aws_route53_record.outofband[local.primary_role_index].fqdn,
+    aws_route53_record.outofband[local.primary_role_index].fqdn
     //    aws_route53_record.thanos_store[local.primary_role_index].fqdn
   ]
 }
