@@ -58,7 +58,7 @@ resource "aws_ecs_service" "thanos_store" {
   load_balancer {
     target_group_arn = aws_lb_target_group.thanos_store[local.primary_role_index].arn
     container_name   = "thanos-store"
-    container_port   = var.prometheus_port
+    container_port   = 10902
   }
 
   service_registries {
