@@ -124,69 +124,69 @@ resource "aws_acm_certificate" "monitoring" {
 }
 
 resource "aws_route53_record" "monitoring" {
-  provider = aws.management_dns
-  count    = local.is_management_env ? 1 : 0
-  name     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.0.resource_record_name
-  type     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.0.resource_record_type
-  zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
-  records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.0.resource_record_value]
-  ttl      = 60
+  provider        = aws.management_dns
+  count           = local.is_management_env ? 1 : 0
+  name            = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.0.resource_record_name
+  type            = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.0.resource_record_type
+  zone_id         = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
+  records         = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.0.resource_record_value]
+  ttl             = 60
   allow_overwrite = true
 
 }
 
 resource "aws_route53_record" "thanos_query" {
-  provider = aws.management_dns
-  count    = local.is_management_env ? 1 : 0
-  name     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.1.resource_record_name
-  type     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.1.resource_record_type
-  zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
-  records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.1.resource_record_value]
-  ttl      = 60
+  provider        = aws.management_dns
+  count           = local.is_management_env ? 1 : 0
+  name            = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.1.resource_record_name
+  type            = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.1.resource_record_type
+  zone_id         = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
+  records         = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.1.resource_record_value]
+  ttl             = 60
   allow_overwrite = true
 }
 
 resource "aws_route53_record" "thanos_ruler" {
-  provider = aws.management_dns
-  count    = local.is_management_env ? 1 : 0
-  name     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.2.resource_record_name
-  type     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.2.resource_record_type
-  zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
-  records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.2.resource_record_value]
-  ttl      = 60
+  provider        = aws.management_dns
+  count           = local.is_management_env ? 1 : 0
+  name            = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.2.resource_record_name
+  type            = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.2.resource_record_type
+  zone_id         = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
+  records         = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.2.resource_record_value]
+  ttl             = 60
   allow_overwrite = true
 }
 
 resource "aws_route53_record" "grafana" {
-  provider = aws.management_dns
-  count    = local.is_management_env ? 1 : 0
-  name     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.3.resource_record_name
-  type     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.3.resource_record_type
-  zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
-  records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.3.resource_record_value]
-  ttl      = 60
+  provider        = aws.management_dns
+  count           = local.is_management_env ? 1 : 0
+  name            = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.3.resource_record_name
+  type            = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.3.resource_record_type
+  zone_id         = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
+  records         = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.3.resource_record_value]
+  ttl             = 60
   allow_overwrite = true
 }
 
 resource "aws_route53_record" "alertmanager" {
-  provider = aws.management_dns
-  count    = local.is_management_env ? 1 : 0
-  name     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.4.resource_record_name
-  type     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.4.resource_record_type
-  zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
-  records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.4.resource_record_value]
-  ttl      = 60
+  provider        = aws.management_dns
+  count           = local.is_management_env ? 1 : 0
+  name            = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.4.resource_record_name
+  type            = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.4.resource_record_type
+  zone_id         = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
+  records         = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.4.resource_record_value]
+  ttl             = 60
   allow_overwrite = true
 }
 
 resource "aws_route53_record" "outofband" {
-  provider = aws.management_dns
-  count    = local.is_management_env ? 1 : 0
-  name     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.5.resource_record_name
-  type     = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.5.resource_record_type
-  zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
-  records  = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.5.resource_record_value]
-  ttl      = 60
+  provider        = aws.management_dns
+  count           = local.is_management_env ? 1 : 0
+  name            = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.5.resource_record_name
+  type            = aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.5.resource_record_type
+  zone_id         = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
+  records         = [aws_acm_certificate.monitoring[local.primary_role_index].domain_validation_options.5.resource_record_value]
+  ttl             = 60
   allow_overwrite = true
 }
 
