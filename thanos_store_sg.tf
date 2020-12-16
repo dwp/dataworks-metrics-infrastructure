@@ -15,8 +15,8 @@ resource "aws_security_group_rule" "allow_loadbalancer_ingress_thanos_store_http
   description              = "Allows loadbalancer to access thanos user interface"
   type                     = "ingress"
   protocol                 = "tcp"
-  from_port                = 10902
-  to_port                  = 10902
+  from_port                = var.thanos_port_http
+  to_port                  = var.thanos_port_http
   security_group_id        = aws_security_group.thanos_store[0].id
   source_security_group_id = aws_security_group.monitoring[0].id
 }
