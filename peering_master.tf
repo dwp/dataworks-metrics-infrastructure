@@ -111,7 +111,7 @@ resource "aws_security_group_rule" "thanos_query_allow_egress_thanos_store" {
 resource "aws_security_group_rule" "thanos_query_allow_ingress_thanos_store" {
   count                    = local.is_management_env ? 1 : 0
   description              = "Allow thanos query node to access thanos store"
-  type                     = "egress"
+  type                     = "ingress"
   protocol                 = "tcp"
   from_port                = var.thanos_port_grpc
   to_port                  = var.thanos_port_grpc
