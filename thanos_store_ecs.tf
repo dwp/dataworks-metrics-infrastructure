@@ -55,12 +55,6 @@ resource "aws_ecs_service" "thanos_store" {
     subnets         = module.vpc.outputs.private_subnets[local.primary_role_index]
   }
 
-  load_balancer {
-    target_group_arn = aws_lb_target_group.thanos_store[local.primary_role_index].arn
-    container_name   = "thanos-store"
-    container_port   = var.thanos_port_grpc
-  }
-
   service_registries {
     registry_arn   = aws_service_discovery_service.thanos_store[local.primary_role_index].arn
     container_name = "thanos-store"
