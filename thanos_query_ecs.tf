@@ -21,7 +21,7 @@ data "template_file" "thanos_query_definition" {
     image_url     = data.terraform_remote_state.management.outputs.ecr_thanos_url
     memory        = var.fargate_memory
     user          = "nobody"
-    ports         = jsonencode([10902])
+    ports         = jsonencode([var.thanos_port_http])
     log_group     = aws_cloudwatch_log_group.monitoring.name
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
@@ -62,7 +62,7 @@ resource "aws_ecs_service" "thanos_query" {
   load_balancer {
     target_group_arn = aws_lb_target_group.thanos_query[local.primary_role_index].arn
     container_name   = "thanos-query"
-    container_port   = 10902
+    container_port   = var.thanos_port_http
   }
 
   service_registries {
