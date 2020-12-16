@@ -71,13 +71,3 @@ static:
           - Sum
         period: 60
         length: 300
-  - namespace: AWS/EMR
-    name: EMRCoreNodes
-    regions:
-      - ${region}
-    metrics:
-      - name: CoreNodesRunning
-        statistics:
-          - Sum
-        period: 60
-        length: 300
