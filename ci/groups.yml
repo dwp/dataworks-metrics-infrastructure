@@ -17,6 +17,7 @@ groups:
       - cycle-outofband-management
       - cycle-thanos-ruler-management
       - cycle-thanos-query-management
+      - cycle-thanos-store-management
       - cycle-alertmanager-management
       - cycle-prometheus-management
       - cycle-cloudwatch-exporter-management
@@ -26,6 +27,7 @@ groups:
       - cycle-outofband-management-dev
       - cycle-thanos-ruler-management-dev
       - cycle-thanos-query-management-dev
+      - cycle-thanos-store-management-dev
       - cycle-alertmanager-management-dev
       - cycle-prometheus-management-dev
       - cycle-cloudwatch-exporter-management-dev
