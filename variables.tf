@@ -50,6 +50,10 @@ variable "https_port" {
   default = 443
 }
 
+variable "ulimits" {
+  default = 999999
+}
+
 variable "internet_proxy_port" {}
 variable "grafana_port" {}
 variable "prometheus_port" {}
