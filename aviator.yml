@@ -19,6 +19,8 @@ spruce:
         regexp: ".*.yml"
       - with_in: ci/jobs/cycle-containers/thanos-query/
         regexp: ".*.yml"
+      - with_in: ci/jobs/cycle-containers/thanos-store/
+        regexp: ".*.yml"
       - with_in: ci/jobs/cycle-containers/thanos-ruler/
         regexp: ".*.yml"
       - with_in: ci/jobs/cycle-containers/cloudwatch-exporter/

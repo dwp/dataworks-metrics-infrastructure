@@ -11,6 +11,14 @@
       hostPort = port
     }
   ])},
+  "ulimits": ${jsonencode([
+    for limit in jsondecode(ulimits) :
+    {
+      name      = "nofile",
+      hardLimit = limit,
+      softLimit = limit
+    }
+  ])},
   "mountPoints": ${jsonencode([
     for mount in jsondecode(mount_points) : {
       containerPath = mount.container_path,
