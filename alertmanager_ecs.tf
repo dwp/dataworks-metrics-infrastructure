@@ -22,7 +22,7 @@ data "template_file" "alertmanager_definition" {
     memory        = var.fargate_memory
     user          = "nobody"
     ports         = jsonencode([var.alertmanager_port])
-    ulimits       = jsonencode([var.ulimits])
+    ulimits       = jsonencode([])
     log_group     = aws_cloudwatch_log_group.monitoring.name
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id

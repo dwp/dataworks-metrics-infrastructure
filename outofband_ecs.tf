@@ -35,7 +35,7 @@ data "template_file" "outofband_definition" {
     memory        = var.fargate_memory
     user          = "nobody"
     ports         = jsonencode([var.prometheus_port])
-    ulimits       = jsonencode([var.ulimits])
+    ulimits       = jsonencode([])
     log_group     = aws_cloudwatch_log_group.monitoring.name
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
@@ -71,7 +71,7 @@ data "template_file" "thanos_sidecar_outofband_definition" {
     memory        = var.fargate_memory
     user          = "nobody"
     ports         = jsonencode([var.thanos_port_grpc])
-    ulimits       = jsonencode([var.ulimits])
+    ulimits       = jsonencode([])
     log_group     = aws_cloudwatch_log_group.monitoring.name
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
