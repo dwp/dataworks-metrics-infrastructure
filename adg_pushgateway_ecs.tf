@@ -22,7 +22,7 @@ data "template_file" "adg_pushgateway_definition" {
     memory        = var.fargate_memory
     user          = "nobody"
     ports         = jsonencode([var.pushgateway_port])
-    ulimits       = jsonencode()
+    ulimits       = jsonencode([])
     log_group     = aws_cloudwatch_log_group.monitoring.name
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
