@@ -87,6 +87,7 @@ resource "aws_security_group_rule" "thanos_query_allow_egress_thanos_sidecar" {
 }
 
 resource "aws_security_group_rule" "thanos_store_allow_ingress_thanos_query" {
+  count                    = local.is_management_env ? 1 : 0
   description              = "Allow thanos query node to access thanos store"
   type                     = "ingress"
   protocol                 = "tcp"
@@ -97,6 +98,7 @@ resource "aws_security_group_rule" "thanos_store_allow_ingress_thanos_query" {
 }
 
 resource "aws_security_group_rule" "thanos_query_allow_egress_thanos_store" {
+  count                    = local.is_management_env ? 1 : 0
   description              = "Allow thanos query node to access thanos store"
   type                     = "egress"
   protocol                 = "tcp"
