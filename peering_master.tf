@@ -85,3 +85,23 @@ resource "aws_security_group_rule" "thanos_query_allow_egress_thanos_sidecar" {
   security_group_id        = local.is_management_env ? aws_security_group.thanos_query[0].id : data.terraform_remote_state.management_dmi.outputs.thanos_security_group
   source_security_group_id = aws_security_group.prometheus.id
 }
+
+resource "aws_security_group_rule" "thanos_store_allow_ingress_thanos_query" {
+  description              = "Allow thanos query node to access thanos store"
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = var.thanos_port_grpc
+  to_port                  = var.thanos_port_grpc
+  security_group_id        = aws_security_group.thanos_store[0].id
+  source_security_group_id = aws_security_group.thanos_query[0].id
+}
+
+resource "aws_security_group_rule" "thanos_query_allow_egress_thanos_store" {
+  description              = "Allow thanos query node to access thanos store"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = var.thanos_port_grpc
+  to_port                  = var.thanos_port_grpc
+  security_group_id        = aws_security_group.thanos_query[0].id
+  source_security_group_id = aws_security_group.thanos_store[0].id
+}
