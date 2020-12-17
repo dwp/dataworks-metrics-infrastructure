@@ -55,7 +55,9 @@ data "aws_iam_policy_document" "monitoring_bucket_cmk_policy" {
         "arn:aws:iam::${local.account.qa}:role/prometheus",
         "arn:aws:iam::${local.account.integration}:role/prometheus",
         "arn:aws:iam::${local.account.preprod}:role/prometheus",
-        "arn:aws:iam::${local.account.production}:role/prometheus"
+        "arn:aws:iam::${local.account.production}:role/prometheus",
+        "arn:aws:iam::${local.account.management}:role/prometheus",
+        "arn:aws:iam::${local.account.management-dev}:role/prometheus"
       ]
       type = "AWS"
     }
@@ -150,7 +152,9 @@ data "aws_iam_policy_document" "monitoring_bucket_enforce_https" {
         "arn:aws:iam::${local.account.qa}:role/prometheus",
         "arn:aws:iam::${local.account.integration}:role/prometheus",
         "arn:aws:iam::${local.account.preprod}:role/prometheus",
-        "arn:aws:iam::${local.account.production}:role/prometheus"
+        "arn:aws:iam::${local.account.production}:role/prometheus",
+        "arn:aws:iam::${local.account.management}:role/prometheus",
+        "arn:aws:iam::${local.account.management-dev}:role/prometheus"
       ]
       type = "AWS"
     }
@@ -176,7 +180,9 @@ data "aws_iam_policy_document" "monitoring_bucket_enforce_https" {
         "arn:aws:iam::${local.account.qa}:role/prometheus",
         "arn:aws:iam::${local.account.integration}:role/prometheus",
         "arn:aws:iam::${local.account.preprod}:role/prometheus",
-        "arn:aws:iam::${local.account.production}:role/prometheus"
+        "arn:aws:iam::${local.account.production}:role/prometheus",
+        "arn:aws:iam::${local.account.management}:role/prometheus",
+        "arn:aws:iam::${local.account.management-dev}:role/prometheus"
       ]
       type = "AWS"
     }
