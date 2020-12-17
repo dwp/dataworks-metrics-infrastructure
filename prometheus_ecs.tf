@@ -98,7 +98,7 @@ data "template_file" "thanos_sidecar_prometheus_definition" {
     image_url     = data.terraform_remote_state.management.outputs.ecr_thanos_url
     memory        = var.fargate_memory
     user          = "nobody"
-    ports         = jsonencode([var.thanos_port_grpc])
+    ports         = jsonencode([var.thanos_port_grpc, var.thanos_port_remote_write])
     ulimits       = jsonencode([])
     log_group     = aws_cloudwatch_log_group.monitoring.name
     region        = data.aws_region.current.name
