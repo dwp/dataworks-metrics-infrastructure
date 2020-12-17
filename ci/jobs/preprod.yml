@@ -3,7 +3,7 @@ jobs:
     plan:
       - get: dataworks-metrics-infrastructure
         passed:
-        - integration
+          - integration
         trigger: true
       - get: dataworks-dashboards
 
@@ -14,15 +14,7 @@ jobs:
       - .: (( inject meta.plan.terraform-apply ))
         params:
           TF_WORKSPACE: preprod
-        
+
       - .: (( inject meta.plan.terraform-plan ))
         params:
           TF_WORKSPACE: preprod
-
-      - .: (( inject meta.plan.cycle-containers ))
-        task: trigger-prometheus-deployment
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
-          CLUSTER: main
-          SERVICE: prometheus
-
