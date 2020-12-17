@@ -103,7 +103,12 @@ data "template_file" "thanos_sidecar_prometheus_definition" {
       }
     ])
 
-    environment_variables = jsonencode([])
+    environment_variables = jsonencode([
+      {
+        "name" : "THANOS_STORE_CONFIG_CHANGE_DEPENDENCY",
+        "value" : "${md5(data.template_file.thanos_config.rendered)}"
+      }
+    ])
   }
 }
 

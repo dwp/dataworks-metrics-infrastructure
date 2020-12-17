@@ -13,4 +13,5 @@ config:
   trace:
     enable: false
   sse_config:
-    type: SSE-S3
+    type: SSE-KMS
+    kms_key_id: "${kms_key_id}"
