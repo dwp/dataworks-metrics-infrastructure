@@ -7,7 +7,7 @@ resource "aws_ecs_task_definition" "outofband" {
   memory                   = "4096"
   task_role_arn            = aws_iam_role.outofband[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
-  container_definitions    = "[${data.template_file.outofband_definition[local.primary_role_index].rendered}, ${data.template_file.thanos_sidecar_outofband_definition[local.primary_role_index].rendered}]"
+  container_definitions    = "[${data.template_file.outofband_definition[local.primary_role_index].rendered}, ${data.template_file.thanos_receiver_outofband_definition[local.primary_role_index].rendered}]"
 
   volume {
     name = "outofband"
@@ -60,17 +60,17 @@ data "template_file" "outofband_definition" {
   }
 }
 
-data "template_file" "thanos_sidecar_outofband_definition" {
+data "template_file" "thanos_receiver_outofband_definition" {
   count    = local.is_management_env ? 1 : 0
   template = file("${path.module}/container_definition.tpl")
   vars = {
-    name          = "thanos-sidecar"
+    name          = "thanos-receiver"
     group_name    = "thanos"
     cpu           = var.fargate_cpu
     image_url     = data.terraform_remote_state.management.outputs.ecr_thanos_url
     memory        = var.fargate_memory
     user          = "nobody"
-    ports         = jsonencode([var.thanos_port_grpc])
+    ports         = jsonencode([var.thanos_port_grpc, var.thanos_port_remote_write])
     ulimits       = jsonencode([])
     log_group     = aws_cloudwatch_log_group.monitoring.name
     region        = data.aws_region.current.name
