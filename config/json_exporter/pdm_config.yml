@@ -87,12 +87,6 @@ metrics:
   path: $.gauges.'threads.timed_waiting.count'.value
 - name: threads_waiting_count
   path: $.gauges.'threads.waiting.count'.value
-- name: completion_min_step_10
-  path: $.gauges.'completion_min_step_10'.value
-- name: completion_min_step_11
-  path: $.gauges.'completion_min_step_11'.value
-- name: completion_min_step_12
-  path: $.gauges.'completion_min_step_12'.value
 - name: completion_min_step_1
   path: $.gauges.'completion_min_step_1'.value
 - name: completion_min_step_2
@@ -111,6 +105,12 @@ metrics:
   path: $.gauges.'completion_min_step_8'.value
 - name: completion_min_step_9
   path: $.gauges.'completion_min_step_9'.value
+- name: completion_min_step_10
+  path: $.gauges.'completion_min_step_10'.value
+- name: completion_min_step_11
+  path: $.gauges.'completion_min_step_11'.value
+- name: completion_min_step_12
+  path: $.gauges.'completion_min_step_12'.value
 - name: rowcount_uc_pdm_transform
   path: $.gauges.'rowcount_uc_pdm_transform'.value
 - name: rowcount_uc_pdm_transactional
@@ -119,12 +119,6 @@ metrics:
   path: $.gauges.'rowcount_uc_pdm_model'.value
 - name: rowcount_uc
   path: $.gauges.'rowcount_uc'.value
-- name: state_step_10
-  path: $.gauges.'state_step_10'.value
-- name: state_step_11
-  path: $.gauges.'state_step_11'.value
-- name: state_step_12
-  path: $.gauges.'state_step_12'.value
 - name: state_step_1
   path: $.gauges.'state_step_1'.value
 - name: state_step_2
@@ -143,3 +137,9 @@ metrics:
   path: $.gauges.'state_step_8'.value
 - name: state_step_9
   path: $.gauges.'state_step_9'.value
+- name: state_step_10
+  path: $.gauges.'state_step_10'.value
+- name: state_step_11
+  path: $.gauges.'state_step_11'.value
+- name: state_step_12
+  path: $.gauges.'state_step_12'.value
