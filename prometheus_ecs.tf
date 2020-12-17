@@ -72,7 +72,7 @@ data "template_file" "ecs_service_discovery_definition" {
     mount_points = jsonencode([
       {
         "container_path" : "/prometheus",
-        "source_volume" : "prometheus-new"
+        "source_volume" : "prometheus"
       }
     ])
 
@@ -107,7 +107,7 @@ data "template_file" "thanos_receiver_prometheus_definition" {
     mount_points = jsonencode([
       {
         "container_path" : "/prometheus",
-        "source_volume" : "prometheus-new"
+        "source_volume" : "prometheus"
       }
     ])
 
