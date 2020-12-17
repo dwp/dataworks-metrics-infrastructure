@@ -6,7 +6,7 @@ resource "aws_ecs_task_definition" "prometheus" {
   memory                   = "4096"
   task_role_arn            = aws_iam_role.prometheus.arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
-  container_definitions    = "[${data.template_file.prometheus_definition.rendered}, ${data.template_file.thanos_sidecar_prometheus_definition.rendered}, ${data.template_file.ecs_service_discovery_definition.rendered}]"
+  container_definitions    = "[${data.template_file.prometheus_definition.rendered}, ${data.template_file.thanos_receiver_prometheus_definition.rendered}, ${data.template_file.ecs_service_discovery_definition.rendered}]"
 
   volume {
     name = "prometheus"
@@ -89,10 +89,10 @@ data "template_file" "ecs_service_discovery_definition" {
   }
 }
 
-data "template_file" "thanos_sidecar_prometheus_definition" {
+data "template_file" "thanos_receiver_prometheus_definition" {
   template = file("${path.module}/container_definition.tpl")
   vars = {
-    name          = "thanos-sidecar"
+    name          = "thanos-receiver"
     group_name    = "thanos"
     cpu           = var.fargate_cpu
     image_url     = data.terraform_remote_state.management.outputs.ecr_thanos_url
