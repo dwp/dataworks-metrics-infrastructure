@@ -39,7 +39,7 @@ resource "aws_kms_key" "monitoring_bucket_cmk" {
       "kms:List*",
       "kms:Get*"
     ],
-     "Resource": "*"
+     "Resource": "*",
      "Principal": {"AWS": [
         "arn:aws:iam::${local.account.development}:role/prometheus",
         "arn:aws:iam::${local.account.qa}:role/prometheus",
@@ -48,9 +48,8 @@ resource "aws_kms_key" "monitoring_bucket_cmk" {
         "arn:aws:iam::${local.account.production}:role/prometheus"
       ]}
     }
-   }
- }
- POLICY
+  }
+  POLICY
   tags = merge(
     local.tags,
     map("Name", "Monitoring bucket key"),
