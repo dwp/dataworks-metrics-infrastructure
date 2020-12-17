@@ -119,3 +119,27 @@ metrics:
   path: $.gauges.'rowcount_uc_pdm_model'.value
 - name: rowcount_uc
   path: $.gauges.'rowcount_uc'.value
+- name: state_step_10
+  path: $.gauges.'state_step_10'.value
+- name: state_step_11
+  path: $.gauges.'state_step_11'.value
+- name: state_step_12
+  path: $.gauges.'state_step_12'.value
+- name: state_step_1
+  path: $.gauges.'state_step_1'.value
+- name: state_step_2
+  path: $.gauges.'state_step_2'.value
+- name: state_step_3
+  path: $.gauges.'state_step_3'.value
+- name: state_step_4
+  path: $.gauges.'state_step_4'.value
+- name: state_step_5
+  path: $.gauges.'state_step_5'.value
+- name: state_step_6
+  path: $.gauges.'state_step_6'.value
+- name: state_step_7
+  path: $.gauges.'state_step_7'.value
+- name: state_step_8
+  path: $.gauges.'state_step_8'.value
+- name: state_step_9
+  path: $.gauges.'state_step_9'.value
