@@ -3,11 +3,11 @@ jobs:
     plan:
       - get: dataworks-metrics-infrastructure
         passed:
-        - management-dev
+          - management-dev
         trigger: true
       - get: dataworks-dashboards
         passed:
-        - management-dev
+          - management-dev
         trigger: true
 
       - .: (( inject meta.plan.terraform-bootstrap ))
@@ -22,18 +22,3 @@ jobs:
       - .: (( inject meta.plan.terraform-plan ))
         params:
           TF_WORKSPACE: management
-
-      - .: (( inject meta.plan.cycle-containers ))
-        task: trigger-outofband-deployment
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
-          CLUSTER: main
-          SERVICE: outofband
-
-      - .: (( inject meta.plan.cycle-containers ))
-        task: trigger-prometheus-deployment
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
-          CLUSTER: main
-          SERVICE: prometheus
-
