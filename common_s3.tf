@@ -99,6 +99,31 @@ data "aws_iam_policy_document" "monitoring_bucket_enforce_https" {
       variable = "aws:SecureTransport"
     }
   }
+  statement {
+    sid    = "AllowCrossAccountRW"
+    effect = "Allow"
+    actions = [
+      "s3:PutObject",
+      "s3:ListBucket",
+      "s3:GetObject",
+      "s3:DeleteObject"
+    ]
+
+    resources = [aws_s3_bucket.monitoring[local.primary_role_index].arn,
+      "${aws_s3_bucket.monitoring[local.primary_role_index].arn}/*",
+    ]
+
+    principals {
+      identifiers = [
+        "arn:aws:iam::${local.account.development}:role/prometheus",
+        "arn:aws:iam::${local.account.qa}:role/prometheus",
+        "arn:aws:iam::${local.account.integration}:role/prometheus",
+        "arn:aws:iam::${local.account.preprod}:role/prometheus",
+        "arn:aws:iam::${local.account.production}:role/prometheus"
+      ]
+      type = "AWS"
+    }
+  }
 }
 
 resource "aws_s3_bucket_policy" "monitoring" {
