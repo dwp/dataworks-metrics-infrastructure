@@ -58,6 +58,7 @@ variable "internet_proxy_port" {}
 variable "grafana_port" {}
 variable "prometheus_port" {}
 variable "thanos_port_grpc" {}
+variable "thanos_port_remote_write" {}
 variable "thanos_port_http" {}
 variable "alertmanager_port" {}
 variable "cloudwatch_exporter_port" {}
