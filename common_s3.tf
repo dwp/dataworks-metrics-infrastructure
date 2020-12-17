@@ -24,13 +24,20 @@ resource "aws_kms_key" "monitoring_bucket_cmk" {
   deletion_window_in_days = 7
   is_enabled              = true
   enable_key_rotation     = true
-  policy                  = <<POLICY
- {
-   "Version": "2012-10-17",
-   "Sid": "Allow access for cross account RW",
-   "Statement": {
-     "Effect": "Allow",
-     "Action": [
+  policy                  = local.is_management_env ? data.aws_iam_policy_document.monitoring_bucket_cmk_policy[local.primary_role_index].json : "{}"
+  tags = merge(
+    local.tags,
+    map("Name", "Monitoring bucket key"),
+    map("ProtectsSensitiveData", "False")
+  )
+}
+
+data "aws_iam_policy_document" "monitoring_bucket_cmk_policy" {
+  count = local.is_management_env ? 1 : 0
+  statement {
+    sid    = "AllowCrossAccountKMS"
+    effect = "Allow"
+    actions = [
       "kms:Encrypt",
       "kms:Decrypt",
       "kms:ReEncrypt*",
@@ -38,23 +45,21 @@ resource "aws_kms_key" "monitoring_bucket_cmk" {
       "kms:Describe*",
       "kms:List*",
       "kms:Get*"
-    ],
-     "Resource": "*",
-     "Principal": {"AWS": [
+    ]
+
+    resources = ["*"]
+
+    principals {
+      identifiers = [
         "arn:aws:iam::${local.account.development}:role/prometheus",
         "arn:aws:iam::${local.account.qa}:role/prometheus",
         "arn:aws:iam::${local.account.integration}:role/prometheus",
         "arn:aws:iam::${local.account.preprod}:role/prometheus",
         "arn:aws:iam::${local.account.production}:role/prometheus"
-      ]}
+      ]
+      type = "AWS"
     }
   }
-  POLICY
-  tags = merge(
-    local.tags,
-    map("Name", "Monitoring bucket key"),
-    map("ProtectsSensitiveData", "False")
-  )
 }
 
 resource "aws_kms_alias" "monitoring_bucket_cmk_alias" {
