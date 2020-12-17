@@ -29,6 +29,10 @@ data template_file "adg_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/adg_dashboard.json")
 }
 
+data template_file "pdm_dashboard" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/pdm_dashboard.json")
+}
+
 data template_file "analytical_emr_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/analytical_emr_dashboard.json")
 }
@@ -78,6 +82,15 @@ resource "aws_s3_bucket_object" "adg_dashboard" {
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/grafana/provisioning/dashboards/adg_dashboard.json"
   content    = data.template_file.adg_dashboard.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_s3_bucket_object" "pdm_dashboard" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/pdm_dashboard.json"
+  content    = data.template_file.pdm_dashboard.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   tags       = merge(local.tags, { Name = var.name })
 }
