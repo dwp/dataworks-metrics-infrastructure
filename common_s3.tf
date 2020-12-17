@@ -24,6 +24,33 @@ resource "aws_kms_key" "monitoring_bucket_cmk" {
   deletion_window_in_days = 7
   is_enabled              = true
   enable_key_rotation     = true
+  policy                  = <<POLICY
+ {
+   "Version": "2012-10-17",
+   "Sid": "Allow access for cross account RW",
+   "Statement": {
+     "Effect": "Allow",
+     "Action": [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:Describe*",
+      "kms:List*",
+      "kms:Get*"
+    ],
+     "Resource": "*"
+     "Principal": {"AWS": [
+        "arn:aws:iam::${local.account.development}:role/prometheus",
+        "arn:aws:iam::${local.account.qa}:role/prometheus",
+        "arn:aws:iam::${local.account.integration}:role/prometheus",
+        "arn:aws:iam::${local.account.preprod}:role/prometheus",
+        "arn:aws:iam::${local.account.production}:role/prometheus"
+      ]}
+    }
+   }
+ }
+ POLICY
   tags = merge(
     local.tags,
     map("Name", "Monitoring bucket key"),
@@ -111,6 +138,32 @@ data "aws_iam_policy_document" "monitoring_bucket_enforce_https" {
 
     resources = [aws_s3_bucket.monitoring[local.primary_role_index].arn,
       "${aws_s3_bucket.monitoring[local.primary_role_index].arn}/*",
+    ]
+
+    principals {
+      identifiers = [
+        "arn:aws:iam::${local.account.development}:role/prometheus",
+        "arn:aws:iam::${local.account.qa}:role/prometheus",
+        "arn:aws:iam::${local.account.integration}:role/prometheus",
+        "arn:aws:iam::${local.account.preprod}:role/prometheus",
+        "arn:aws:iam::${local.account.production}:role/prometheus"
+      ]
+      type = "AWS"
+    }
+  }
+  statement {
+    sid    = "AllowCrossAccountKMS"
+    effect = "Allow"
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+    ]
+
+    resources = [
+      "${local.is_management_env ? aws_kms_key.monitoring_bucket_cmk[local.primary_role_index].arn : data.terraform_remote_state.management_dmi.outputs.monitoring_bucket.key}",
     ]
 
     principals {
