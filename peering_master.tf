@@ -65,7 +65,7 @@ resource "aws_security_group_rule" "prometheus_primary_allow_egress_prometheus_s
   source_security_group_id = aws_security_group.prometheus.id
 }
 
-resource "aws_security_group_rule" "thanos_sidecar_allow_ingress_thanos_query" {
+resource "aws_security_group_rule" "thanos_receiver_allow_ingress_thanos_query" {
   description              = "Allow thanos query node to access thanos sidecar"
   type                     = "ingress"
   protocol                 = "tcp"
@@ -75,7 +75,7 @@ resource "aws_security_group_rule" "thanos_sidecar_allow_ingress_thanos_query" {
   source_security_group_id = local.is_management_env ? aws_security_group.thanos_query[0].id : data.terraform_remote_state.management_dmi.outputs.thanos_security_group
 }
 
-resource "aws_security_group_rule" "thanos_query_allow_egress_thanos_sidecar" {
+resource "aws_security_group_rule" "thanos_query_allow_egress_thanos_receiver" {
   provider                 = aws.dmi_management
   description              = "Allow thanos query node to access thanos sidecar"
   type                     = "egress"
