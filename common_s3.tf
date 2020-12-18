@@ -13,11 +13,6 @@ data "aws_secretsmanager_secret_version" "dataworks" {
   secret_id = data.aws_secretsmanager_secret.dataworks[local.primary_role_index].id
 }
 
-resource "random_id" "monitoring_bucket" {
-  count       = local.is_management_env ? 1 : 0
-  byte_length = 16
-}
-
 resource "aws_kms_key" "monitoring_bucket_cmk" {
   count                   = local.is_management_env ? 1 : 0
   description             = "Monitoring Bucket Master Key"
@@ -43,6 +38,11 @@ resource "aws_kms_alias" "monitoring_bucket_cmk_alias" {
   count         = local.is_management_env ? 1 : 0
   target_key_id = aws_kms_key.monitoring_bucket_cmk[local.primary_role_index].key_id
   name          = "alias/monitoring_bucket_cmk"
+}
+
+resource "random_id" "monitoring_bucket" {
+  count       = local.is_management_env ? 1 : 0
+  byte_length = 16
 }
 
 resource "aws_s3_bucket" "monitoring" {

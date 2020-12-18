@@ -11,7 +11,8 @@
                 "s3:DeleteObject"
             ],
             "Resource": [
-                "${monitoring_bucket_arn}/*"
+                "${monitoring_bucket_arn}/*",
+                "${monitoring_bucket_arn}"
             ],
             "Principal": { "AWS": "arn:aws:iam::${account}:root" }
         },
