@@ -5,13 +5,16 @@
         {
             "Effect": "Allow",
             "Action": [
+                "kms:Encrypt",
                 "kms:Decrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
                 "kms:Describe*",
                 "kms:List*",
                 "kms:Get*"
             ],
             "Resource": ["*"],
-            "Principal": { "AWS": "arn:aws:iam::${account}:root" }
+            "Principal": { "AWS": "arn:aws:iam::${account}:role/prometheus" }
         },
 %{ endfor }
         {
