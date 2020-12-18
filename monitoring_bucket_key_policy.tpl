@@ -14,14 +14,7 @@
                 "kms:Get*"
             ],
             "Resource": ["*"],
-            "Principal": {
-                "AWS": [
-                "arn:aws:iam::${account}:role/prometheus",
-                "arn:aws:iam::${account}:role/outofband",
-                "arn:aws:iam::${account}:role/thanos_store",
-                "arn:aws:iam::${account}:role/thanos_ruler"
-                ]
-            }
+            "Principal": {"AWS": "${account}"}
         },
 %{ endfor }
         {
