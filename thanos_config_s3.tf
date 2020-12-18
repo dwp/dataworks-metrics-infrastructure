@@ -3,7 +3,7 @@ data template_file "thanos_config" {
   vars = {
     metrics_bucket = local.is_management_env ? aws_s3_bucket.monitoring[local.primary_role_index].id : data.terraform_remote_state.management_dmi.outputs.monitoring_bucket.id
     s3_endpoint    = "s3-${var.region}.amazonaws.com"
-    kms_key_id     = local.is_management_env ? data.terraform_remote_state.management.outputs.monitoring_bucket.cmk_arn : data.terraform_remote_state.common.outputs.monitoring_bucket_cmk.arn
+    kms_key_id     = local.is_management_env ? data.terraform_remote_state.management.outputs.monitoring_bucket[local.primary_role_index].cmk_arn : data.terraform_remote_state.common.outputs.monitoring_bucket_cmk.arn
   }
 }
 
