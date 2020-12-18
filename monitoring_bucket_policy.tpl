@@ -14,7 +14,7 @@
                 "${monitoring_bucket_arn}/*",
                 "${monitoring_bucket_arn}"
             ],
-            "Principal": { "AWS": "arn:aws:iam::${account}:root" }
+            "Principal": { "AWS": "arn:aws:iam::${account}:role/prometheus" }
         },
         {
             "Effect": "Allow",
@@ -24,7 +24,7 @@
             "Resource": [
                 "${monitoring_bucket_arn}"
             ],
-            "Principal": { "AWS": "arn:aws:iam::${account}:root" }
+            "Principal": { "AWS": "arn:aws:iam::${account}:role/prometheus" }
         },
 %{ endfor }
         {
