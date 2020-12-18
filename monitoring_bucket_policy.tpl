@@ -20,7 +20,7 @@
                 "arn:aws:iam::${account}:role/thanos_store",
                 "arn:aws:iam::${account}:role/thanos_ruler"
                 ]
-            },
+            }
         },
         {
             "Effect": "Allow",
@@ -36,7 +36,7 @@
                 "arn:aws:iam::${account}:role/thanos_store",
                 "arn:aws:iam::${account}:role/thanos_ruler"
                 ]
-            },
+            }
         },
 %{ endfor }
         {
