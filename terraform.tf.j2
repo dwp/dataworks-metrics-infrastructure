@@ -210,6 +210,16 @@ provider "aws" {
   }
 }
 
+provider "aws" {
+  version = "~> 2.68.0"
+  alias   = "management"
+  region  = var.region
+
+  assume_role {
+    role_arn = "arn:aws:iam::${local.account.management}:role/${var.assume_role}"
+  }
+}
+
 // Get AWS Account ID for credentials in use
 data "aws_caller_identity" "current" {}
 
@@ -304,4 +314,20 @@ locals {
 
   zone_count = length(data.aws_availability_zones.current.zone_ids)
   zone_names = data.aws_availability_zones.current.names
+}
+
+data "aws_iam_user" "breakglass" {
+  user_name = "breakglass"
+}
+
+data "aws_iam_role" "ci" {
+  name = "ci"
+}
+
+data "aws_iam_role" "administrator" {
+  name = "administrator"
+}
+
+data "aws_iam_role" "aws_config" {
+  name = "aws_config"
 }
