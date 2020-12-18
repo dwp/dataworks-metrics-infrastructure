@@ -115,6 +115,10 @@ data "template_file" "thanos_receiver_prometheus_definition" {
       {
         "name" : "THANOS_STORE_CONFIG_CHANGE_DEPENDENCY",
         "value" : "${md5(data.template_file.thanos_config.rendered)}"
+      },
+      {
+        "name" : "THANOS_ALLOW_EXISTING_BUCKET_USE"
+        "value" : "true"
       }
     ])
   }
