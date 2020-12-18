@@ -24,7 +24,13 @@ resource "aws_kms_key" "monitoring_bucket_cmk" {
   deletion_window_in_days = 7
   is_enabled              = true
   enable_key_rotation     = true
-  policy                  = local.is_management_env ? data.aws_iam_policy_document.monitoring_bucket_cmk_policy[local.primary_role_index].json : "{}"
+  policy = templatefile("monitoring_bucket_key_policy.tpl", {
+    accounts            = join(",", values(local.account))
+    breakglass_arn      = data.aws_iam_user.breakglass.arn
+    ci_arn              = data.aws_iam_role.ci.arn
+    administrator_arn   = data.aws_iam_role.administrator.arn
+    aws_config_role_arn = data.aws_iam_role.aws_config.arn
+  })
   tags = merge(
     local.tags,
     map("Name", "Monitoring bucket key"),
@@ -32,37 +38,6 @@ resource "aws_kms_key" "monitoring_bucket_cmk" {
   )
 }
 
-data "aws_iam_policy_document" "monitoring_bucket_cmk_policy" {
-  count = local.is_management_env ? 1 : 0
-  statement {
-    sid    = "AllowCrossAccountKMS"
-    effect = "Allow"
-    actions = [
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:Describe*",
-      "kms:List*",
-      "kms:Get*"
-    ]
-
-    resources = ["*"]
-
-    principals {
-      identifiers = [
-        "arn:aws:iam::${local.account.development}:role/prometheus",
-        "arn:aws:iam::${local.account.qa}:role/prometheus",
-        "arn:aws:iam::${local.account.integration}:role/prometheus",
-        "arn:aws:iam::${local.account.preprod}:role/prometheus",
-        "arn:aws:iam::${local.account.production}:role/prometheus",
-        "arn:aws:iam::${local.account.management}:role/prometheus",
-        "arn:aws:iam::${local.account.management-dev}:role/prometheus"
-      ]
-      type = "AWS"
-    }
-  }
-}
 
 resource "aws_kms_alias" "monitoring_bucket_cmk_alias" {
   count         = local.is_management_env ? 1 : 0
@@ -109,88 +84,11 @@ resource "aws_s3_bucket_public_access_block" "monitoring" {
   ignore_public_acls      = true
 }
 
-data "aws_iam_policy_document" "monitoring_bucket_enforce_https" {
-  count = local.is_management_env ? 1 : 0
-  statement {
-    sid     = "BlockHTTP"
-    effect  = "Deny"
-    actions = ["*"]
-
-    resources = [
-      aws_s3_bucket.monitoring[local.primary_role_index].arn,
-      "${aws_s3_bucket.monitoring[local.primary_role_index].arn}/*",
-    ]
-
-    principals {
-      identifiers = ["*"]
-      type        = "AWS"
-    }
-
-    condition {
-      test     = "Bool"
-      values   = ["false"]
-      variable = "aws:SecureTransport"
-    }
-  }
-  statement {
-    sid    = "AllowCrossAccountRW"
-    effect = "Allow"
-    actions = [
-      "s3:PutObject",
-      "s3:ListBucket",
-      "s3:GetObject",
-      "s3:DeleteObject"
-    ]
-
-    resources = [aws_s3_bucket.monitoring[local.primary_role_index].arn,
-      "${aws_s3_bucket.monitoring[local.primary_role_index].arn}/*",
-    ]
-
-    principals {
-      identifiers = [
-        "arn:aws:iam::${local.account.development}:role/prometheus",
-        "arn:aws:iam::${local.account.qa}:role/prometheus",
-        "arn:aws:iam::${local.account.integration}:role/prometheus",
-        "arn:aws:iam::${local.account.preprod}:role/prometheus",
-        "arn:aws:iam::${local.account.production}:role/prometheus",
-        "arn:aws:iam::${local.account.management}:role/prometheus",
-        "arn:aws:iam::${local.account.management-dev}:role/prometheus"
-      ]
-      type = "AWS"
-    }
-  }
-  statement {
-    sid    = "AllowCrossAccountKMS"
-    effect = "Allow"
-    actions = [
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey",
-    ]
-
-    resources = [
-      "${local.is_management_env ? aws_kms_key.monitoring_bucket_cmk[local.primary_role_index].arn : data.terraform_remote_state.management_dmi.outputs.monitoring_bucket.key}",
-    ]
-
-    principals {
-      identifiers = [
-        "arn:aws:iam::${local.account.development}:role/prometheus",
-        "arn:aws:iam::${local.account.qa}:role/prometheus",
-        "arn:aws:iam::${local.account.integration}:role/prometheus",
-        "arn:aws:iam::${local.account.preprod}:role/prometheus",
-        "arn:aws:iam::${local.account.production}:role/prometheus",
-        "arn:aws:iam::${local.account.management}:role/prometheus",
-        "arn:aws:iam::${local.account.management-dev}:role/prometheus"
-      ]
-      type = "AWS"
-    }
-  }
-}
-
 resource "aws_s3_bucket_policy" "monitoring" {
   count  = local.is_management_env ? 1 : 0
   bucket = aws_s3_bucket.monitoring[local.primary_role_index].id
-  policy = local.is_management_env ? data.aws_iam_policy_document.monitoring_bucket_enforce_https[local.primary_role_index].json : "{}"
+  policy = templatefile("monitoring_bucket_policy.tpl", {
+    accounts              = join(",", values(local.account))
+    monitoring_bucket_arn = aws_s3_bucket.monitoring[count.index].arn
+  })
 }
