@@ -105,3 +105,36 @@ resource "aws_security_group_rule" "efs_allow_ingress_outofband" {
   type                     = "ingress"
   source_security_group_id = aws_security_group.outofband[local.primary_role_index].id
 }
+
+
+
+resource "aws_efs_file_system" "prometheus_new" {
+  tags = merge(local.tags, { Name = "prometheus_efs_new" })
+}
+
+resource "aws_efs_mount_target" "prometheus_new" {
+  count           = length(module.vpc.outputs.private_subnets[local.secondary_role_index])
+  file_system_id  = aws_efs_file_system.prometheus_new.id
+  subnet_id       = module.vpc.outputs.private_subnets[local.secondary_role_index][count.index]
+  security_groups = [aws_security_group.prometheus_efs.id]
+}
+
+resource "aws_efs_access_point" "prometheus_new" {
+  file_system_id = aws_efs_file_system.prometheus_new.id
+
+  root_directory {
+    path = "/prometheus"
+    creation_info {
+      owner_gid   = 0
+      owner_uid   = 0
+      permissions = 600
+    }
+  }
+
+  posix_user {
+    uid = 0
+    gid = 0
+  }
+
+  tags = merge(local.tags, { Name = var.name })
+}
