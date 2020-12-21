@@ -10,25 +10,34 @@ resource "aws_ecs_task_definition" "prometheus" {
 
   volume {
     name = "prometheus"
+    efs_volume_configuration {
+      file_system_id     = aws_efs_file_system.prometheus.id
+      root_directory     = "/"
+      transit_encryption = "ENABLED"
+      authorization_config {
+        access_point_id = aws_efs_access_point.prometheus.id
+      }
+    }
   }
 
   tags = merge(local.tags, { Name = var.name })
 }
 
 data "template_file" "prometheus_definition" {
-  template = file("${path.module}/container_definition.tpl")
+  template = file("${path.module}/reserved_container_definition.tpl")
   vars = {
-    name          = "prometheus"
-    group_name    = "prometheus"
-    cpu           = var.fargate_cpu
-    image_url     = data.terraform_remote_state.management.outputs.ecr_prometheus_url
-    memory        = var.fargate_memory
-    user          = "nobody"
-    ports         = jsonencode([var.prometheus_port])
-    ulimits       = jsonencode([])
-    log_group     = aws_cloudwatch_log_group.monitoring.name
-    region        = data.aws_region.current.name
-    config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+    name               = "prometheus"
+    group_name         = "prometheus"
+    cpu                = var.fargate_cpu
+    image_url          = data.terraform_remote_state.management.outputs.ecr_prometheus_url
+    memory             = var.receiver_memory
+    memory_reservation = var.fargate_memory
+    user               = "nobody"
+    ports              = jsonencode([var.prometheus_port])
+    ulimits            = jsonencode([])
+    log_group          = aws_cloudwatch_log_group.monitoring.name
+    region             = data.aws_region.current.name
+    config_bucket      = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
     mount_points = jsonencode([
       {
@@ -47,19 +56,20 @@ data "template_file" "prometheus_definition" {
 }
 
 data "template_file" "ecs_service_discovery_definition" {
-  template = file("${path.module}/container_definition.tpl")
+  template = file("${path.module}/reserved_container_definition.tpl")
   vars = {
-    name          = "ecs-service-discovery"
-    group_name    = "ecs_service_discovery"
-    cpu           = var.fargate_cpu
-    image_url     = data.terraform_remote_state.management.outputs.ecr_ecs_service_discovery_url
-    memory        = var.fargate_memory
-    user          = "nobody"
-    ports         = jsonencode([])
-    ulimits       = jsonencode([])
-    log_group     = aws_cloudwatch_log_group.monitoring.name
-    region        = data.aws_region.current.name
-    config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+    name               = "ecs-service-discovery"
+    group_name         = "ecs_service_discovery"
+    cpu                = var.fargate_cpu
+    image_url          = data.terraform_remote_state.management.outputs.ecr_ecs_service_discovery_url
+    memory             = var.receiver_memory
+    memory_reservation = var.fargate_memory
+    user               = "nobody"
+    ports              = jsonencode([])
+    ulimits            = jsonencode([])
+    log_group          = aws_cloudwatch_log_group.monitoring.name
+    region             = data.aws_region.current.name
+    config_bucket      = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
     mount_points = jsonencode([
       {
