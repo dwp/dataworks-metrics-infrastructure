@@ -3,7 +3,7 @@ resource "aws_ecs_task_definition" "outofband" {
   family                   = "outofband"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "512"
+  cpu                      = "2048"
   memory                   = "4096"
   task_role_arn            = aws_iam_role.outofband[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
