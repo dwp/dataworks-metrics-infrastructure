@@ -8,18 +8,6 @@ resource "aws_ecs_task_definition" "prometheus" {
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.prometheus_definition.rendered}, ${data.template_file.thanos_receiver_prometheus_definition.rendered}, ${data.template_file.ecs_service_discovery_definition.rendered}]"
 
-  volume {
-    name = "prometheus"
-    efs_volume_configuration {
-      file_system_id     = aws_efs_file_system.prometheus.id
-      root_directory     = "/"
-      transit_encryption = "ENABLED"
-      authorization_config {
-        access_point_id = aws_efs_access_point.prometheus.id
-      }
-    }
-  }
-
   tags = merge(local.tags, { Name = var.name })
 }
 
@@ -38,12 +26,7 @@ data "template_file" "prometheus_definition" {
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
-    mount_points = jsonencode([
-      {
-        "container_path" : "/prometheus",
-        "source_volume" : "prometheus"
-      }
-    ])
+    mount_points = jsonencode([])
 
     environment_variables = jsonencode([
       {
@@ -69,12 +52,7 @@ data "template_file" "ecs_service_discovery_definition" {
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
-    mount_points = jsonencode([
-      {
-        "container_path" : "/prometheus",
-        "source_volume" : "prometheus"
-      }
-    ])
+    mount_points = jsonencode([])
 
     environment_variables = jsonencode([
       {
@@ -94,9 +72,9 @@ data "template_file" "thanos_receiver_prometheus_definition" {
   vars = {
     name          = "thanos-receiver"
     group_name    = "thanos"
-    cpu           = var.fargate_cpu
+    cpu           = var.receiver_cpu
     image_url     = data.terraform_remote_state.management.outputs.ecr_thanos_url
-    memory        = var.fargate_memory
+    memory        = var.receiver_memory
     user          = "nobody"
     ports         = jsonencode([var.thanos_port_grpc, var.thanos_port_remote_write])
     ulimits       = jsonencode([])
@@ -104,12 +82,7 @@ data "template_file" "thanos_receiver_prometheus_definition" {
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
-    mount_points = jsonencode([
-      {
-        "container_path" : "/prometheus",
-        "source_volume" : "prometheus"
-      }
-    ])
+    mount_points = jsonencode([])
 
     environment_variables = jsonencode([
       {

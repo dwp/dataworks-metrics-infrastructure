@@ -46,6 +46,14 @@ variable "fargate_memory" {
   default = "512"
 }
 
+variable "receiver_cpu" {
+  default = "512"
+}
+
+variable "receiver_memory" {
+  default = "1024"
+}
+
 variable "https_port" {
   default = 443
 }
