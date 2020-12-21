@@ -11,14 +11,6 @@ resource "aws_ecs_task_definition" "outofband" {
 
   volume {
     name = "outofband"
-    efs_volume_configuration {
-      file_system_id     = aws_efs_file_system.outofband[local.primary_role_index].id
-      root_directory     = "/"
-      transit_encryption = "ENABLED"
-      authorization_config {
-        access_point_id = aws_efs_access_point.outofband[local.primary_role_index].id
-      }
-    }
   }
 
   tags = merge(local.tags, { Name = var.name })
@@ -62,19 +54,20 @@ data "template_file" "outofband_definition" {
 
 data "template_file" "thanos_receiver_outofband_definition" {
   count    = local.is_management_env ? 1 : 0
-  template = file("${path.module}/container_definition.tpl")
+  template = file("${path.module}/reserved_container_definition.tpl")
   vars = {
-    name          = "thanos-receiver"
-    group_name    = "thanos"
-    cpu           = var.fargate_cpu
-    image_url     = data.terraform_remote_state.management.outputs.ecr_thanos_url
-    memory        = var.fargate_memory
-    user          = "nobody"
-    ports         = jsonencode([var.thanos_port_grpc, var.thanos_port_remote_write])
-    ulimits       = jsonencode([])
-    log_group     = aws_cloudwatch_log_group.monitoring.name
-    region        = data.aws_region.current.name
-    config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+    name               = "thanos-receiver"
+    group_name         = "thanos"
+    cpu                = var.fargate_cpu
+    image_url          = data.terraform_remote_state.management.outputs.ecr_thanos_url
+    memory             = var.receiver_memory
+    memory_reservation = var.fargate_memory
+    user               = "nobody"
+    ports              = jsonencode([var.thanos_port_grpc, var.thanos_port_remote_write])
+    ulimits            = jsonencode([])
+    log_group          = aws_cloudwatch_log_group.monitoring.name
+    region             = data.aws_region.current.name
+    config_bucket      = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
     mount_points = jsonencode([
       {
