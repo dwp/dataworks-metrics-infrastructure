@@ -2,6 +2,7 @@
   "cpu": ${cpu},
   "image": "${image_url}",
   "memory": ${memory},
+  "memoryReservation": ${memory_reservation},
   "name": "${name}",
   "networkMode": "awsvpc",
   "user": "${user}",
