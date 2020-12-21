@@ -2,14 +2,14 @@ resource "aws_ecs_task_definition" "prometheus" {
   family                   = "prometheus"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "1024"
+  cpu                      = "2048"
   memory                   = "4096"
   task_role_arn            = aws_iam_role.prometheus.arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.prometheus_definition.rendered}, ${data.template_file.thanos_receiver_prometheus_definition.rendered}, ${data.template_file.ecs_service_discovery_definition.rendered}]"
 
   volume {
-    name = "prometheus_new"
+    name = "prometheus"
     //    efs_volume_configuration {
     //      file_system_id     = aws_efs_file_system.prometheus_new.id
     //      root_directory     = "/"
@@ -42,7 +42,7 @@ data "template_file" "prometheus_definition" {
     mount_points = jsonencode([
       {
         "container_path" : "/prometheus",
-        "source_volume" : "prometheus_new"
+        "source_volume" : "prometheus"
       }
     ])
 
@@ -74,7 +74,7 @@ data "template_file" "ecs_service_discovery_definition" {
     mount_points = jsonencode([
       {
         "container_path" : "/prometheus",
-        "source_volume" : "prometheus_new"
+        "source_volume" : "prometheus"
       }
     ])
 
@@ -110,7 +110,7 @@ data "template_file" "thanos_receiver_prometheus_definition" {
     mount_points = jsonencode([
       {
         "container_path" : "/prometheus",
-        "source_volume" : "prometheus_new"
+        "source_volume" : "prometheus"
       }
     ])
 
