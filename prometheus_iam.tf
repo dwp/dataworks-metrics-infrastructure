@@ -116,7 +116,7 @@ data "aws_iam_policy_document" "prometheus_efs" {
     ]
 
     resources = [
-      aws_efs_file_system.prometheus.arn
+      aws_efs_file_system.prometheus_new.arn
     ]
   }
 }
