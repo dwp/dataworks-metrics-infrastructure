@@ -40,14 +40,14 @@ resource "aws_kms_alias" "monitoring_bucket_cmk_alias" {
   name          = "alias/monitoring_bucket_cmk"
 }
 
-resource "random_id" "monitoring_bucket" {
+resource "random_id" "monitoring_bucket_id" {
   count       = local.is_management_env ? 1 : 0
   byte_length = 16
 }
 
 resource "aws_s3_bucket" "monitoring" {
   count  = local.is_management_env ? 1 : 0
-  bucket = random_id.monitoring_bucket[local.primary_role_index].hex
+  bucket = random_id.monitoring_bucket_id[local.primary_role_index].hex
   acl    = "private"
   tags = merge(
     local.tags,
