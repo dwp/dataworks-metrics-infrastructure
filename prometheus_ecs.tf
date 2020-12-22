@@ -10,14 +10,14 @@ resource "aws_ecs_task_definition" "prometheus" {
 
   volume {
     name = "prometheus"
-//    efs_volume_configuration {
-//      file_system_id     = aws_efs_file_system.prometheus_new.id
-//      root_directory     = "/"
-//      transit_encryption = "ENABLED"
-//      authorization_config {
-//        access_point_id = aws_efs_access_point.prometheus_new.id
-//      }
-//    }
+    //    efs_volume_configuration {
+    //      file_system_id     = aws_efs_file_system.prometheus_new.id
+    //      root_directory     = "/"
+    //      transit_encryption = "ENABLED"
+    //      authorization_config {
+    //        access_point_id = aws_efs_access_point.prometheus_new.id
+    //      }
+    //    }
   }
 
   tags = merge(local.tags, { Name = var.name })
