@@ -3,13 +3,15 @@
   "image": "${image_url}",
   "memory": ${memory},
   "memoryReservation": ${memory_reservation},
+  "volumesFrom": [],
   "name": "${name}",
   "networkMode": "awsvpc",
   "user": "${user}",
   "portMappings": ${jsonencode([
     for port in jsondecode(ports) : {
       containerPort = port,
-      hostPort = port
+      hostPort = port,
+      protocol = "tcp"
     }
   ])},
   "ulimits": ${jsonencode([
