@@ -54,6 +54,10 @@ variable "receiver_memory" {
   default = "1024"
 }
 
+variable "store_cpu" {
+  default = "1024"
+}
+
 variable "https_port" {
   default = 443
 }

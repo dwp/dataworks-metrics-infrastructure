@@ -17,7 +17,7 @@ data "template_file" "thanos_store_definition" {
   vars = {
     name          = "thanos-store"
     group_name    = "thanos"
-    cpu           = var.fargate_cpu
+    cpu           = var.store_cpu
     image_url     = data.terraform_remote_state.management.outputs.ecr_thanos_url
     memory        = var.fargate_memory
     user          = "nobody"
