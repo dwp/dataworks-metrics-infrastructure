@@ -17,7 +17,7 @@ data "aws_iam_policy_document" "prometheus_assume_role" {
 
     principals {
       type        = "Service"
-      identifiers = ["ecs-tasks.amazonaws.com"]
+      identifiers = ["ec2.amazonaws.com"]
     }
   }
 }
@@ -170,3 +170,19 @@ data "aws_iam_policy_document" "monitoring_bucket_read_write" {
     ]
   }
 }
+
+resource "aws_iam_role_policy_attachment" "prometheus_ecs_cwasp" {
+  role       = aws_iam_role.prometheus.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "prometheus_ecs_ssm" {
+  role       = aws_iam_role.prometheus.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
+}
+
+resource "aws_iam_role_policy_attachment" "prometheus_ecs" {
+  role       = aws_iam_role.prometheus.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+}
+
