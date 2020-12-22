@@ -4,6 +4,11 @@ resource "aws_iam_role" "prometheus" {
   tags               = merge(local.tags, { Name = "prometheus" })
 }
 
+resource "aws_iam_instance_profile" "prometheus" {
+  name = "prometheus-instance"
+  role = aws_iam_role.prometheus.name
+}
+
 data "aws_iam_policy_document" "prometheus_assume_role" {
   statement {
     actions = [
