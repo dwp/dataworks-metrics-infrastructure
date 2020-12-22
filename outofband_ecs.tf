@@ -11,14 +11,14 @@ resource "aws_ecs_task_definition" "outofband" {
 
   volume {
     name = "outofband"
-    efs_volume_configuration {
-      file_system_id     = aws_efs_file_system.prometheus.id
-      root_directory     = "/"
-      transit_encryption = "ENABLED"
-      authorization_config {
-        access_point_id = aws_efs_access_point.prometheus.id
-      }
-    }
+//    efs_volume_configuration {
+//      file_system_id     = aws_efs_file_system.prometheus.id
+//      root_directory     = "/"
+//      transit_encryption = "ENABLED"
+//      authorization_config {
+//        access_point_id = aws_efs_access_point.prometheus.id
+//      }
+//    }
   }
   tags = merge(local.tags, { Name = var.name })
 }
