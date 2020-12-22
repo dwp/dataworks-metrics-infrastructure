@@ -11,6 +11,11 @@ resource "aws_ecs_task_definition" "outofband" {
 
   volume {
     name = "outofband"
+    docker_volume_configuration {
+      scope         = "shared"
+      autoprovision = true
+      driver        = "local"
+    }
     //    efs_volume_configuration {
     //      file_system_id     = aws_efs_file_system.prometheus.id
     //      root_directory     = "/"

@@ -51,6 +51,7 @@ meta:
               cp ../terraform-config/outputs.tf modules/vpc/outputs.tf
               terraform workspace show
               terraform init
+
               terraform plan -out terraform.plan
               terraform apply -auto-approve terraform.plan
           dir: dataworks-metrics-infrastructure
