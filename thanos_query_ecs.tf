@@ -23,7 +23,7 @@ data "template_file" "thanos_query_definition" {
     user          = "nobody"
     ports         = jsonencode([var.thanos_port_http])
     ulimits       = jsonencode([var.ulimits])
-    log_group     = aws_cloudwatch_log_group.monitoring.name
+    log_group     = aws_cloudwatch_log_group.monitoring_metrics.name
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 

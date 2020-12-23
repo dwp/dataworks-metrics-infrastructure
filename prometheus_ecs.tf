@@ -33,7 +33,7 @@ data "template_file" "prometheus_definition" {
     user               = "nobody"
     ports              = jsonencode([var.prometheus_port])
     ulimits            = jsonencode([])
-    log_group          = aws_cloudwatch_log_group.monitoring.name
+    log_group          = aws_cloudwatch_log_group.monitoring_metrics.name
     region             = data.aws_region.current.name
     config_bucket      = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
@@ -65,7 +65,7 @@ data "template_file" "ecs_service_discovery_definition" {
     user               = "nobody"
     ports              = jsonencode([])
     ulimits            = jsonencode([])
-    log_group          = aws_cloudwatch_log_group.monitoring.name
+    log_group          = aws_cloudwatch_log_group.monitoring_metrics.name
     region             = data.aws_region.current.name
     config_bucket      = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
@@ -105,7 +105,7 @@ data "template_file" "thanos_receiver_prometheus_definition" {
     user               = "nobody"
     ports              = jsonencode([var.thanos_port_grpc, var.thanos_port_remote_write])
     ulimits            = jsonencode([])
-    log_group          = aws_cloudwatch_log_group.monitoring.name
+    log_group          = aws_cloudwatch_log_group.monitoring_metrics.name
     region             = data.aws_region.current.name
     config_bucket      = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
@@ -154,7 +154,13 @@ resource "aws_ecs_service" "prometheus" {
   tags = merge(local.tags, { Name = var.name })
 }
 
+#TODO remove this log-group as it is no longer being written to by this repo
 resource "aws_cloudwatch_log_group" "monitoring" {
+  name = "${data.terraform_remote_state.management.outputs.ecs_cluster_main_log_group.name}/${var.name}"
+  tags = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_cloudwatch_log_group" "monitoring_metrics" {
   name = "${aws_ecs_cluster.metrics_ecs_cluster.name}/${var.name}"
   tags = merge(local.tags, { Name = var.name })
 }

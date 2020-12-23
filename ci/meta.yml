@@ -44,6 +44,7 @@ meta:
           args:
             - -exc
             - |
+              terraform state rm aws_cloudwatch_log_group.metrics_ecs_cluster
               export TF_VAR_ecs_hardened_ami_id=$(cat ../dw-al2-ecs-ami/id)
               cp -r ../dataworks-dashboards config/grafana/provisioning/dashboards
               cp ../terraform-config/terraform.tf .
