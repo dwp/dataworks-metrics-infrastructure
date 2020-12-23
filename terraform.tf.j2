@@ -329,6 +329,8 @@ locals {
     integration = "False"
     preprod     = "False"
     production  = "False"
+    management     = "False"
+    management-dev = "False"
   }
 
   metrics_ecs_cluster_asg_ssmenabled = {
@@ -337,6 +339,8 @@ locals {
     integration = "True"
     preprod     = "False"
     production  = "False"
+    management     = "False"
+    management-dev = "False"
   }
 
   metrics_ecs_asg_tags = merge(
