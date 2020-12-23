@@ -84,7 +84,7 @@ resource "aws_launch_template" "metrics_ecs_cluster" {
     delete_on_termination       = true
 
     security_groups = [
-      aws_security_group.prometheus.id
+      aws_security_group.metrics_cluster.id
     ]
   }
 
@@ -95,7 +95,7 @@ resource "aws_launch_template" "metrics_ecs_cluster" {
   instance_initiated_shutdown_behavior = "terminate"
 
   iam_instance_profile {
-    arn = aws_iam_instance_profile.prometheus.arn
+    arn = aws_iam_instance_profile.metrics_cluster.arn
   }
 
   block_device_mappings {

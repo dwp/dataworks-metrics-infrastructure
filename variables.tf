@@ -117,4 +117,5 @@ variable "metrics_ecs_cluster_ec2_size" {
 variable "ecs_hardened_ami_id" {
   description = "The AMI ID of the latest/pinned ECS Hardened AMI Image"
   type        = string
+  default     = "ami-04cd12fe23950815a"
 }
