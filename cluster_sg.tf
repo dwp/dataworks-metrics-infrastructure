@@ -51,13 +51,3 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_hbase_exporter"
   security_group_id        = aws_security_group.metrics_cluster.id
   source_security_group_id = aws_security_group.hbase_exporter[0].id
 }
-
-resource "aws_security_group_rule" "metrics_cluster_allow_egress_efs" {
-  description              = "Allow metrics cluster to access efs mount target"
-  type                     = "egress"
-  protocol                 = "tcp"
-  from_port                = 2049
-  to_port                  = 2049
-  security_group_id        = aws_security_group.metrics_cluster.id
-  source_security_group_id = aws_security_group.metrics_cluster_efs.id
-}

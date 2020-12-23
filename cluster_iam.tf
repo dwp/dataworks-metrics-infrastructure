@@ -1,7 +1,8 @@
 resource "aws_iam_role" "metrics_cluster" {
-  name               = "metrics_cluster"
-  assume_role_policy = data.aws_iam_policy_document.metrics_cluster_assume_role.json
-  tags               = merge(local.tags, { Name = "metrics_cluster" })
+  name                 = "metrics_cluster"
+  assume_role_policy   = data.aws_iam_policy_document.metrics_cluster_assume_role.json
+  max_session_duration = local.iam_role_max_session_timeout_seconds
+  tags                 = merge(local.tags, { Name = "metrics_cluster" })
 }
 
 resource "aws_iam_instance_profile" "metrics_cluster" {
@@ -78,7 +79,7 @@ resource "aws_iam_role_policy_attachment" "metrics_cluster_monitoring_bucket_rea
 }
 
 resource "aws_iam_policy" "metrics_cluster_monitoring_bucket_read_write" {
-  name        = "MonitoringBucketReadWritePolicy"
+  name        = "MetricsClusterBucketReadWritePolicy"
   description = "Allow metrics cluster to read and write to monitoring bucket"
   policy      = data.aws_iam_policy_document.monitoring_bucket_read_write.json
 }
@@ -119,11 +120,11 @@ data "aws_iam_policy_document" "metrics_cluster_monitoring_bucket_read_write" {
 
 resource "aws_iam_role_policy_attachment" "metrics_cluster_monitoring_logging" {
   role       = aws_iam_role.metrics_cluster.name
-  policy_arn = aws_iam_policy.monitoring_logging.arn
+  policy_arn = aws_iam_policy.metrics_cluster_monitoring_logging.arn
 }
 
 resource "aws_iam_policy" "metrics_cluster_monitoring_logging" {
-  name        = "MonitoringLoggingPolicy"
+  name        = "MetricsClusterLoggingPolicy"
   description = "Allow Metrics cluster to log"
   policy      = data.aws_iam_policy_document.metrics_cluster_monitoring_logging.json
 }

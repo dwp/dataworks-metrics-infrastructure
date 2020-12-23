@@ -55,7 +55,7 @@ resource "aws_autoscaling_group" "metrics_ecs_cluster" {
 
   launch_template {
     id      = aws_launch_template.metrics_ecs_cluster.id
-    version = "$Latest"
+    version = aws_launch_template.metrics_ecs_cluster.latest_version
   }
 
   lifecycle {
