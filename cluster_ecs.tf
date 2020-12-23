@@ -35,10 +35,6 @@ resource "aws_ecs_capacity_provider" "metrics_ecs_cluster" {
     }
   }
 
-  lifecycle {
-    create_before_destroy = true
-  }
-
   tags = merge(
     local.tags,
     {
@@ -48,7 +44,7 @@ resource "aws_ecs_capacity_provider" "metrics_ecs_cluster" {
 }
 
 resource "aws_autoscaling_group" "metrics_ecs_cluster" {
-  name_prefix               = "${aws_launch_template.metrics_ecs_cluster.name}-lt_ver${aws_launch_template.metrics_ecs_cluster.latest_version}_"
+  name                      = local.metrics_ecs_friendly_name
   min_size                  = 0
   desired_capacity          = 1
   max_size                  = var.metrics_ecs_cluster_asg_max[local.environment]
