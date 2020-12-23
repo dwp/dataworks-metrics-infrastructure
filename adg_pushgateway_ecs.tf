@@ -41,7 +41,7 @@ data "template_file" "adg_pushgateway_definition" {
 resource "aws_ecs_service" "adg_pushgateway" {
   count            = local.is_management_env ? 0 : 1
   name             = "adg-pushgateway"
-  cluster          = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_cluster_main.id : data.terraform_remote_state.common.outputs.ecs_cluster_main.id
+  cluster          = aws_ecs_cluster.metrics_ecs_cluster.id
   task_definition  = aws_ecs_task_definition.adg_pushgateway[local.primary_role_index].arn
   platform_version = var.platform_version
   desired_count    = 1

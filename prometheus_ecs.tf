@@ -84,6 +84,10 @@ data "template_file" "ecs_service_discovery_definition" {
       {
         "name" : "PROMETHEUS_CONFIG_CHANGE_DEPENDENCY",
         "value" : "${md5(data.template_file.prometheus.rendered)}"
+      },
+      {
+        "name" : "AWS_DEFAULT_REGION",
+        "value" : "eu-west-2"
       }
     ])
   }
@@ -151,7 +155,7 @@ resource "aws_ecs_service" "prometheus" {
 }
 
 resource "aws_cloudwatch_log_group" "monitoring" {
-  name = "${data.terraform_remote_state.management.outputs.ecs_cluster_main_log_group.name}/${var.name}"
+  name = "${aws_ecs_cluster.metrics_ecs_cluster.name}/${var.name}"
   tags = merge(local.tags, { Name = var.name })
 }
 

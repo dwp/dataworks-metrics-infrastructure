@@ -22,5 +22,5 @@ jobs:
         task: trigger-prometheus-deployment
         params:
           AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
-          CLUSTER: main
+          CLUSTER: metrics
           SERVICE: prometheus
