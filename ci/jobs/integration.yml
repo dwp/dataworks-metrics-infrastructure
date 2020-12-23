@@ -1,6 +1,7 @@
 jobs:
   - name: integration
     plan:
+      - get: dw-al2-ecs-ami
       - get: dataworks-metrics-infrastructure
         passed:
           - qa

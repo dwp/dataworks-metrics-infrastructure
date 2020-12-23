@@ -1,6 +1,7 @@
 jobs:
   - name: development
     plan:
+      - get: dw-al2-ecs-ami
       - get: dataworks-metrics-infrastructure
         trigger: true
       - get: dataworks-dashboards
