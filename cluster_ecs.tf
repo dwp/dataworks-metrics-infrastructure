@@ -35,6 +35,10 @@ resource "aws_ecs_capacity_provider" "metrics_ecs_cluster" {
     }
   }
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   tags = merge(
     local.tags,
     {
@@ -86,7 +90,6 @@ resource "aws_launch_template" "metrics_ecs_cluster" {
 
     security_groups = [
       aws_security_group.metrics_cluster.id,
-      aws_security_group.monitoring_common[local.primary_role_index].id,
     ]
   }
 
