@@ -106,7 +106,7 @@ variable "metrics_ecs_cluster_asg_max" {
 
 variable "metrics_ecs_cluster_ec2_size" {
   default = {
-    development = "t3.medium"
+    development = "t3.large"
     qa          = "t3.medium"
     integration = "t3.medium"
     preprod     = "t3.medium"
