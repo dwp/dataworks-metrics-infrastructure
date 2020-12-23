@@ -161,7 +161,7 @@ resource "aws_cloudwatch_log_group" "monitoring" {
 }
 
 resource "aws_cloudwatch_log_group" "monitoring_metrics" {
-  name = "${aws_ecs_cluster.metrics_ecs_cluster.name}/${var.name}"
+  name = "${aws_ecs_cluster.metrics_ecs_cluster.name}/${var.name}-log"
   tags = merge(local.tags, { Name = var.name })
 }
 
