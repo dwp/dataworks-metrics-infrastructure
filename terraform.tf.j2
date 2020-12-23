@@ -314,6 +314,44 @@ locals {
 
   zone_count = length(data.aws_availability_zones.current.zone_ids)
   zone_names = data.aws_availability_zones.current.names
+
+  metrics_ecs_friendly_name = "metrics-ecs-cluster"
+  cluster_name              = replace(local.metrics_ecs_friendly_name, "-ecs-cluster", "")
+
+  iam_role_max_session_timeout_seconds = 43200
+
+  cw_agent_namespace_metrics_ecs      = "/app/${local.metrics_ecs_friendly_name}"
+  cw_agent_log_group_name_metrics_ecs = "/app/${local.metrics_ecs_friendly_name}"
+
+  metrics_ecs_cluster_asg_autoshutdown = {
+    development = "False"
+    qa          = "False"
+    integration = "False"
+    preprod     = "False"
+    production  = "False"
+    management     = "False"
+    management-dev = "False"
+  }
+
+  metrics_ecs_cluster_asg_ssmenabled = {
+    development = "True"
+    qa          = "True"
+    integration = "True"
+    preprod     = "False"
+    production  = "False"
+    management     = "False"
+    management-dev = "False"
+  }
+
+  metrics_ecs_asg_tags = merge(
+    local.tags,
+    {
+      Name         = local.metrics_ecs_friendly_name,
+      AutoShutdown = local.metrics_ecs_cluster_asg_autoshutdown[local.environment],
+      SSMEnabled   = local.metrics_ecs_cluster_asg_ssmenabled[local.environment],
+      Persistence  = "Ignore",
+    }
+  )
 }
 
 data "aws_iam_user" "breakglass" {

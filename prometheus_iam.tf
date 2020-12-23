@@ -4,6 +4,11 @@ resource "aws_iam_role" "prometheus" {
   tags               = merge(local.tags, { Name = "prometheus" })
 }
 
+resource "aws_iam_instance_profile" "prometheus" {
+  name = "prometheus-instance"
+  role = aws_iam_role.prometheus.name
+}
+
 data "aws_iam_policy_document" "prometheus_assume_role" {
   statement {
     actions = [
@@ -84,9 +89,26 @@ data "aws_iam_policy_document" "prometheus_service_discovery" {
 
     actions = [
       "ec2:DescribeInstances",
-      "ec2:DescribeTags",
+      "ec2:Describe*",
+      "ec2:AttachVolume",
+      "ec2:CreateVolume",
+      "ec2:CreateTags",
+      "ec2:DeleteVolume",
+      "ec2:DetachVolume",
+      "ec2:ModifyVolumeAttribute"
+    ]
+
+    resources = [
+      "*"
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
       "ecs:Describe*",
-      "ecs:List*"
+      "ecs:List*",
     ]
 
     resources = [

@@ -31,6 +31,7 @@ bootstrap: ## Bootstrap local environment for first use
 	 }
 
 	@terraform fmt -recursive
+	@terraform init
 
 .PHONY: git-hooks
 git-hooks: ## Set up hooks in .git/hooks

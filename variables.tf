@@ -92,3 +92,33 @@ variable "subnets" {
     }
   }
 }
+
+variable "metrics_ecs_cluster_asg_max" {
+  description = "Max metrics asg size"
+  default = {
+    development    = 1
+    qa             = 1
+    integration    = 1
+    preprod        = 1
+    production     = 1
+    management     = 1
+    management-dev = 1
+  }
+}
+
+variable "metrics_ecs_cluster_ec2_size" {
+  default = {
+    development    = "t3.large"
+    qa             = "t3.large"
+    integration    = "t3.large"
+    preprod        = "t3.large"
+    production     = "t3.large"
+    management     = "t3.large"
+    management-dev = "t3.large"
+  }
+}
+
+variable "ecs_hardened_ami_id" {
+  description = "The AMI ID of the latest/pinned ECS Hardened AMI Image"
+  type        = string
+}

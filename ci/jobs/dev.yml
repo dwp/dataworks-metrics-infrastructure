@@ -1,6 +1,7 @@
 jobs:
   - name: development
     plan:
+      - get: dw-al2-ecs-ami
       - get: dataworks-metrics-infrastructure
         trigger: true
       - get: dataworks-dashboards
@@ -14,5 +15,5 @@ jobs:
         task: trigger-prometheus-deployment
         params:
           AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
-          CLUSTER: main
+          CLUSTER: metrics
           SERVICE: prometheus

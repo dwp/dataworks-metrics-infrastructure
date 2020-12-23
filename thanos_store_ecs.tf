@@ -45,7 +45,7 @@ data "template_file" "thanos_store_definition" {
 resource "aws_ecs_service" "thanos_store" {
   count            = local.is_management_env ? 1 : 0
   name             = "thanos-store"
-  cluster          = data.terraform_remote_state.management.outputs.ecs_cluster_main.id
+  cluster          = aws_ecs_cluster.metrics_ecs_cluster.id
   task_definition  = aws_ecs_task_definition.thanos_store[local.primary_role_index].arn
   platform_version = var.platform_version
   desired_count    = 1

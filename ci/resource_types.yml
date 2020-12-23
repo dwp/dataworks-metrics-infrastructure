@@ -4,3 +4,9 @@ resource_types:
     source:
       repository: teliaoss/github-pr-resource
       tag: latest
+
+  - name: ami
+    type: docker-image
+    source:
+      repository: chrisscottthomas/ami-resource
+      tag: latest

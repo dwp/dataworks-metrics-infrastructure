@@ -1,6 +1,7 @@
 jobs:
 - name: dataworks-metrics-infrastructure-pr
   plan:
+  - get: dw-al2-ecs-ami
   - get: dataworks-metrics-infrastructure-pr
     trigger: true
     version: every
@@ -35,6 +36,7 @@ jobs:
         args:
         - -exc
         - |
+          export TF_VAR_ecs_hardened_ami_id=$(cat ../dw-al2-ecs-ami/id)
           cp -r ../dataworks-dashboards config/grafana/provisioning/dashboards
           cp ../terraform-config/terraform.tf .
           cp ../terraform-config/terraform.tfvars .
@@ -47,6 +49,7 @@ jobs:
       - name: dataworks-metrics-infrastructure-pr
       - name: terraform-config
       - name: dataworks-dashboards
+      - name: dw-al2-ecs-ami
     on_failure:
       put: dataworks-metrics-infrastructure-pr
       params:

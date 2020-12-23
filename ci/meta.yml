@@ -44,6 +44,7 @@ meta:
           args:
             - -exc
             - |
+              export TF_VAR_ecs_hardened_ami_id=$(cat ../dw-al2-ecs-ami/id)
               cp -r ../dataworks-dashboards config/grafana/provisioning/dashboards
               cp ../terraform-config/terraform.tf .
               cp ../terraform-config/terraform.tfvars .
@@ -51,7 +52,6 @@ meta:
               cp ../terraform-config/outputs.tf modules/vpc/outputs.tf
               terraform workspace show
               terraform init
-
               terraform plan -out terraform.plan
               terraform apply -auto-approve terraform.plan
           dir: dataworks-metrics-infrastructure
@@ -59,6 +59,7 @@ meta:
           - name: dataworks-metrics-infrastructure
           - name: terraform-config
           - name: dataworks-dashboards
+          - name: dw-al2-ecs-ami
       params:
         TF_CLI_ARGS_apply: -lock-timeout=300s
         TF_INPUT: "false"
@@ -77,6 +78,7 @@ meta:
           args:
             - -exc
             - |
+              export TF_VAR_ecs_hardened_ami_id=$(cat ../dw-al2-ecs-ami/id)
               cp -r ../dataworks-dashboards config/grafana/provisioning/dashboards
               cp ../terraform-config/terraform.tf .
               cp ../terraform-config/terraform.tfvars .
@@ -90,6 +92,7 @@ meta:
           - name: dataworks-metrics-infrastructure
           - name: terraform-config
           - name: dataworks-dashboards
+          - name: dw-al2-ecs-ami
       params:
         TF_CLI_ARGS_plan: -lock-timeout=300s
         TF_INPUT: "false"

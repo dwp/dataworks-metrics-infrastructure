@@ -1,6 +1,7 @@
 jobs:
   - name: management-dev
     plan:
+      - get: dw-al2-ecs-ami
       - get: dataworks-metrics-infrastructure
         trigger: true
       - get: dataworks-dashboards
@@ -21,12 +22,12 @@ jobs:
         task: trigger-outofband-deployment
         params:
           AWS_ROLE_ARN: arn:aws:iam::((aws_account.management-dev)):role/ci
-          CLUSTER: main
+          CLUSTER: metrics
           SERVICE: outofband
 
       - .: (( inject meta.plan.cycle-containers ))
         task: trigger-prometheus-deployment
         params:
           AWS_ROLE_ARN: arn:aws:iam::((aws_account.management-dev)):role/ci
-          CLUSTER: main
+          CLUSTER: metrics
           SERVICE: prometheus

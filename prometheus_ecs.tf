@@ -1,7 +1,7 @@
 resource "aws_ecs_task_definition" "prometheus" {
   family                   = "prometheus"
   network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
+  requires_compatibilities = ["EC2"]
   cpu                      = "2048"
   memory                   = "4096"
   task_role_arn            = aws_iam_role.prometheus.arn
@@ -84,6 +84,10 @@ data "template_file" "ecs_service_discovery_definition" {
       {
         "name" : "PROMETHEUS_CONFIG_CHANGE_DEPENDENCY",
         "value" : "${md5(data.template_file.prometheus.rendered)}"
+      },
+      {
+        "name" : "AWS_DEFAULT_REGION",
+        "value" : "eu-west-2"
       }
     ])
   }
@@ -130,12 +134,12 @@ data "template_file" "thanos_receiver_prometheus_definition" {
 }
 
 resource "aws_ecs_service" "prometheus" {
-  name             = "prometheus"
-  cluster          = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_cluster_main.id : data.terraform_remote_state.common.outputs.ecs_cluster_main.id
-  task_definition  = aws_ecs_task_definition.prometheus.arn
-  platform_version = var.platform_version
-  desired_count    = 1
-  launch_type      = "FARGATE"
+  name            = "prometheus"
+  cluster         = aws_ecs_cluster.metrics_ecs_cluster.id
+  task_definition = aws_ecs_task_definition.prometheus.arn
+  # platform_version = var.platform_version
+  desired_count = 1
+  launch_type   = "EC2"
 
   network_configuration {
     security_groups = [aws_security_group.prometheus.id, aws_security_group.monitoring_common[local.secondary_role_index].id]
@@ -151,7 +155,7 @@ resource "aws_ecs_service" "prometheus" {
 }
 
 resource "aws_cloudwatch_log_group" "monitoring" {
-  name = "${data.terraform_remote_state.management.outputs.ecs_cluster_main_log_group.name}/${var.name}"
+  name = "${aws_ecs_cluster.metrics_ecs_cluster.name}/${var.name}"
   tags = merge(local.tags, { Name = var.name })
 }
 
