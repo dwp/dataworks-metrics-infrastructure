@@ -49,7 +49,7 @@ jobs:
       - name: dataworks-metrics-infrastructure-pr
       - name: terraform-config
       - name: dataworks-dashboards
-      - name: dw-al2-ecs-ami±
+      - name: dw-al2-ecs-ami
     on_failure:
       put: dataworks-metrics-infrastructure-pr
       params:
