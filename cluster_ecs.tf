@@ -25,7 +25,7 @@ resource "aws_ecs_capacity_provider" "metrics_ecs_cluster" {
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = aws_autoscaling_group.metrics_ecs_cluster.arn
-    managed_termination_protection = "ENABLED"
+    managed_termination_protection = "DISABLED"
 
     managed_scaling {
       maximum_scaling_step_size = 1000
@@ -46,6 +46,7 @@ resource "aws_ecs_capacity_provider" "metrics_ecs_cluster" {
 resource "aws_autoscaling_group" "metrics_ecs_cluster" {
   name_prefix               = "${aws_launch_template.metrics_ecs_cluster.name}-lt_ver${aws_launch_template.metrics_ecs_cluster.latest_version}_"
   min_size                  = 0
+  desired_capacity          = 1
   max_size                  = var.metrics_ecs_cluster_asg_max[local.environment]
   protect_from_scale_in     = true
   health_check_grace_period = 600
@@ -84,7 +85,8 @@ resource "aws_launch_template" "metrics_ecs_cluster" {
     delete_on_termination       = true
 
     security_groups = [
-      aws_security_group.metrics_cluster.id
+      aws_security_group.metrics_cluster.id,
+      aws_security_group.monitoring_common[local.primary_role_index].id,
     ]
   }
 
@@ -142,3 +144,4 @@ resource "aws_cloudwatch_log_group" "metrics_ecs_cluster" {
   retention_in_days = 180
   tags              = local.tags
 }
+

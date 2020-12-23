@@ -6,7 +6,7 @@ module "vpc" {
   region                                   = data.aws_region.current.name
   is_management_env                        = local.is_management_env
   vpc_cidr_block                           = local.cidr_block[local.environment]
-  interface_vpce_source_security_group_ids = local.is_management_env ? [aws_security_group.grafana[0].id, aws_security_group.thanos_query[0].id, aws_security_group.thanos_ruler[0].id, aws_security_group.alertmanager[0].id, aws_security_group.outofband[0].id, aws_security_group.prometheus.id, aws_security_group.cloudwatch_exporter.id, aws_security_group.thanos_store[0].id] : [aws_security_group.prometheus.id, aws_security_group.cloudwatch_exporter.id, aws_security_group.pdm_exporter[0].id, aws_security_group.hbase_exporter[0].id]
+  interface_vpce_source_security_group_ids = local.is_management_env ? [aws_security_group.grafana[0].id, aws_security_group.thanos_query[0].id, aws_security_group.thanos_ruler[0].id, aws_security_group.alertmanager[0].id, aws_security_group.outofband[0].id, aws_security_group.prometheus.id, aws_security_group.cloudwatch_exporter.id, aws_security_group.thanos_store[0].id, aws_security_group.metrics_cluster.id] : [aws_security_group.prometheus.id, aws_security_group.cloudwatch_exporter.id, aws_security_group.pdm_exporter[0].id, aws_security_group.hbase_exporter[0].id, aws_security_group.metrics_cluster.id]
   zone_count                               = local.zone_count
   zone_names                               = local.zone_names
   route_tables_public                      = aws_route_table.public

@@ -55,8 +55,7 @@ data "aws_iam_policy_document" "metrics_cluster_read_config" {
     ]
 
     resources = [
-      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/thanos/*",
-      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/prometheus/*",
+      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/*",
     ]
   }
 
@@ -65,6 +64,7 @@ data "aws_iam_policy_document" "metrics_cluster_read_config" {
 
     actions = [
       "kms:Decrypt",
+      "kms:GenerateDataKey",
     ]
 
     resources = [
@@ -85,6 +85,22 @@ resource "aws_iam_policy" "metrics_cluster_monitoring_bucket_read_write" {
 }
 
 data "aws_iam_policy_document" "metrics_cluster_monitoring_bucket_read_write" {
+
+  statement {
+    sid    = "AllowUseDefaultEbsCmk"
+    effect = "Allow"
+
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+    ]
+
+    resources = [data.terraform_remote_state.security-tools.outputs.ebs_cmk.arn]
+  }
+
   statement {
     effect = "Allow"
 
