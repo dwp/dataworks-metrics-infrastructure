@@ -43,7 +43,7 @@ resource "aws_ecs_capacity_provider" "metrics_ecs_cluster" {
 }
 
 resource "aws_autoscaling_group" "metrics_ecs_cluster" {
-  name                      = local.metrics_ecs_friendly_name
+  name                      = "metrics-ecs-cluster-lt_ver1_20201223162139109300000008" #local.metrics_ecs_friendly_name
   min_size                  = 0
   desired_capacity          = 0
   max_size                  = var.metrics_ecs_cluster_asg_max[local.environment]
