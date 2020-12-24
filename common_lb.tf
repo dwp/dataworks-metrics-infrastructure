@@ -184,8 +184,9 @@ resource "aws_lb_listener_rule" "prometheus" {
   }
 
   condition {
-    field  = "host-header"
-    values = [aws_route53_record.monitoring_loadbalancer[local.primary_role_index].fqdn]
+    host_header {
+      values = [aws_route53_record.monitoring_loadbalancer[local.primary_role_index].fqdn]
+    }
   }
 }
 
@@ -199,8 +200,9 @@ resource "aws_lb_listener_rule" "thanos_query" {
   }
 
   condition {
-    field  = "host-header"
-    values = [aws_route53_record.thanos_query_loadbalancer[local.primary_role_index].fqdn]
+    host_header {
+      values = [aws_route53_record.thanos_query_loadbalancer[local.primary_role_index].fqdn]
+    }
   }
 }
 
@@ -214,8 +216,9 @@ resource "aws_lb_listener_rule" "thanos_ruler" {
   }
 
   condition {
-    field  = "host-header"
-    values = [aws_route53_record.thanos_ruler_loadbalancer[local.primary_role_index].fqdn]
+    host_header {
+      values = [aws_route53_record.thanos_ruler_loadbalancer[local.primary_role_index].fqdn]
+    }
   }
 }
 
@@ -229,8 +232,9 @@ resource "aws_lb_listener_rule" "grafana" {
   }
 
   condition {
-    field  = "host-header"
-    values = [aws_route53_record.grafana_loadbalancer[local.primary_role_index].fqdn]
+    host_header {
+      values = [aws_route53_record.grafana_loadbalancer[local.primary_role_index].fqdn]
+    }
   }
 }
 
@@ -244,8 +248,9 @@ resource "aws_lb_listener_rule" "alertmanager" {
   }
 
   condition {
-    field  = "host-header"
-    values = [aws_route53_record.alertmanager_loadbalancer[local.primary_role_index].fqdn]
+    host_header {
+      values = [aws_route53_record.alertmanager_loadbalancer[local.primary_role_index].fqdn]
+    }
   }
 }
 
@@ -259,8 +264,9 @@ resource "aws_lb_listener_rule" "outofband" {
   }
 
   condition {
-    field  = "host-header"
-    values = [aws_route53_record.outofband_loadbalancer[local.primary_role_index].fqdn]
+    host_header {
+      values = [aws_route53_record.outofband_loadbalancer[local.primary_role_index].fqdn]
+    }
   }
 }
 

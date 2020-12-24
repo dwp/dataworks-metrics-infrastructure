@@ -96,13 +96,13 @@ variable "subnets" {
 variable "metrics_ecs_cluster_asg_max" {
   description = "Max metrics asg size"
   default = {
-    development    = 1
-    qa             = 1
-    integration    = 1
-    preprod        = 1
-    production     = 1
-    management     = 1
-    management-dev = 1
+    development    = 3
+    qa             = 3
+    integration    = 3
+    preprod        = 5
+    production     = 5
+    management     = 5
+    management-dev = 5
   }
 }
 
