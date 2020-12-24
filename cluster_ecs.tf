@@ -20,7 +20,6 @@ resource "aws_ecs_cluster" "metrics_ecs_cluster" {
   }
 }
 
-
 resource "aws_cloudwatch_log_group" "metrics_ecs_cluster" {
   name              = local.cw_agent_log_group_name_metrics_ecs
   retention_in_days = 180
