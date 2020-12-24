@@ -96,15 +96,29 @@ variable "subnets" {
 variable "metrics_ecs_cluster_asg_max" {
   description = "Max metrics asg size"
   default = {
+    development    = 3
+    qa             = 3
+    integration    = 3
+    preprod        = 3
+    production     = 5
+    management     = 5
+    management-dev = 5
+  }
+}
+
+variable "desired_capacity" {
+  description = "Desired asg size"
+  default = {
     development    = 1
     qa             = 1
     integration    = 1
     preprod        = 1
-    production     = 1
-    management     = 1
-    management-dev = 1
+    production     = 3
+    management     = 3
+    management-dev = 3
   }
 }
+
 
 variable "metrics_ecs_cluster_ec2_size" {
   default = {
@@ -122,3 +136,4 @@ variable "ecs_hardened_ami_id" {
   description = "The AMI ID of the latest/pinned ECS Hardened AMI Image"
   type        = string
 }
+
