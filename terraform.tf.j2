@@ -350,6 +350,7 @@ locals {
       AutoShutdown = local.metrics_ecs_cluster_asg_autoshutdown[local.environment],
       SSMEnabled   = local.metrics_ecs_cluster_asg_ssmenabled[local.environment],
       Persistence  = "Ignore",
+      AmazonECSManaged = "",
     }
   )
 }

@@ -25,7 +25,7 @@ resource "aws_ecs_capacity_provider" "metrics_ecs_cluster" {
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = aws_autoscaling_group.metrics_ecs_cluster.arn
-    managed_termination_protection = "DISABLED"
+    managed_termination_protection = "ENABLED"
 
     managed_scaling {
       maximum_scaling_step_size = 1000
@@ -34,6 +34,10 @@ resource "aws_ecs_capacity_provider" "metrics_ecs_cluster" {
       target_capacity           = 10
     }
   }
+
+  # lifecycle {
+  #   ignore_changes = all
+  # }
 
   tags = merge(
     local.tags,
@@ -45,8 +49,8 @@ resource "aws_ecs_capacity_provider" "metrics_ecs_cluster" {
 
 resource "aws_autoscaling_group" "metrics_ecs_cluster" {
   name                      = local.metrics_ecs_friendly_name
-  min_size                  = 0
-  desired_capacity          = 1
+  min_size                  = var.desired_capacity[local.environment]
+  desired_capacity          = var.desired_capacity[local.environment]
   max_size                  = var.metrics_ecs_cluster_asg_max[local.environment]
   protect_from_scale_in     = true
   health_check_grace_period = 600
@@ -61,7 +65,6 @@ resource "aws_autoscaling_group" "metrics_ecs_cluster" {
 
   lifecycle {
     create_before_destroy = true
-    ignore_changes        = [desired_capacity]
   }
 
   dynamic "tag" {
