@@ -25,7 +25,7 @@ resource "aws_ecs_capacity_provider" "metrics_ecs_cluster" {
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = aws_autoscaling_group.metrics_ecs_cluster.arn
-    managed_termination_protection = "ENABLED"
+    managed_termination_protection = "DISABLED"
 
     managed_scaling {
       maximum_scaling_step_size = 1000
