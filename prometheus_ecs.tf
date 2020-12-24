@@ -155,22 +155,22 @@
 //}
 //
 //#TODO remove this log-group as it is no longer being written to by this repo
-//resource "aws_cloudwatch_log_group" "monitoring" {
-//  name = "${data.terraform_remote_state.management.outputs.ecs_cluster_main_log_group.name}/${var.name}"
-//  tags = merge(local.tags, { Name = var.name })
-//}
-//
-//resource "aws_cloudwatch_log_group" "monitoring_metrics" {
-//  name = "${aws_ecs_cluster.metrics_ecs_cluster.name}/${var.name}-log"
-//  tags = merge(local.tags, { Name = var.name })
-//}
-//
-//resource "aws_service_discovery_private_dns_namespace" "monitoring" {
-//  name = "${local.environment}.services.${var.parent_domain_name}"
-//  vpc  = module.vpc.outputs.vpcs[0].id
-//  tags = merge(local.tags, { Name = var.name })
-//}
-//
+resource "aws_cloudwatch_log_group" "monitoring" {
+  name = "${data.terraform_remote_state.management.outputs.ecs_cluster_main_log_group.name}/${var.name}"
+  tags = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_cloudwatch_log_group" "monitoring_metrics" {
+  name = "${aws_ecs_cluster.metrics_ecs_cluster.name}/${var.name}-log"
+  tags = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_service_discovery_private_dns_namespace" "monitoring" {
+  name = "${local.environment}.services.${var.parent_domain_name}"
+  vpc  = module.vpc.outputs.vpcs[0].id
+  tags = merge(local.tags, { Name = var.name })
+}
+
 //resource "aws_service_discovery_service" "prometheus" {
 //  name = "${var.name}-${local.roles[local.secondary_role_index]}"
 //
