@@ -109,13 +109,13 @@ variable "metrics_ecs_cluster_asg_max" {
 variable "desired_capacity" {
   description = "Desired asg size"
   default = {
-    development    = 1
-    qa             = 1
-    integration    = 1
-    preprod        = 1
-    production     = 3
-    management     = 3
-    management-dev = 3
+    development    = 0 #1
+    qa             = 0 #1
+    integration    = 0 #1
+    preprod        = 0 #1
+    production     = 0 #3
+    management     = 0 #3
+    management-dev = 0 #3
   }
 }
 
