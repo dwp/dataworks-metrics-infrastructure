@@ -93,7 +93,7 @@ resource "aws_launch_template" "metrics_cluster" {
     delete_on_termination       = true
 
     security_groups = [
-      # aws_security_group.metrics_cluster.id,
+      aws_security_group.metrics_cluster.id,
       aws_security_group.monitoring_common[local.primary_role_index].id,
     ]
   }
