@@ -5,7 +5,7 @@ resource "aws_security_group" "metrics_cluster" {
   tags        = merge(local.tags, { Name = "metrics_cluster" })
 
   lifecycle {
-    create_before_destroy = true
+    create_before_destroy = false
   }
 }
 
