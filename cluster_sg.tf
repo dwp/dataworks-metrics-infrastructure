@@ -1,7 +1,7 @@
 resource "aws_security_group" "metrics_cluster" {
   name        = "metrics_cluster"
   description = "Rules necesary for pulling container image and accessing other metrics_cluster instances"
-  vpc_id      = local.is_management_env ? module.vpc.outputs.vpcs[local.primary_role_index].id : module.vpc.outputs.vpcs[local.secondary_role_index].id
+  vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
   tags        = merge(local.tags, { Name = "metrics_cluster" })
 
   lifecycle {

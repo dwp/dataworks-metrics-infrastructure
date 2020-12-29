@@ -61,7 +61,7 @@ resource "aws_autoscaling_group" "metrics_cluster" {
   health_check_grace_period = 600
   health_check_type         = "EC2"
   force_delete              = true
-  vpc_zone_identifier       = module.vpc.outputs.private_subnets[local.primary_role_index]
+  vpc_zone_identifier       = module.vpc.outputs.private_subnets[local.secondary_role_index]
 
   launch_template {
     id      = aws_launch_template.metrics_cluster.id
