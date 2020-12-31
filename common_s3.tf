@@ -45,14 +45,9 @@ resource "random_id" "monitoring_bucket_id" {
   byte_length = 16
 }
 
-resource "random_id" "monitoring_bucket" {
-  count       = local.is_management_env ? 1 : 0
-  byte_length = 16
-}
-
 resource "aws_s3_bucket" "monitoring" {
   count  = local.is_management_env ? 1 : 0
-  bucket = local.management_envs == "management-dev" ? random_id.monitoring_bucket_id[local.primary_role_index].hex : random_id.monitoring_bucket[local.primary_role_index].hex
+  bucket = random_id.monitoring_bucket_id[local.primary_role_index].hex
   acl    = "private"
   tags = merge(
     local.tags,
