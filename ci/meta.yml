@@ -44,6 +44,7 @@ meta:
           args:
             - -exc
             - |
+              exit_status=0
               export TF_VAR_ecs_hardened_ami_id=$(cat ../dw-al2-ecs-ami/id)
               cp -r ../dataworks-dashboards config/grafana/provisioning/dashboards
               cp ../terraform-config/terraform.tf .
@@ -52,8 +53,15 @@ meta:
               cp ../terraform-config/outputs.tf modules/vpc/outputs.tf
               terraform workspace show
               terraform init
-              terraform plan -out terraform.plan
-              terraform apply -auto-approve terraform.plan
+              terraform plan -detailed-exitcode -out terraform.plan || exit_status=$?
+              if [ $exit_status -eq 0 ]; then
+                  echo "No changes, not applying"
+              elif [ $exit_status -eq 1 ]; then
+                  echo "Terraform plan failed"
+                  exit 1
+              elif [ $exit_status -eq 2 ]; then
+                  terraform apply -auto-approve terraform.plan
+              fi
           dir: dataworks-metrics-infrastructure
         inputs:
           - name: dataworks-metrics-infrastructure
