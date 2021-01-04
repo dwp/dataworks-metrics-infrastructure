@@ -57,7 +57,7 @@ resource "aws_autoscaling_group" "metrics_cluster" {
   min_size                  = var.desired_capacity[local.environment]
   desired_capacity          = var.desired_capacity[local.environment]
   max_size                  = var.metrics_ecs_cluster_asg_max[local.environment]
-  protect_from_scale_in     = false
+  protect_from_scale_in     = true
   health_check_grace_period = 600
   health_check_type         = "EC2"
   force_delete              = true
