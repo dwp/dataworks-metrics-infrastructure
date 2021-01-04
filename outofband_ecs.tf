@@ -2,7 +2,7 @@ resource "aws_ecs_task_definition" "outofband" {
   count                    = local.is_management_env ? 1 : 0
   family                   = "outofband"
   network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
+  requires_compatibilities = ["EC2"]
   cpu                      = "2048"
   memory                   = "4096"
   task_role_arn            = aws_iam_role.outofband[local.primary_role_index].arn
@@ -16,14 +16,6 @@ resource "aws_ecs_task_definition" "outofband" {
       autoprovision = true
       driver        = "local"
     }
-    //    efs_volume_configuration {
-    //      file_system_id     = aws_efs_file_system.prometheus.id
-    //      root_directory     = "/"
-    //      transit_encryption = "ENABLED"
-    //      authorization_config {
-    //        access_point_id = aws_efs_access_point.prometheus.id
-    //      }
-    //    }
   }
   tags = merge(local.tags, { Name = var.name })
 }
@@ -93,13 +85,12 @@ data "template_file" "thanos_receiver_outofband_definition" {
 }
 
 resource "aws_ecs_service" "outofband" {
-  count            = local.is_management_env ? 1 : 0
-  name             = "outofband"
-  cluster          = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition  = aws_ecs_task_definition.outofband[local.primary_role_index].arn
-  platform_version = var.platform_version
-  desired_count    = 1
-  launch_type      = "FARGATE"
+  count           = local.is_management_env ? 1 : 0
+  name            = "outofband"
+  cluster         = aws_ecs_cluster.metrics_ecs_cluster.id
+  task_definition = aws_ecs_task_definition.outofband[local.primary_role_index].arn
+  desired_count   = 1
+  launch_type     = "EC2"
 
   network_configuration {
     security_groups = [aws_security_group.outofband[local.primary_role_index].id, aws_security_group.monitoring_common[local.primary_role_index].id]
