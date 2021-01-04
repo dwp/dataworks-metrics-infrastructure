@@ -1,10 +1,10 @@
 resource "aws_ecs_cluster" "metrics_ecs_cluster" {
-  name = local.cluster_name
-  //  capacity_providers = [aws_ecs_capacity_provider.metrics_cluster.name]
-  //
-  //  default_capacity_provider_strategy {
-  //    capacity_provider = aws_ecs_capacity_provider.metrics_cluster.name
-  //  }
+  name               = local.cluster_name
+  capacity_providers = [aws_ecs_capacity_provider.metrics_cluster.name]
+
+  default_capacity_provider_strategy {
+    capacity_provider = aws_ecs_capacity_provider.metrics_cluster.name
+  }
 
   tags = merge(
     local.tags,
