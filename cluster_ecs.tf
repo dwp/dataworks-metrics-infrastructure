@@ -146,6 +146,7 @@ resource "aws_launch_template" "metrics_cluster" {
         SSMEnabled          = local.metrics_ecs_cluster_asg_ssmenabled[local.environment],
         Persistence         = "Ignore",
         propagate_at_launch = true,
+        InstanceRefresh     = ""
       }
     )
   }
