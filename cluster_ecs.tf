@@ -72,6 +72,13 @@ resource "aws_autoscaling_group" "metrics_cluster" {
     create_before_destroy = true
   }
 
+  instance_refresh {
+    strategy = "Rolling"
+    preferences {
+      min_healthy_percentage = 50
+    }
+  }
+
   dynamic "tag" {
     for_each = local.metrics_ecs_asg_tags
 
