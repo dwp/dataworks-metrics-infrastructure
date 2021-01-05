@@ -154,7 +154,7 @@ resource "aws_launch_template" "metrics_cluster" {
 
 resource "aws_ecs_capacity_provider" "mgmt_metrics_cluster" {
   count = local.is_management_env ? 1 : 0
-  name  = local.metrics_friendly_name
+  name  = "mgmt-${local.metrics_friendly_name}"
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = aws_autoscaling_group.mgmt_metrics_cluster[local.primary_role_index].arn
