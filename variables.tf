@@ -100,9 +100,9 @@ variable "metrics_ecs_cluster_asg_max" {
     qa             = 3
     integration    = 3
     preprod        = 3
-    production     = 5
-    management     = 5
-    management-dev = 5
+    production     = 3
+    management     = 3
+    management-dev = 3
   }
 }
 
@@ -113,9 +113,9 @@ variable "desired_capacity" {
     qa             = 3
     integration    = 3
     preprod        = 3
-    production     = 5
-    management     = 5
-    management-dev = 5
+    production     = 3
+    management     = 3
+    management-dev = 3
   }
 }
 

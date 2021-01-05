@@ -2,9 +2,9 @@ resource "aws_ecs_cluster" "metrics_ecs_cluster" {
   name               = local.cluster_name
   capacity_providers = local.is_management_env ? [aws_ecs_capacity_provider.metrics_cluster.name, aws_ecs_capacity_provider.mgmt_metrics_cluster[local.primary_role_index].name] : [aws_ecs_capacity_provider.metrics_cluster.name]
 
-  default_capacity_provider_strategy {
-    capacity_provider = aws_ecs_capacity_provider.metrics_cluster.name
-  }
+  //  default_capacity_provider_strategy {
+  //    capacity_provider = aws_ecs_capacity_provider.metrics_cluster.name
+  //  }
 
   tags = merge(
     local.tags,
@@ -154,7 +154,7 @@ resource "aws_launch_template" "metrics_cluster" {
 
 resource "aws_ecs_capacity_provider" "mgmt_metrics_cluster" {
   count = local.is_management_env ? 1 : 0
-  name  = local.metrics_friendly_name
+  name  = "mgmt-${local.metrics_friendly_name}"
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = aws_autoscaling_group.mgmt_metrics_cluster[local.primary_role_index].arn
@@ -229,7 +229,7 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
     associate_public_ip_address = false
     delete_on_termination       = true
 
-    security_groups = [aws_security_group.metrics_cluster.id, aws_security_group.monitoring_common[local.primary_role_index].id]
+    security_groups = [aws_security_group.mgmt_metrics_cluster[local.primary_role_index].id, aws_security_group.monitoring_common[local.primary_role_index].id]
   }
 
   user_data = base64encode(templatefile("userdata.tpl", {
