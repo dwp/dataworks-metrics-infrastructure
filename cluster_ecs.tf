@@ -3,7 +3,7 @@ resource "aws_ecs_cluster" "metrics_ecs_cluster" {
   capacity_providers = local.is_management_env ? [aws_ecs_capacity_provider.metrics_cluster.name, aws_ecs_capacity_provider.mgmt_metrics_cluster[local.primary_role_index].name] : [aws_ecs_capacity_provider.metrics_cluster.name]
 
   default_capacity_provider_strategy {
-    capacity_provider = aws_ecs_capacity_provider.metrics_cluster.name
+    capacity_provider = [aws_ecs_capacity_provider.metrics_cluster.name, aws_ecs_capacity_provider.mgmt_metrics_cluster.name]
   }
 
   tags = merge(
