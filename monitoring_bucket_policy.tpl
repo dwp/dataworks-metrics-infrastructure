@@ -39,7 +39,7 @@
                 }
             },
             "Principal": {"AWS": "${account}"}
-        }
+        },
 %{ endfor }
         {
             "Effect": "Allow",
