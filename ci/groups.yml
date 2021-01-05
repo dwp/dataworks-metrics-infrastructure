@@ -15,6 +15,7 @@ groups:
     jobs:
       - cycle-grafana-management
       - cycle-outofband-management
+      - redeploy-outofband-management
       - cycle-thanos-ruler-management
       - cycle-thanos-query-management
       - cycle-thanos-store-management
@@ -25,6 +26,7 @@ groups:
     jobs:
       - cycle-grafana-management-dev
       - cycle-outofband-management-dev
+      - redeploy-outofband-management-dev
       - cycle-thanos-ruler-management-dev
       - cycle-thanos-query-management-dev
       - cycle-thanos-store-management-dev
