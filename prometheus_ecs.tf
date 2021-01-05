@@ -53,6 +53,10 @@ data "template_file" "prometheus_definition" {
         "name" : "PROMETHEUS_CONFIG_CHANGE_DEPENDENCY",
         "value" : "${md5(data.template_file.prometheus.rendered)}"
       },
+      {
+        "name" : "LOG_LEVEL",
+        "value" : "debug"
+      }
     ])
   }
 }
@@ -128,6 +132,10 @@ data "template_file" "thanos_receiver_prometheus_definition" {
       {
         "name" : "RECEIVE_ENV"
         "value" : "${local.environment}"
+      },
+      {
+        "name" : "LOG_LEVEL",
+        "value" : "debug"
       }
     ])
   }
