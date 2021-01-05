@@ -5,7 +5,6 @@
         {
             "Effect": "Allow",
             "Action": [
-                "s3:Put*",
                 "s3:List*",
                 "s3:Get*",
                 "s3:DeleteObject"
@@ -26,6 +25,21 @@
             ],
             "Principal": {"AWS": "${account}"}
         },
+        {
+            "Sid": "BucketOwnerFullControl",
+            "Action": [
+                "s3:PutObject",
+                "s3:PutObjectAcl"
+            ],
+            "Effect": "Allow",
+            "Resource": "${monitoring_bucket_arn}/*",
+            "Condition": {
+                "StringEquals": {
+                    "s3:x-amz-acl": "bucket-owner-full-control"
+                }
+            },
+            "Principal": {"AWS": "${account}"}
+        }
 %{ endfor }
         {
             "Effect": "Allow",
