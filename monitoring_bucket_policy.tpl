@@ -32,7 +32,10 @@
             "Action": [
                 "s3:*"
             ],
-            "Resource": ["*"],
+            "Resource": [
+                "${monitoring_bucket_arn}/*",
+                "${monitoring_bucket_arn}"
+            ],
             "Principal": {"AWS": "${mgmt-env}"}
         },
         {
