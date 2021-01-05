@@ -80,7 +80,20 @@ data "template_file" "thanos_receiver_outofband_definition" {
       }
     ])
 
-    environment_variables = jsonencode([])
+    environment_variables = jsonencode([
+      {
+        "name" : "THANOS_STORE_CONFIG_CHANGE_DEPENDENCY",
+        "value" : "${md5(data.template_file.thanos_config.rendered)}"
+      },
+      {
+        "name" : "THANOS_ALLOW_EXISTING_BUCKET_USE"
+        "value" : "true"
+      },
+      {
+        "name" : "RECEIVE_ENV"
+        "value" : "OOB-${local.environment}"
+      }
+    ])
   }
 }
 
