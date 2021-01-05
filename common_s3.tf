@@ -94,5 +94,6 @@ resource "aws_s3_bucket_policy" "monitoring" {
   policy = templatefile("monitoring_bucket_policy.tpl", {
     accounts              = join(",", values(local.account))
     monitoring_bucket_arn = aws_s3_bucket.monitoring[count.index].arn
+    mgmt-env              = local.account[local.environment]
   })
 }

@@ -5,9 +5,9 @@
         {
             "Effect": "Allow",
             "Action": [
-                "s3:PutObject",
-                "s3:ListBucket",
-                "s3:GetObject",
+                "s3:Put*",
+                "s3:List*",
+                "s3:Get*",
                 "s3:DeleteObject"
             ],
             "Resource": [
@@ -27,6 +27,14 @@
             "Principal": {"AWS": "${account}"}
         },
 %{ endfor }
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:*"
+            ],
+            "Resource": ["*"],
+            "Principal": {"AWS": "${mgmt-env}"}
+        },
         {
             "Sid": "BlockHTTP",
             "Effect": "Deny",
