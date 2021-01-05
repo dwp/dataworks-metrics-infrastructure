@@ -111,11 +111,11 @@ resource "aws_ecs_service" "outofband" {
     subnets         = module.vpc.outputs.private_subnets[local.primary_role_index]
   }
 
-  # load_balancer {
-  #   target_group_arn = aws_lb_target_group.outofband[local.primary_role_index].arn
-  #   container_name   = "outofband"
-  #   container_port   = var.prometheus_port
-  # }
+  load_balancer {
+    target_group_arn = aws_lb_target_group.outofband[local.primary_role_index].arn
+    container_name   = "outofband"
+    container_port   = var.prometheus_port
+  }
 
   service_registries {
     registry_arn   = aws_service_discovery_service.outofband[local.primary_role_index].arn
