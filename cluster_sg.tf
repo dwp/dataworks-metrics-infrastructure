@@ -71,6 +71,6 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_cloudwatch_expo
   protocol                 = "tcp"
   from_port                = var.cloudwatch_exporter_port
   to_port                  = var.cloudwatch_exporter_port
-  security_group_id        = aws_security_group.mgmt_metrics_cluster.id
+  security_group_id        = aws_security_group.mgmt_metrics_cluster[0].id
   source_security_group_id = aws_security_group.cloudwatch_exporter.id
 }
