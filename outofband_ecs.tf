@@ -24,17 +24,18 @@ data "template_file" "outofband_definition" {
   count    = local.is_management_env ? 1 : 0
   template = file("${path.module}/container_definition.tpl")
   vars = {
-    name          = "outofband"
-    group_name    = "prometheus"
-    cpu           = var.fargate_cpu
-    image_url     = data.terraform_remote_state.management.outputs.ecr_prometheus_url
-    memory        = var.fargate_memory
-    user          = "nobody"
-    ports         = jsonencode([var.prometheus_port])
-    ulimits       = jsonencode([])
-    log_group     = aws_cloudwatch_log_group.monitoring_metrics.name
-    region        = data.aws_region.current.name
-    config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+    name               = "outofband"
+    group_name         = "prometheus"
+    cpu                = var.fargate_cpu
+    image_url          = data.terraform_remote_state.management.outputs.ecr_prometheus_url
+    memory             = var.receiver_memory
+    memory_reservation = var.fargate_memory
+    user               = "nobody"
+    ports              = jsonencode([var.prometheus_port])
+    ulimits            = jsonencode([])
+    log_group          = aws_cloudwatch_log_group.monitoring_metrics.name
+    region             = data.aws_region.current.name
+    config_bucket      = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
     mount_points = jsonencode([
       {
@@ -80,7 +81,20 @@ data "template_file" "thanos_receiver_outofband_definition" {
       }
     ])
 
-    environment_variables = jsonencode([])
+    environment_variables = jsonencode([
+      {
+        "name" : "THANOS_STORE_CONFIG_CHANGE_DEPENDENCY",
+        "value" : "${md5(data.template_file.thanos_config.rendered)}"
+      },
+      {
+        "name" : "THANOS_ALLOW_EXISTING_BUCKET_USE"
+        "value" : "true"
+      },
+      {
+        "name" : "RECEIVE_ENV"
+        "value" : "OOB-${local.environment}"
+      }
+    ])
   }
 }
 
@@ -97,11 +111,11 @@ resource "aws_ecs_service" "outofband" {
     subnets         = module.vpc.outputs.private_subnets[local.primary_role_index]
   }
 
-  load_balancer {
-    target_group_arn = aws_lb_target_group.outofband[local.primary_role_index].arn
-    container_name   = "outofband"
-    container_port   = var.prometheus_port
-  }
+  # load_balancer {
+  #   target_group_arn = aws_lb_target_group.outofband[local.primary_role_index].arn
+  #   container_name   = "outofband"
+  #   container_port   = var.prometheus_port
+  # }
 
   service_registries {
     registry_arn   = aws_service_discovery_service.outofband[local.primary_role_index].arn
