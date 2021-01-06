@@ -73,9 +73,9 @@ resource "aws_s3_bucket" "monitoring" {
     target_prefix = "S3Logs/${local.tags.Name}-monitoring-bucket"
   }
 
-  //  lifecycle {
-  //    ignore_changes = all
-  //  }
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "monitoring" {
