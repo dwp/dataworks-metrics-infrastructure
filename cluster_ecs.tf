@@ -40,9 +40,9 @@ resource "aws_ecs_capacity_provider" "metrics_cluster" {
     }
   }
 
-  lifecycle {
-    ignore_changes = all
-  }
+  //  lifecycle {
+  //    ignore_changes = all
+  //  }
 
   tags = merge(
     local.tags,
@@ -168,9 +168,9 @@ resource "aws_ecs_capacity_provider" "mgmt_metrics_cluster" {
     }
   }
 
-  lifecycle {
-    ignore_changes = all
-  }
+  //  lifecycle {
+  //    ignore_changes = all
+  //  }
 
   tags = merge(
     local.tags,
