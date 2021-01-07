@@ -194,11 +194,11 @@ resource "aws_acm_certificate_validation" "monitoring" {
 // for each of the lower envs [preprod, prod]
 
 // management-dev = [development, qa, integration]
-resource "aws_route53_vpc_association_authorization" "monitoring" {
-  vpc_id  = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
-  zone_id = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone
-}
-
+//resource "aws_route53_vpc_association_authorization" "monitoring" {
+//  vpc_id  = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
+//  zone_id = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone
+//}
+//
 //resource "aws_route53_zone_association" "monitoring" {
 //  count    = local.is_management_env ? 1 : 0
 //  provider = aws.management_dns
@@ -217,29 +217,30 @@ resource "aws_route53_zone" "monitoring" {
     ignore_changes = [vpc]
   }
 }
+
 # Share this private hosted zone with dns-${group} vpc so it can in the future have a resolver for external DNS inbound/outbound
-//resource "aws_route53_vpc_association_authorization" "dns" {
-//  for_each = local.is_management_env ? local.dns_zone_ids[local.environment] : null_resource
-//  vpc_id   = module.vpc.outputs.vpcs[local.primary_role_index].id
-//  zone_id  = aws_route53_zone.main.id
-//}
-//resource "aws_route53_zone_association" "dns" {
-//  for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : null_resource
-//  vpc_id     = lookup(aws_route53_vpc_association_authorization.monitoring, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.dns[each.key].vpc_id
-//  zone_id    = lookup(aws_route53_vpc_association_authorization.dns, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.dns[each.key].zone_id
-//  provider   = aws.dns
-//  depends_on = [aws_route53_vpc_association_authorization.dns]
-//}
-////# Register our vpc with the dns-${group} private hosted zone so that it can by used by the dns project to calculate/provision zone sharing
-//resource "aws_route53_vpc_association_authorization" "registration" {
-//  for_each = local.provision_dns
-//  vpc_id   = aws_vpc.main.id
-//  zone_id  = var.dns_private_zone.zone_id
-//  provider = aws.dns
-//}
-//resource "aws_route53_zone_association" "registration" {
-//  for_each   = local.provision_dns
-//  vpc_id     = lookup(aws_route53_vpc_association_authorization.registration, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.registration[each.key].vpc_id
-//  zone_id    = lookup(aws_route53_vpc_association_authorization.registration, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.registration[each.key].zone_id
-//  depends_on = [aws_route53_vpc_association_authorization.registration]
-//}
+resource "aws_route53_vpc_association_authorization" "dns" {
+  for_each = local.is_management_env ? local.dns_zone_ids[local.environment] : null_resource
+  vpc_id   = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
+  zone_id  = aws_route53_zone.monitoring.id
+}
+resource "aws_route53_zone_association" "dns" {
+  for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : null_resource
+  vpc_id     = lookup(aws_route53_vpc_association_authorization.dns, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.dns[each.key].vpc_id
+  zone_id    = lookup(aws_route53_vpc_association_authorization.dns, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.dns[each.key].zone_id
+  provider   = aws.management_dns
+  depends_on = [aws_route53_vpc_association_authorization.dns]
+}
+# Register our vpc with the dns-${group} private hosted zone so that it can by used by the dns project to calculate/provision zone sharing
+resource "aws_route53_vpc_association_authorization" "registration" {
+  for_each = local.dns_zone_ids[local.environment]
+  vpc_id   = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
+  zone_id  = aws_route53_zone.monitoring.id
+  provider = aws.management_dns
+}
+resource "aws_route53_zone_association" "registration" {
+  for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : null_resource
+  vpc_id     = lookup(aws_route53_vpc_association_authorization.registration, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.registration[each.key].vpc_id
+  zone_id    = lookup(aws_route53_vpc_association_authorization.registration, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.registration[each.key].zone_id
+  depends_on = [aws_route53_vpc_association_authorization.registration]
+}
