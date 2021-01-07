@@ -190,8 +190,7 @@ resource "aws_acm_certificate_validation" "monitoring" {
 }
 
 resource "aws_route53_vpc_association_authorization" "monitoring" {
-  count   = local.is_management_env ? 0 : 1
-  vpc_id  = data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
+  vpc_id  = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
   zone_id = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone
 }
 
