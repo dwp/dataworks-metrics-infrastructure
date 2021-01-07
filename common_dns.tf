@@ -194,9 +194,20 @@ resource "aws_route53_vpc_association_authorization" "monitoring" {
   zone_id = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone
 }
 
-resource "aws_route53_zone_association" "monitoring" {
-  count    = local.is_management_env ? 1 : 0
-  provider = aws.management_dns
-  vpc_id   = module.vpc.outputs.vpcs[local.primary_role_index].id
-  zone_id  = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone
+//resource "aws_route53_zone_association" "monitoring" {
+//  count    = local.is_management_env ? 1 : 0
+//  provider = aws.management_dns
+//  vpc_id   = module.vpc.outputs.vpcs[local.primary_role_index].id
+//  zone_id  = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone THIS NEEDS TO BE THE DEV/QA/ETC ZONEID
+//}
+
+resource "aws_route53_zone" "monitoring" {
+  name = "${local.environment}.services.${var.parent_domain_name}"
+  vpc {
+    vpc_id = module.vpc.outputs.vpcs[0].id
+  }
+  tags = merge(local.tags, { Name = var.name })
+  lifecycle {
+    ignore_changes = [vpc]
+  }
 }
