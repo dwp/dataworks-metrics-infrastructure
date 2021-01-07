@@ -220,12 +220,12 @@ resource "aws_route53_zone" "monitoring" {
 
 # Share this private hosted zone with dns-${group} vpc so it can in the future have a resolver for external DNS inbound/outbound
 resource "aws_route53_vpc_association_authorization" "dns" {
-  for_each = local.is_management_env ? local.dns_zone_ids[local.environment] : null_resource
+  for_each = local.is_management_env ? local.dns_zone_ids[local.environment] : [""]
   vpc_id   = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
   zone_id  = aws_route53_zone.monitoring.id
 }
 resource "aws_route53_zone_association" "dns" {
-  for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : null_resource
+  for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : [""]
   vpc_id     = lookup(aws_route53_vpc_association_authorization.dns, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.dns[each.key].vpc_id
   zone_id    = lookup(aws_route53_vpc_association_authorization.dns, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.dns[each.key].zone_id
   provider   = aws.management_dns
@@ -239,7 +239,7 @@ resource "aws_route53_vpc_association_authorization" "registration" {
   provider = aws.management_dns
 }
 resource "aws_route53_zone_association" "registration" {
-  for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : null_resource
+  for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : [""]
   vpc_id     = lookup(aws_route53_vpc_association_authorization.registration, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.registration[each.key].vpc_id
   zone_id    = lookup(aws_route53_vpc_association_authorization.registration, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.registration[each.key].zone_id
   depends_on = [aws_route53_vpc_association_authorization.registration]
