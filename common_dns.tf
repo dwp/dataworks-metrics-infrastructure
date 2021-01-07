@@ -220,12 +220,12 @@ resource "aws_route53_zone" "monitoring" {
 
 # Share this private hosted zone with dns-${group} vpc so it can in the future have a resolver for external DNS inbound/outbound
 resource "aws_route53_vpc_association_authorization" "dns" {
-  for_each = local.dns_zone_ids[local.environment]
+  for_each = local.dns_zone_ids
   vpc_id   = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
   zone_id  = aws_route53_zone.monitoring.id
 }
 resource "aws_route53_zone_association" "dns" {
-  for_each   = local.dns_zone_ids[local.environment]
+  for_each   = local.dns_zone_ids
   vpc_id     = lookup(aws_route53_vpc_association_authorization.dns, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.dns[each.key].vpc_id
   zone_id    = lookup(aws_route53_vpc_association_authorization.dns, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.dns[each.key].zone_id
   provider   = aws.management_dns
@@ -233,7 +233,7 @@ resource "aws_route53_zone_association" "dns" {
 }
 # Register our vpc with the dns-${group} private hosted zone so that it can by used by the dns project to calculate/provision zone sharing
 resource "aws_route53_vpc_association_authorization" "registration" {
-  for_each = local.dns_zone_ids[local.environment]
+  for_each = local.dns_zone_ids
   vpc_id   = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
   zone_id  = aws_route53_zone.monitoring.id
   provider = aws.management_dns
