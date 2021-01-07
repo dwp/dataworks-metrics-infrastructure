@@ -264,10 +264,13 @@ locals {
     management = ["management", "preprod", "production"]
   }
 
-  dns_zone_ids = {
-      management-dev = ["development", "qa", "integration"]
-      management = ["preprod", "production"]
-  }
+    dns_zone_ids = {
+      management-dev = "development"
+      management-dev = "qa"
+      management-dev = "integration"
+      management     = "preprod"
+      management     = "production"
+    }
 
   registered_vpc_ids = aws_route53_zone.monitoring.vpc[*].vpc_id
 
