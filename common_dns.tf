@@ -239,7 +239,7 @@ resource "aws_route53_vpc_association_authorization" "registration" {
   provider = aws.management_dns
 }
 resource "aws_route53_zone_association" "registration" {
-  for_each   = local.dns_zone_ids[local.environment]
+  for_each   = local.dns_zone_ids
   vpc_id     = lookup(aws_route53_vpc_association_authorization.registration, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.registration[each.key].vpc_id
   zone_id    = lookup(aws_route53_vpc_association_authorization.registration, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.registration[each.key].zone_id
   depends_on = [aws_route53_vpc_association_authorization.registration]
