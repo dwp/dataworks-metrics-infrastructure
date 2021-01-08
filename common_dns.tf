@@ -207,7 +207,7 @@ resource "aws_route53_vpc_association_authorization" "monitoring" {
 }
 
 resource "aws_route53_zone_association" "monitoring" {
-  for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : null
+  for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : ""
   provider   = aws.management_dns
   vpc_id     = lookup(aws_route53_vpc_association_authorization.monitoring, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.monitoring[each.key].vpc_id
   zone_id    = lookup(aws_route53_vpc_association_authorization.monitoring, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.monitoring[each.key].zone_id
