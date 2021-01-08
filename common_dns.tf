@@ -202,6 +202,7 @@ resource "aws_route53_zone" "monitoring" {
 
 #this succeeds in creating authorisations from all envs -> mgmt/mgmt-dev monitoring-master
 resource "aws_route53_vpc_association_authorization" "monitoring" {
+  for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : {}
   vpc_id  = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
   zone_id = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone
 }
