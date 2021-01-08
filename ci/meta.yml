@@ -141,11 +141,11 @@ meta:
                   echo "No terraform changes exiting"
                   exit 0 
               fi
+        inputs:
+          - name: terraform-success
       params:
         AWS_DEFAULT_REGION: ((dataworks.aws_region))
         AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
-      inputs:
-        - name: terraform-success
     trigger-deployment:
       task: trigger-deployment
       config:
@@ -170,8 +170,9 @@ meta:
                   echo "No terraform changes exiting"
                   exit 0 
               fi
+        inputs:
+          - name: terraform-success
       params:
         AWS_DEFAULT_REGION: ((dataworks.aws_region))
         AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
-      inputs:
-        - name: terraform-success
+
