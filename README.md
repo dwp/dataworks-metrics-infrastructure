@@ -98,5 +98,5 @@ The drawback is that as we are routing the queries through the query node, there
 
 ## Current Architecture
 
-![Current Architecture](docs/metrics_architecture_290720.png)
+![Current Architecture](docs/metrics_architecture_080121.png)
 
