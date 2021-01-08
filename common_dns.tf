@@ -211,7 +211,7 @@ resource "aws_route53_zone_association" "monitoring" {
   for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : toset(local.environment)
   provider   = aws.management_dns
   vpc_id     = module.vpc.outputs.vpcs[0].id
-  zone_id    = lookup(local.dns_zone_ids, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.monitoring[each.key].each.value
+  zone_id    = lookup(local.dns_zone_ids, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.monitoring[each.key].value
   depends_on = [aws_route53_vpc_association_authorization.monitoring]
 }
 
