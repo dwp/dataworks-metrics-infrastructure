@@ -264,6 +264,16 @@ locals {
     management = ["management", "preprod", "production"]
   }
 
+  registration = {
+    management-dev = "management-dev"
+    management = "management"
+    development = "development"
+    qa = "qa"
+    integration = "integration"
+    preprod = "preprod"
+    production = "production"
+  }
+
   dns_zone_ids = {
     management-dev = toset(["development", "qa", "integration"])
     management = toset(["preprod", "production"])

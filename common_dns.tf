@@ -201,9 +201,9 @@ resource "aws_route53_zone" "monitoring" {
 }
 
 resource "aws_route53_vpc_association_authorization" "monitoring" {
-  for_each = local.environment
+  for_each = local.registration[local.environment]
   vpc_id   = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
-  zone_id  = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone
+  zone_id  = aws_service_discovery_private_dns_namespace.monitoring[each.key].hosted_zone
 }
 
 resource "aws_route53_zone_association" "monitoring" {
