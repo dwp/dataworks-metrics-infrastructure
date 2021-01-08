@@ -4,6 +4,15 @@ provider "aws" {
   alias   = "management_dns"
 
   assume_role {
+    role_arn = "arn:aws:iam::${local.account["management"]}:role/${var.assume_role}"
+  }
+}
+provider "aws" {
+  version = "~> 3.22.0"
+  region  = var.region
+  alias   = "management_zone"
+
+  assume_role {
     role_arn = "arn:aws:iam::${local.account[local.slave_peerings[local.environment]]}:role/${var.assume_role}"
   }
 }
@@ -211,15 +220,9 @@ resource "aws_route53_vpc_association_authorization" "monitoring" {
 resource "aws_route53_zone_association" "monitoring" {
   for_each = local.is_management_env ? local.dns_zone_ids[local.environment] : {}
   #for_each    = local.is_management_env ? { for dns_zone_id in local.dns_zone_ids[local.environment] : dns_zone_id.name => dns_zone_id } : {}
-  provider = aws.management_dns
+  provider = aws.management_zone
   vpc_id   = module.vpc.outputs.vpcs[0].id
   #zone_id    = lookup(local.dns_zone_ids, each.key, false) == false ? "" : each.value[each.key]
   zone_id    = each.value
   depends_on = [aws_route53_vpc_association_authorization.monitoring]
 }
-
-# resource "aws_route53_vpc_association_authorization" "monitoring_master" {
-#   count   = local.is_management_env ? 1 : 0
-#   vpc_id  = aws_route53_vpc_association_authorization.monitoring.vpc_id
-#   zone_id = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone
-# }
