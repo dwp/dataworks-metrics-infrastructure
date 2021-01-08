@@ -4,7 +4,7 @@ provider "aws" {
   alias   = "management_dns"
 
   assume_role {
-    role_arn = "arn:aws:iam::${local.account[local.slave_peering[local.environment]]}:role/${var.assume_role}"
+    role_arn = "arn:aws:iam::${local.account[local.slave_peerings[local.environment]]}:role/${var.assume_role}"
   }
 }
 
