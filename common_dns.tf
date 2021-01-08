@@ -183,7 +183,7 @@ resource "aws_acm_certificate_validation" "monitoring" {
     aws_route53_record.monitoring[local.primary_role_index].fqdn,
     aws_route53_record.thanos_query[local.primary_role_index].fqdn,
     aws_route53_record.thanos_ruler[local.primary_role_index].fqdn,
-    aws_route53_record.grafana[local.primary_role_index].fqdn,
+    aws_route53_record.grafana[locaZ069618828GNI303SDYTEl.primary_role_index].fqdn,
     aws_route53_record.alertmanager[local.primary_role_index].fqdn,
     aws_route53_record.outofband[local.primary_role_index].fqdn
   ]
@@ -202,7 +202,6 @@ resource "aws_route53_zone" "monitoring" {
 
 #this succeeds in creating authorisations from all envs -> mgmt/mgmt-dev monitoring-master
 resource "aws_route53_vpc_association_authorization" "monitoring" {
-  for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : toset(local.environment)
   vpc_id  = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
   zone_id = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone
 }
@@ -211,8 +210,8 @@ resource "aws_route53_vpc_association_authorization" "monitoring" {
 resource "aws_route53_zone_association" "monitoring" {
   for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : toset(local.environment)
   provider   = aws.management_dns
-  vpc_id     = lookup(aws_route53_vpc_association_authorization.monitoring, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.monitoring[each.key].vpc_id
-  zone_id    = lookup(aws_route53_vpc_association_authorization.monitoring, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.monitoring[each.key].zone_id
+  vpc_id     = module.vpc.outputs.vpcs[0].id
+  zone_id    = lookup(local.dns_zone_ids, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.monitoring[each.key].each.value
   depends_on = [aws_route53_vpc_association_authorization.monitoring]
 }
 

@@ -274,9 +274,22 @@ locals {
     production = "production"
   }
 
-  dns_zone_ids = {
+# RM this I think.
+  dns_zone_envs = {
     management-dev = toset(["development", "qa", "integration"])
     management = toset(["preprod", "production"])
+  }
+
+  dns_zone_ids = {
+    management-dev = {
+      development = "Z02358887RGCSSD0V4J9"
+      qa = "Z069618828GNI303SDYTE"
+      integration = "Z070873634CP7OEVEEW1J"
+    }
+    management = {
+      preprod = "Z02904251L1YCSWE9C0HU"
+      production = "Z0713033EGP0T6GNEAE6"
+    }
   }
 
   common_workspace = {
