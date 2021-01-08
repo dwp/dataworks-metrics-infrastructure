@@ -7,6 +7,15 @@ provider "aws" {
     role_arn = "arn:aws:iam::${local.account["management"]}:role/${var.assume_role}"
   }
 }
+provider "aws" {
+  version = "~> 3.22.0"
+  region  = var.region
+  alias   = "management_zone"
+
+  assume_role {
+    role_arn = "arn:aws:iam::${local.account[local.slave_peerings[local.environment]]}:role/${var.assume_role}"
+  }
+}
 
 locals {
   fqdn = join(".", [var.name, local.parent_domain_name[local.environment]])
@@ -189,18 +198,6 @@ resource "aws_acm_certificate_validation" "monitoring" {
   ]
 }
 
-resource "aws_route53_vpc_association_authorization" "monitoring" {
-  vpc_id  = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
-  zone_id = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone
-}
-
-//resource "aws_route53_zone_association" "monitoring" {
-//  count    = local.is_management_env ? 1 : 0
-//  provider = aws.management_dns
-//  vpc_id   = module.vpc.outputs.vpcs[local.primary_role_index].id
-//  zone_id  = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone THIS NEEDS TO BE THE DEV/QA/ETC ZONEID
-//}
-
 resource "aws_route53_zone" "monitoring" {
   name = "${local.environment}.services.${var.parent_domain_name}"
   vpc {
@@ -210,4 +207,18 @@ resource "aws_route53_zone" "monitoring" {
   lifecycle {
     ignore_changes = [vpc]
   }
+}
+
+resource "aws_route53_vpc_association_authorization" "monitoring" {
+  count   = local.is_management_env ? 0 : 1
+  vpc_id  = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
+  zone_id = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone
+}
+
+resource "aws_route53_zone_association" "monitoring" {
+  for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : {}
+  provider   = aws.management_zone
+  vpc_id     = module.vpc.outputs.vpcs[0].id
+  zone_id    = each.value
+  depends_on = [aws_route53_vpc_association_authorization.monitoring]
 }
