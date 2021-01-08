@@ -210,9 +210,10 @@ resource "aws_route53_vpc_association_authorization" "monitoring" {
 #this succeeds in trying to create assocations from mgmt/mgmt-dev using authorisations that don't exist. e.g. aws_route53_vpc_association_authorization.monitoring[development].vpc_id
 resource "aws_route53_zone_association" "monitoring" {
   for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : {}
+  #for_each    = local.is_management_env ? { for dns_zone_id in local.dns_zone_ids[local.environment] : dns_zone_id.name => dns_zone_id } : {}
   provider   = aws.management_dns
   vpc_id     = module.vpc.outputs.vpcs[0].id
-  zone_id    = lookup(local.dns_zone_ids, each.key, false) == false ? "" : aws_service_discovery_private_dns_namespace.monitoring[each.key].hosted_zone[each.value]
+  zone_id    = lookup(local.dns_zone_ids, each.key, false) == false ? "" : each.value[each.key]
   depends_on = [aws_route53_vpc_association_authorization.monitoring]
 }
 
