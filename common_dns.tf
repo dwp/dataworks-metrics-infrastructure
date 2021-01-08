@@ -200,12 +200,21 @@ resource "aws_route53_zone" "monitoring" {
   }
 }
 
+#this succeeds in creating authorisations from all envs -> mgmt/mgmt-dev monitoring-master
 resource "aws_route53_vpc_association_authorization" "monitoring" {
-  for_each = local.registration[local.environment]
-  vpc_id   = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
-  zone_id  = aws_service_discovery_private_dns_namespace.monitoring[each.key].hosted_zone
+  vpc_id  = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
+  zone_id = aws_service_discovery_private_dns_namespace.monitoring[local.environment].hosted_zone
 }
 
+
+# resource "aws_route53_vpc_association_authorization" "monitoring_master" {
+#   count   = local.is_management_env ? 1 : 0
+#   vpc_id  = aws_route53_vpc_association_authorization.monitoring.vpc_id
+#   zone_id = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone
+# }
+
+
+#this succeeds in trying to create assocations from mgmt/mgmt-dev using authorisations that don't exist. e.g. aws_route53_vpc_association_authorization.monitoring[development].vpc_id
 resource "aws_route53_zone_association" "monitoring" {
   for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : ""
   provider   = aws.management_dns
