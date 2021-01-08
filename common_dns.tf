@@ -189,18 +189,6 @@ resource "aws_acm_certificate_validation" "monitoring" {
   ]
 }
 
-resource "aws_route53_vpc_association_authorization" "monitoring" {
-  vpc_id  = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
-  zone_id = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone
-}
-
-//resource "aws_route53_zone_association" "monitoring" {
-//  count    = local.is_management_env ? 1 : 0
-//  provider = aws.management_dns
-//  vpc_id   = module.vpc.outputs.vpcs[local.primary_role_index].id
-//  zone_id  = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone THIS NEEDS TO BE THE DEV/QA/ETC ZONEID
-//}
-
 resource "aws_route53_zone" "monitoring" {
   name = "${local.environment}.services.${var.parent_domain_name}"
   vpc {
@@ -210,4 +198,19 @@ resource "aws_route53_zone" "monitoring" {
   lifecycle {
     ignore_changes = [vpc]
   }
+}
+
+resource "aws_route53_vpc_association_authorization" "monitoring" {
+  vpc_id  = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
+  zone_id = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone
+}
+
+resource "aws_route53_zone_association" "monitoring" {
+  for_each = local.is_management_env ? local.dns_zone_ids[local.environment] : null
+  provider = aws.management_dns
+  # vpc_id   = module.vpc.outputs.vpcs[local.primary_role_index].id
+  vpc_id = lookup(aws_route53_vpc_association_authorization.monitoring, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.monitoring[each.key].vpc_id
+  #zone_id  = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone
+  zone_id    = lookup(aws_route53_vpc_association_authorization.monitoring, each.key, false) == false ? "" : aws_route53_vpc_association_authorization.monitoring[each.key].zone_id
+  depends_on = [aws_route53_vpc_association_authorization.monitoring]
 }
