@@ -51,7 +51,6 @@ meta:
               cp ../terraform-config/terraform.tfvars .
               cp ../terraform-config/vpc.tf modules/vpc/vpc.tf
               cp ../terraform-config/outputs.tf modules/vpc/outputs.tf
-              mkdir ../terraform-success
               terraform workspace show
               terraform init
               terraform plan -detailed-exitcode -out terraform.plan || exit_status=$?
@@ -175,4 +174,3 @@ meta:
       params:
         AWS_DEFAULT_REGION: ((dataworks.aws_region))
         AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
-
