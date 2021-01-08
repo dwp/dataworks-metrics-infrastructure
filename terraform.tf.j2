@@ -264,22 +264,6 @@ locals {
     management = ["management", "preprod", "production"]
   }
 
-  registration = {
-    management-dev = "management-dev"
-    management = "management"
-    development = "development"
-    qa = "qa"
-    integration = "integration"
-    preprod = "preprod"
-    production = "production"
-  }
-
-# RM this I think.
-  dns_zone_envs = {
-    management-dev = toset(["development", "qa", "integration"])
-    management = toset(["preprod", "production"])
-  }
-
   dns_zone_ids = {
     management-dev = {
       development = "Z02358887RGCSSD0V4J9"
