@@ -183,7 +183,7 @@ resource "aws_acm_certificate_validation" "monitoring" {
     aws_route53_record.monitoring[local.primary_role_index].fqdn,
     aws_route53_record.thanos_query[local.primary_role_index].fqdn,
     aws_route53_record.thanos_ruler[local.primary_role_index].fqdn,
-    aws_route53_record.grafana[locaZ069618828GNI303SDYTEl.primary_role_index].fqdn,
+    aws_route53_record.grafana[local.primary_role_index].fqdn,
     aws_route53_record.alertmanager[local.primary_role_index].fqdn,
     aws_route53_record.outofband[local.primary_role_index].fqdn
   ]
