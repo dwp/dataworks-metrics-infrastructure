@@ -69,6 +69,26 @@ resource "aws_lb_target_group" "prometheus" {
   tags = merge(local.tags, { Name = "prometheus" })
 }
 
+resource "aws_lb_target_group" "thanos_receive" {
+  name        = "${var.primary}-${var.name}-http"
+  port        = var.prometheus_port
+  protocol    = "HTTP"
+  vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
+  target_type = "ip"
+
+  health_check {
+    port    = var.prometheus_port
+    path    = "/-/healthy"
+    matcher = "200"
+  }
+
+  stickiness {
+    enabled = true
+    type    = "lb_cookie"
+  }
+  tags = merge(local.tags, { Name = "thanos_receive" })
+}
+
 resource "aws_lb_target_group" "thanos_query" {
   count       = local.is_management_env ? 1 : 0
   name        = "thanos-query-http"
@@ -181,6 +201,22 @@ resource "aws_lb_listener_rule" "prometheus" {
   action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.prometheus[local.primary_role_index].arn
+  }
+
+  condition {
+    host_header {
+      values = [aws_route53_record.monitoring_loadbalancer[local.primary_role_index].fqdn]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "thanos_receive" {
+  count        = local.is_management_env ? 1 : 0
+  listener_arn = aws_lb_listener.monitoring[local.secondary_role_index].arn
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.thanos_receive[local.secondary_role_index].arn
   }
 
   condition {
