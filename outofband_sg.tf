@@ -10,17 +10,6 @@ resource "aws_security_group" "outofband" {
   }
 }
 
-resource "aws_security_group_rule" "outofband_allow_egress_efs" {
-  count                    = local.is_management_env ? 1 : 0
-  description              = "Allow outofband to access efs mount target"
-  type                     = "egress"
-  protocol                 = "tcp"
-  from_port                = 2049
-  to_port                  = 2049
-  security_group_id        = aws_security_group.outofband[local.primary_role_index].id
-  source_security_group_id = aws_security_group.outofband_efs[local.primary_role_index].id
-}
-
 resource "aws_security_group_rule" "outofband_allow_egress_thanos_ruler" {
   count                    = local.is_management_env ? 1 : 0
   description              = "Allow outofband to access thanos ruler"
