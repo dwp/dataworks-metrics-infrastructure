@@ -179,7 +179,7 @@ resource "aws_lb_listener_rule" "thanos_receive" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.thanos_receive[local.primary_role_index].arn
+    target_group_arn = aws_lb_target_group.thanos_receive[local.secondary_role_index].arn
   }
 
   condition {
