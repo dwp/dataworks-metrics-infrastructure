@@ -70,35 +70,6 @@ data "aws_iam_policy_document" "outofband_read_config" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "outofband_efs_attachment" {
-  count      = local.is_management_env ? 1 : 0
-  role       = aws_iam_role.outofband[local.primary_role_index].name
-  policy_arn = aws_iam_policy.outofband_efs[local.primary_role_index].arn
-}
-
-resource "aws_iam_policy" "outofband_efs" {
-  count       = local.is_management_env ? 1 : 0
-  name        = "OutofbandEFSPolicy"
-  description = "Allow Prometheus to access EFS volume"
-  policy      = data.aws_iam_policy_document.outofband_efs[local.primary_role_index].json
-}
-
-data "aws_iam_policy_document" "outofband_efs" {
-  count = local.is_management_env ? 1 : 0
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "elasticfilesystem:ClientMount",
-      "elasticfilesystem:ClientWrite"
-    ]
-
-    resources = [
-      aws_efs_file_system.outofband[local.primary_role_index].arn
-    ]
-  }
-}
-
 resource "aws_iam_role_policy_attachment" "outofband_monitoring_bucket_read_write" {
   count      = local.is_management_env ? 1 : 0
   role       = aws_iam_role.outofband[local.primary_role_index].name

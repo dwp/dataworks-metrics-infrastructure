@@ -117,32 +117,6 @@ data "aws_iam_policy_document" "prometheus_service_discovery" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "prometheus_efs_attachment" {
-  role       = aws_iam_role.prometheus.name
-  policy_arn = aws_iam_policy.prometheus_efs.arn
-}
-
-resource "aws_iam_policy" "prometheus_efs" {
-  name        = "PrometheusEFSPolicy"
-  description = "Allow Prometheus to access EFS volume"
-  policy      = data.aws_iam_policy_document.prometheus_efs.json
-}
-
-data "aws_iam_policy_document" "prometheus_efs" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "elasticfilesystem:ClientMount",
-      "elasticfilesystem:ClientWrite"
-    ]
-
-    resources = [
-      aws_efs_file_system.prometheus_new.arn
-    ]
-  }
-}
-
 resource "aws_iam_role_policy_attachment" "prometheus_monitoring_bucket_read_write" {
   role       = aws_iam_role.prometheus.name
   policy_arn = aws_iam_policy.monitoring_bucket_read_write.arn

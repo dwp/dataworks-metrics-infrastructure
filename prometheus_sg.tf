@@ -51,13 +51,3 @@ resource "aws_security_group_rule" "allow_prometheus_egress_hbase_exporter" {
   security_group_id        = aws_security_group.prometheus.id
   source_security_group_id = aws_security_group.hbase_exporter[0].id
 }
-
-resource "aws_security_group_rule" "prometheus_allow_egress_efs" {
-  description              = "Allow prometheus to access efs mount target"
-  type                     = "egress"
-  protocol                 = "tcp"
-  from_port                = 2049
-  to_port                  = 2049
-  security_group_id        = aws_security_group.prometheus.id
-  source_security_group_id = aws_security_group.prometheus_efs.id
-}
