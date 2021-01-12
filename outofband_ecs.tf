@@ -27,7 +27,7 @@ data "template_file" "outofband_definition" {
     name               = "outofband"
     group_name         = "prometheus"
     cpu                = var.fargate_cpu
-    image_url          = data.terraform_remote_state.management.outputs.ecr_prometheus_url
+    image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_prometheus_url, var.image_versions.prometheus)
     memory             = var.receiver_memory
     memory_reservation = var.fargate_memory
     user               = "nobody"
@@ -64,7 +64,7 @@ data "template_file" "thanos_receiver_outofband_definition" {
     name               = "thanos-receiver"
     group_name         = "thanos"
     cpu                = var.fargate_cpu
-    image_url          = data.terraform_remote_state.management.outputs.ecr_thanos_url
+    image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_thanos_url, var.image_versions.thanos)
     memory             = var.receiver_memory
     memory_reservation = var.fargate_memory
     user               = "nobody"

@@ -18,7 +18,7 @@ data "template_file" "adg_pushgateway_definition" {
     name          = "adg-pushgateway"
     group_name    = "pushgateway"
     cpu           = var.fargate_cpu
-    image_url     = data.terraform_remote_state.management.outputs.ecr_pushgateway_url
+    image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_pushgateway_url, var.image_versions.prom-pushgateway)
     memory        = var.fargate_memory
     user          = "nobody"
     ports         = jsonencode([var.pushgateway_port])

@@ -18,7 +18,7 @@ data "template_file" "grafana_definition" {
     name          = "grafana"
     group_name    = "grafana"
     cpu           = var.fargate_cpu
-    image_url     = data.terraform_remote_state.management.outputs.ecr_grafana_url
+    image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_grafana_url, var.image_versions.grafana)
     memory        = var.fargate_memory
     user          = "grafana"
     ports         = jsonencode([var.grafana_port])

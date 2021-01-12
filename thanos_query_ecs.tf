@@ -18,7 +18,7 @@ data "template_file" "thanos_query_definition" {
     name          = "thanos-query"
     group_name    = "thanos"
     cpu           = var.fargate_cpu
-    image_url     = data.terraform_remote_state.management.outputs.ecr_thanos_url
+    image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_thanos_url, var.image_versions.thanos)
     memory        = var.fargate_memory
     user          = "nobody"
     ports         = jsonencode([var.thanos_port_http])

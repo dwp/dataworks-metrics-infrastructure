@@ -18,7 +18,7 @@ data "template_file" "pdm_exporter_definition" {
     name          = "pdm-exporter"
     group_name    = "json_exporter"
     cpu           = var.fargate_cpu
-    image_url     = data.terraform_remote_state.management.outputs.ecr_hive_exporter_url
+    image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_hive_exporter_url, var.image_versions.hive-exporter)
     memory        = var.fargate_memory
     user          = "nobody"
     ports         = jsonencode([var.json_exporter_port])
