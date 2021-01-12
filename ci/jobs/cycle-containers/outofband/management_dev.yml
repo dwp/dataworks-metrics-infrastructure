@@ -1,6 +1,7 @@
 jobs:
   - name: cycle-outofband-management-dev
     plan:
+      - .: (( inject meta.plan.admin-enable ))
       - .: (( inject meta.plan.cycle-containers ))
         params:
           AWS_ROLE_ARN: arn:aws:iam::((aws_account.management-dev)):role/ci
@@ -8,6 +9,7 @@ jobs:
           SERVICE: outofband
   - name: redeploy-outofband-management-dev
     plan:
+      - .: (( inject meta.plan.admin-enable ))
       - .: (( inject meta.plan.trigger-deployment ))
         params:
           AWS_ROLE_ARN: arn:aws:iam::((aws_account.management-dev)):role/ci
