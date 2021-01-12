@@ -181,17 +181,13 @@ meta:
         image_resource:
           type: docker-image
           source:
-            repository: ((dataworks.docker_awscli_repository))
-            version: ((dataworks.docker_awscli_version))
-            tag: ((dataworks.docker_awscli_version))
+            repository: alpine
+            tag: latest
         run:
           path: sh
           args:
             - -exc
             - |
-              touch ../terraform-success/success
+              touch terraform-success/success
         outputs:
           - name: terraform-success
-      params:
-        AWS_DEFAULT_REGION: ((dataworks.aws_region))
-        AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
