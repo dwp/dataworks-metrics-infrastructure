@@ -1,6 +1,7 @@
 jobs:
   - name: cycle-cloudwatch-exporter-management
     plan:
+      - .: (( inject meta.plan.admin-enable ))
       - .: (( inject meta.plan.cycle-containers ))
         params:
           AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
