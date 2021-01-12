@@ -128,13 +128,20 @@ meta:
           args:
             - -exc
             - |
-              export AWS_DEFAULT_REGION
-              source /assume-role
-              set +x
-              TASK_IDS=$(aws ecs list-tasks --cluster $CLUSTER --family $SERVICE | jq .taskArns | jq .[] | tr -d '\"' | sed 's|.*/||')
-              for TASK_ID in $TASK_IDS; do
-                aws ecs stop-task --cluster $CLUSTER --task $TASK_ID
-              done
+              if [ -f terraform-success/success ]; then
+                export AWS_DEFAULT_REGION
+                source /assume-role
+                set +x
+                TASK_IDS=$(aws ecs list-tasks --cluster $CLUSTER --family $SERVICE | jq .taskArns | jq .[] | tr -d '\"' | sed 's|.*/||')
+                for TASK_ID in $TASK_IDS; do
+                  aws ecs stop-task --cluster $CLUSTER --task $TASK_ID
+                done
+              else
+                  echo "No terraform changes exiting"
+                  exit 0
+              fi
+        inputs:
+          - name: terraform-success
       params:
         AWS_DEFAULT_REGION: ((dataworks.aws_region))
         AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
@@ -153,10 +160,17 @@ meta:
           args:
             - -exc
             - |
-              export AWS_DEFAULT_REGION
-              source /assume-role
-              set +x
-              aws ecs update-service --cluster $CLUSTER --service $SERVICE --force-new-deployment
+              if [ -f terraform-success/success ]; then
+                export AWS_DEFAULT_REGION
+                source /assume-role
+                set +x
+                aws ecs update-service --cluster $CLUSTER --service $SERVICE --force-new-deployment
+              else
+                  echo "No terraform changes exiting"
+                  exit 0
+              fi
+        inputs:
+          - name: terraform-success
       params:
         AWS_DEFAULT_REGION: ((dataworks.aws_region))
         AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
