@@ -145,35 +145,6 @@ meta:
       params:
         AWS_DEFAULT_REGION: ((dataworks.aws_region))
         AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
-    trigger-deployment:
-      task: trigger-deployment
-      config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: ((dataworks.docker_awscli_repository))
-            version: ((dataworks.docker_awscli_version))
-            tag: ((dataworks.docker_awscli_version))
-        run:
-          path: sh
-          args:
-            - -exc
-            - |
-              if [ -f terraform-success/success ]; then
-                export AWS_DEFAULT_REGION
-                source /assume-role
-                set +x
-                aws ecs update-service --cluster $CLUSTER --service $SERVICE --force-new-deployment
-              else
-                  echo "No terraform changes exiting"
-                  exit 0
-              fi
-        inputs:
-          - name: terraform-success
-      params:
-        AWS_DEFAULT_REGION: ((dataworks.aws_region))
-        AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
     admin-enable:
       task: admin-enable
       config:
