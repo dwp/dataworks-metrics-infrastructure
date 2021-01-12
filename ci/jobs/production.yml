@@ -19,9 +19,3 @@ jobs:
       - .: (( inject meta.plan.terraform-plan ))
         params:
           TF_WORKSPACE: production
-      - .: (( inject meta.plan.cycle-containers ))
-        task: trigger-prometheus-deployment
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
-          CLUSTER: metrics
-          SERVICE: prometheus

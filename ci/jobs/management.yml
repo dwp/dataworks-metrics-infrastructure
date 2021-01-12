@@ -23,16 +23,3 @@ jobs:
       - .: (( inject meta.plan.terraform-plan ))
         params:
           TF_WORKSPACE: management
-      - .: (( inject meta.plan.cycle-containers ))
-        task: trigger-outofband-deployment
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
-          CLUSTER: metrics
-          SERVICE: outofband
-
-      - .: (( inject meta.plan.cycle-containers ))
-        task: trigger-prometheus-deployment
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
-          CLUSTER: metrics
-          SERVICE: prometheus

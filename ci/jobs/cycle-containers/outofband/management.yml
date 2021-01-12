@@ -10,7 +10,7 @@ jobs:
   - name: redeploy-outofband-management
     plan:
       - .: (( inject meta.plan.admin-enable ))
-      - .: (( inject meta.plan.trigger-deployment ))
+      - .: (( inject meta.plan.cycle-containers ))
         params:
           AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
           CLUSTER: metrics
