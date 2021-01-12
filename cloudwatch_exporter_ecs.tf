@@ -16,7 +16,7 @@ data "template_file" "cloudwatch_exporter_definition" {
     name          = "cloudwatch-exporter"
     group_name    = "cloudwatch_exporter"
     cpu           = var.fargate_cpu
-    image_url     = data.terraform_remote_state.management.outputs.ecr_cloudwatch_exporter_url
+    image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_cloudwatch_exporter_url, var.image_versions.cloudwatch-exporter)
     memory        = var.fargate_memory
     user          = "nobody"
     ports         = jsonencode([var.cloudwatch_exporter_port])

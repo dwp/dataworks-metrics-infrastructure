@@ -119,6 +119,21 @@ variable "desired_capacity" {
   }
 }
 
+variable "image_versions" {
+  description = "pinned image versions to use"
+  default = {
+    prometheus            = "0.0.9"
+    thanos                = "0.0.19"
+    alertmanager          = "0.0.5"
+    ecs-service-discovery = "0.0.3"
+    grafana               = "0.0.9"
+    cloudwatch-exporter   = "0.0.5"
+    prom-pushgateway      = "0.0.56"
+    hive-exporter         = "0.0.4"
+
+  }
+}
+
 
 variable "metrics_ecs_cluster_ec2_size" {
   default = {
@@ -135,5 +150,6 @@ variable "metrics_ecs_cluster_ec2_size" {
 variable "ecs_hardened_ami_id" {
   description = "The AMI ID of the latest/pinned ECS Hardened AMI Image"
   type        = string
+  default     = "ami-0231ce48c6161e98d"
 }
 

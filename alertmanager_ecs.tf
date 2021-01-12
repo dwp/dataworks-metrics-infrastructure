@@ -18,7 +18,7 @@ data "template_file" "alertmanager_definition" {
     name          = "alertmanager"
     group_name    = "alertmanager"
     cpu           = var.fargate_cpu
-    image_url     = data.terraform_remote_state.management.outputs.ecr_alertmanager_url
+    image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_alertmanager_url, var.image_versions.alertmanager)
     memory        = var.fargate_memory
     user          = "nobody"
     ports         = jsonencode([var.alertmanager_port])

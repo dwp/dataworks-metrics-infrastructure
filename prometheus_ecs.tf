@@ -27,7 +27,7 @@ data "template_file" "prometheus_definition" {
     name               = "prometheus"
     group_name         = "prometheus"
     cpu                = var.fargate_cpu
-    image_url          = data.terraform_remote_state.management.outputs.ecr_prometheus_url
+    image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_prometheus_url, var.image_versions.prometheus)
     memory             = var.receiver_memory
     memory_reservation = var.fargate_memory
     user               = "nobody"
@@ -67,7 +67,7 @@ data "template_file" "ecs_service_discovery_definition" {
     name               = "ecs-service-discovery"
     group_name         = "ecs_service_discovery"
     cpu                = var.fargate_cpu
-    image_url          = data.terraform_remote_state.management.outputs.ecr_ecs_service_discovery_url
+    image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_ecs_service_discovery_url, var.image_versions.ecs-service-discovery)
     memory             = var.receiver_memory
     memory_reservation = var.fargate_memory
     user               = "nobody"
@@ -103,7 +103,7 @@ data "template_file" "thanos_receiver_prometheus_definition" {
     name               = "thanos-receiver"
     group_name         = "thanos"
     cpu                = var.fargate_cpu
-    image_url          = data.terraform_remote_state.management.outputs.ecr_thanos_url
+    image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_thanos_url, var.image_versions.thanos)
     memory             = var.receiver_memory
     memory_reservation = var.fargate_memory
     user               = "nobody"
