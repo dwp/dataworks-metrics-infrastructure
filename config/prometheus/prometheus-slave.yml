@@ -94,7 +94,7 @@ scrape_configs:
         target_label: instance
         replacement: $1
         action: replace
-  - job_name: jmx-namenode
+  - job_name: jmx-hdfs-namenode
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -112,7 +112,7 @@ scrape_configs:
         target_label: instance
         replacement: $1
         action: replace
-  - job_name: jmx-datanode
+  - job_name: jmx-hdfs-datanode
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -123,6 +123,42 @@ scrape_configs:
         region: eu-west-2
         refresh_interval: 1m
         port: 7103
+        filters: []
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_Name]
+        regex: (.*)
+        target_label: instance
+        replacement: $1
+        action: replace
+  - job_name: jmx-yarn-resource-manager
+    honor_timestamps: true
+    scrape_interval: 1m
+    scrape_timeout: 10s
+    metrics_path: /metrics
+    scheme: http
+    ec2_sd_configs:
+      - endpoint: ""
+        region: eu-west-2
+        refresh_interval: 1m
+        port: 7105
+        filters: []
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_Name]
+        regex: (.*)
+        target_label: instance
+        replacement: $1
+        action: replace
+  - job_name: jmx-yarn-node-manager
+    honor_timestamps: true
+    scrape_interval: 1m
+    scrape_timeout: 10s
+    metrics_path: /metrics
+    scheme: http
+    ec2_sd_configs:
+      - endpoint: ""
+        region: eu-west-2
+        refresh_interval: 1m
+        port: 7107
         filters: []
     relabel_configs:
       - source_labels: [__meta_ec2_tag_Name]
