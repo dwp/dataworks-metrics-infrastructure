@@ -98,9 +98,16 @@ resource "aws_launch_template" "metrics_cluster" {
     security_groups = [aws_security_group.metrics_cluster.id, aws_security_group.monitoring_common[local.secondary_role_index].id]
   }
 
-  user_data = base64encode(templatefile("userdata.tpl", {
-    cluster_name = local.cluster_name # Referencing the cluster resource causes a circular dependency
-  }))
+  user_data = base64encode(templatefile(
+    "userdata.tpl",
+    {
+      cluster_name  = local.cluster_name # Referencing the cluster resource causes a circular dependency
+      instance_role = aws_iam_instance_profile.metrics_cluster.name
+      region        = data.aws_region.current.name
+      folder        = "/mnt/config"
+      mnt_bucket    = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+    }
+  ))
 
   instance_initiated_shutdown_behavior = "terminate"
 
@@ -228,9 +235,15 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
     security_groups = [aws_security_group.mgmt_metrics_cluster[local.primary_role_index].id, aws_security_group.monitoring_common[local.primary_role_index].id]
   }
 
-  user_data = base64encode(templatefile("userdata.tpl", {
-    cluster_name = local.cluster_name # Referencing the cluster resource causes a circular dependency
-  }))
+  user_data = base64encode(templatefile("userdata.tpl",
+    {
+      cluster_name  = local.cluster_name # Referencing the cluster resource causes a circular dependency
+      instance_role = aws_iam_instance_profile.metrics_cluster.name
+      region        = data.aws_region.current.name
+      folder        = "/mnt/config"
+      mnt_bucket    = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+    }
+  ))
 
   instance_initiated_shutdown_behavior = "terminate"
 
