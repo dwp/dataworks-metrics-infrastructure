@@ -18,6 +18,18 @@ resource "aws_ecs_task_definition" "prometheus" {
     }
   }
 
+  volume {
+    name      = "prometheus_config"
+    host_path = "/mnt/config/monitoring/prometheus"
+
+  }
+
+  volume {
+    name      = "thanos_config"
+    host_path = "/mnt/config/monitoring/thanos"
+
+  }
+
   tags = merge(local.tags, { Name = var.name })
 }
 
@@ -41,6 +53,10 @@ data "template_file" "prometheus_definition" {
       {
         "container_path" : "/prometheus",
         "source_volume" : "prometheus"
+      },
+      {
+        "container_path" : "/etc/prometheus",
+        "source_volume" : "prometheus_config"
       }
     ])
 
@@ -117,6 +133,10 @@ data "template_file" "thanos_receiver_prometheus_definition" {
       {
         "container_path" : "/prometheus",
         "source_volume" : "prometheus"
+      },
+      {
+        "container_path" : "/etc/thanos",
+        "source_volume" : "thanos_config"
       }
     ])
 
