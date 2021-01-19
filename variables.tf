@@ -122,8 +122,8 @@ variable "desired_capacity" {
 variable "image_versions" {
   description = "pinned image versions to use"
   default = {
-    prometheus            = "0.0.9"
-    thanos                = "0.0.19"
+    prometheus            = "0.0.13"
+    thanos                = "0.0.21"
     alertmanager          = "0.0.5"
     ecs-service-discovery = "0.0.3"
     grafana               = "0.0.9"
@@ -150,6 +150,6 @@ variable "metrics_ecs_cluster_ec2_size" {
 variable "ecs_hardened_ami_id" {
   description = "The AMI ID of the latest/pinned ECS Hardened AMI Image"
   type        = string
-  default     = "ami-0231ce48c6161e98d"
+  default     = "ami-049bba1a08b31ff8e"
 }
 
