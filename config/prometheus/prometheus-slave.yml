@@ -40,12 +40,6 @@ scrape_configs:
         action: replace
         target_label: __metrics_path__
         regex: (.+)
-    metric_relabel_configs:
-      - source_labels: [__name__]
-        regex: "application_[0-9]+_[0-9]+_(.*)"
-        replacement: adg_$${1}
-        target_label: __name__
-        action: replace
   - job_name: concourse-worker
     honor_timestamps: true
     scrape_interval: 1m
