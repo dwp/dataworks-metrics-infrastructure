@@ -36,8 +36,8 @@ data "template_file" "thanos_query_definition" {
 
     mount_points = jsonencode([
       {
-        "container_path" : "/etc/prometheus",
-        "source_volume" : "prometheus_config"
+        "container_path" : "/etc/thanos",
+        "source_volume" : "thanos_config"
       }
     ])
 
