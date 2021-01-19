@@ -167,6 +167,7 @@ resource "aws_ecs_service" "prometheus" {
   task_definition = aws_ecs_task_definition.prometheus.arn
   desired_count   = 3
   launch_type     = "EC2"
+  force_new_deployment = true
 
   network_configuration {
     security_groups = [aws_security_group.prometheus.id, aws_security_group.monitoring_common[local.secondary_role_index].id]
@@ -177,7 +178,7 @@ resource "aws_ecs_service" "prometheus" {
     registry_arn   = aws_service_discovery_service.prometheus.arn
     container_name = "prometheus"
   }
-
+  
   tags = merge(local.tags, { Name = var.name })
 }
 

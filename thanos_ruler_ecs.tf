@@ -58,6 +58,7 @@ resource "aws_ecs_service" "thanos_ruler" {
   platform_version = var.platform_version
   desired_count    = 1
   launch_type      = "FARGATE"
+  force_new_deployment = true
 
   network_configuration {
     security_groups = [aws_security_group.thanos_ruler[0].id, aws_security_group.monitoring_common[local.primary_role_index].id]
