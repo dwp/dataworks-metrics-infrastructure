@@ -120,14 +120,14 @@ data "template_file" "thanos_receiver_outofband_definition" {
 }
 
 resource "aws_ecs_service" "outofband" {
-  count           = local.is_management_env ? 1 : 0
-  name            = "outofband"
-  cluster         = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition = aws_ecs_task_definition.outofband[local.primary_role_index].arn
-  desired_count   = 3
-  launch_type     = "EC2"
+  count                = local.is_management_env ? 1 : 0
+  name                 = "outofband"
+  cluster              = aws_ecs_cluster.metrics_ecs_cluster.id
+  task_definition      = aws_ecs_task_definition.outofband[local.primary_role_index].arn
+  desired_count        = 3
+  launch_type          = "EC2"
   force_new_deployment = true
-  
+
   network_configuration {
     security_groups = [aws_security_group.outofband[local.primary_role_index].id, aws_security_group.monitoring_common[local.primary_role_index].id]
     subnets         = module.vpc.outputs.private_subnets[local.primary_role_index]

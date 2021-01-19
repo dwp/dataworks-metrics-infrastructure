@@ -162,11 +162,11 @@ data "template_file" "thanos_receiver_prometheus_definition" {
 }
 
 resource "aws_ecs_service" "prometheus" {
-  name            = "prometheus"
-  cluster         = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition = aws_ecs_task_definition.prometheus.arn
-  desired_count   = 3
-  launch_type     = "EC2"
+  name                 = "prometheus"
+  cluster              = aws_ecs_cluster.metrics_ecs_cluster.id
+  task_definition      = aws_ecs_task_definition.prometheus.arn
+  desired_count        = 3
+  launch_type          = "EC2"
   force_new_deployment = true
 
   network_configuration {
@@ -178,7 +178,7 @@ resource "aws_ecs_service" "prometheus" {
     registry_arn   = aws_service_discovery_service.prometheus.arn
     container_name = "prometheus"
   }
-  
+
   tags = merge(local.tags, { Name = var.name })
 }
 

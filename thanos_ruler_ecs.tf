@@ -51,13 +51,13 @@ data "template_file" "thanos_ruler_definition" {
 }
 
 resource "aws_ecs_service" "thanos_ruler" {
-  count            = local.is_management_env ? 1 : 0
-  name             = "thanos-ruler"
-  cluster          = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition  = aws_ecs_task_definition.thanos_ruler[local.primary_role_index].arn
-  platform_version = var.platform_version
-  desired_count    = 1
-  launch_type      = "FARGATE"
+  count                = local.is_management_env ? 1 : 0
+  name                 = "thanos-ruler"
+  cluster              = aws_ecs_cluster.metrics_ecs_cluster.id
+  task_definition      = aws_ecs_task_definition.thanos_ruler[local.primary_role_index].arn
+  platform_version     = var.platform_version
+  desired_count        = 1
+  launch_type          = "FARGATE"
   force_new_deployment = true
 
   network_configuration {
