@@ -8,13 +8,6 @@ resource "aws_ecs_task_definition" "thanos_ruler" {
   task_role_arn            = aws_iam_role.thanos_ruler[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.thanos_ruler_definition[local.primary_role_index].rendered}]"
-
-  volume {
-    name      = "thanos_config"
-    host_path = "/mnt/config/monitoring/thanos"
-
-  }
-
   tags = merge(local.tags, { Name = var.name })
 }
 
@@ -34,12 +27,7 @@ data "template_file" "thanos_ruler_definition" {
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
-    mount_points = jsonencode([
-      {
-        "container_path" : "/etc/thanos",
-        "source_volume" : "thanos_config"
-      }
-    ])
+    mount_points = jsonencode([])
 
     environment_variables = jsonencode([
       {
