@@ -67,11 +67,11 @@ resource "aws_s3_bucket_object" "grafana_dashboard_config" {
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   tags       = merge(local.tags, { Name = var.name })
 }
-
+# private dashboards
 resource "aws_s3_bucket_object" "security_dashboard" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
-  key        = "${var.name}/grafana/provisioning/dashboards/security_dashboard.json"
+  key        = "${var.name}/grafana/provisioning/dashboards/private/security_dashboard.json"
   content    = data.template_file.security_dashboard.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   tags       = merge(local.tags, { Name = var.name })
@@ -80,7 +80,7 @@ resource "aws_s3_bucket_object" "security_dashboard" {
 resource "aws_s3_bucket_object" "adg_dashboard" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
-  key        = "${var.name}/grafana/provisioning/dashboards/adg_dashboard.json"
+  key        = "${var.name}/grafana/provisioning/dashboards/private/adg_dashboard.json"
   content    = data.template_file.adg_dashboard.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   tags       = merge(local.tags, { Name = var.name })
@@ -89,7 +89,7 @@ resource "aws_s3_bucket_object" "adg_dashboard" {
 resource "aws_s3_bucket_object" "pdm_dashboard" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
-  key        = "${var.name}/grafana/provisioning/dashboards/pdm_dashboard.json"
+  key        = "${var.name}/grafana/provisioning/dashboards/private/pdm_dashboard.json"
   content    = data.template_file.pdm_dashboard.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   tags       = merge(local.tags, { Name = var.name })
@@ -98,7 +98,7 @@ resource "aws_s3_bucket_object" "pdm_dashboard" {
 resource "aws_s3_bucket_object" "analytical_emr_dashboard" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
-  key        = "${var.name}/grafana/provisioning/dashboards/analytical_emr_dashboard.json"
+  key        = "${var.name}/grafana/provisioning/dashboards/private/analytical_emr_dashboard.json"
   content    = data.template_file.analytical_emr_dashboard.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   tags       = merge(local.tags, { Name = var.name })
@@ -107,7 +107,7 @@ resource "aws_s3_bucket_object" "analytical_emr_dashboard" {
 resource "aws_s3_bucket_object" "concourse_dashboard" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
-  key        = "${var.name}/grafana/provisioning/dashboards/concourse_dashboard.json"
+  key        = "${var.name}/grafana/provisioning/dashboards/private/concourse_dashboard.json"
   content    = data.template_file.concourse_dashboard.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   tags       = merge(local.tags, { Name = var.name })
