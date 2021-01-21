@@ -47,8 +47,12 @@ data "template_file" "grafana_definition" {
         "value" : "${md5(data.template_file.grafana[local.primary_role_index].rendered)}"
       },
       {
-        "name" : "SECRET_ID",
-        "value" : "/concourse/dataworks/monitoring"
+        "name" : "GRAFANA_USERNAME",
+        "value" : jsondecode(data.aws_secretsmanager_secret_version.dataworks_secrets[local.primary_role_index].secret_binary)["grafana_user"]
+      },
+      {
+        "name" : "GRAFANA_PASSWORD",
+        "value" : jsondecode(data.aws_secretsmanager_secret_version.dataworks_secrets[local.primary_role_index].secret_binary)["grafana_password"]
       }
     ])
   }

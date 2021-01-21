@@ -3,6 +3,11 @@ data "aws_secretsmanager_secret" "dataworks_secrets" {
   name  = "/concourse/dataworks/dataworks-secrets"
 }
 
+data "aws_secretsmanager_secret_version" "dataworks_secrets" {
+  count     = local.is_management_env ? 1 : 0
+  secret_id = data.aws_secretsmanager_secret.dataworks-secrets[local.primary_role_index].id
+}
+
 data "aws_secretsmanager_secret" "dataworks" {
   count = local.is_management_env ? 1 : 0
   name  = "/concourse/dataworks/dataworks"
