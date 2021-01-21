@@ -1,5 +1,38 @@
 meta:
   plan:
+    create-credentials:
+      task: create-credentials
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              set -x
+              source /assume-role
+              creds=$(cat << EOF  
+              {
+              "grafana": 
+              {
+              "username": "${GRAFANA_USER}", 
+              "password": "${GRAFANA_PASSWORD}"  
+              }
+              }
+              EOF
+              )
+              echo $creds > creds.json            
+              aws secretsmanager put-secret-value --secret-id /concourse/dataworks/monitoring/credentials --secret-string file://creds.json
+      params:
+        AWS_DEFAULT_REGION: ((dataworks.aws_region))
+        GRAFANA_USER: ((dataworks-secrets.grafana_user_mgt_dev))
+        GRAFANA_PASSWORD: ((dataworks-secrets.grafana_password_mgt_dev)) 
     terraform-bootstrap:
       task: terraform-bootstrap
       config:

@@ -11,6 +11,12 @@ jobs:
           - management-dev
         trigger: true
 
+      - .: (( inject meta.plan.create-credentials ))
+        params:
+          GRAFANA_USER: ((dataworks-secrets.grafana_user))
+          GRAFANA_PASSWORD: ((dataworks-secrets.grafana_password))
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci      
+
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           TF_WORKSPACE: management

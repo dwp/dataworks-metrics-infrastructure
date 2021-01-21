@@ -7,6 +7,12 @@ jobs:
       - get: dataworks-dashboards
         trigger: true
 
+      - .: (( inject meta.plan.create-credentials ))
+        params:
+          GRAFANA_USER: ((dataworks-secrets.grafana_user_mgt_dev))
+          GRAFANA_PASSWORD: ((dataworks-secrets.grafana_password_mgt_dev))
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management-dev)):role/ci      
+
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           TF_WORKSPACE: management-dev
