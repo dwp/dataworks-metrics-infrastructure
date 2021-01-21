@@ -48,7 +48,7 @@ data "template_file" "grafana_definition" {
       },
       {
         "name" : "SECRET_ID",
-        "value" : aws_secretsmanager_secret.monitoring_secrets.id
+        "value" : aws_secretsmanager_secret.monitoring_secrets[0].id
       }
     ])
   }
