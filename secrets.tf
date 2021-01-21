@@ -1,4 +1,4 @@
-resource "aws_secretsmanager_secret" "monitoring-secrets" {
+resource "aws_secretsmanager_secret" "monitoring_secrets" {
   count       = local.is_management_env
   name        = "/concourse/dataworks/monitoring/credentials"
   description = "Secret paramaters used to store credentials to be accessed within Concourse"
