@@ -48,7 +48,7 @@ data "template_file" "grafana_definition" {
       },
       {
         "name" : "SECRET_ID",
-        "value" : "/concourse/dataworks/monitoring"
+        "value" : aws_secretsmanager_secret.monitoring_secrets[0].id
       }
     ])
   }
