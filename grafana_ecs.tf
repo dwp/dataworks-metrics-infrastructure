@@ -7,7 +7,7 @@ resource "aws_ecs_task_definition" "grafana" {
   memory                   = "4096"
   task_role_arn            = aws_iam_role.grafana[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
-  container_definitions    = "[${data.template_file.grafana_definition[local.primary_role_index].rendered}]"
+  container_definitions    = "[${data.template_file.grafana_definition[local.primary_role_index].rendered}, ${data.template_file.grafana_sidecar_definition[local.primary_role_index].rendered}]"
   tags                     = merge(local.tags, { Name = var.name })
 }
 
@@ -49,6 +49,47 @@ data "template_file" "grafana_definition" {
       {
         "name" : "SECRET_ID",
         "value" : aws_secretsmanager_secret.monitoring_secrets[0].id
+      }
+    ])
+  }
+}
+
+data "template_file" "grafana_sidecar_definition" {
+  count    = local.is_management_env ? 1 : 0
+  template = file("${path.module}/container_definition.tpl")
+  vars = {
+    name         = "grafana_sidecar"
+    group_name   = "grafana_sidecar"
+    cpu          = var.fargate_cpu
+    image_url    = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_awscli_url, var.image_versions.awscli)
+    memory       = var.fargate_memory
+    user         = "nobody"
+    ports        = jsonencode([80])
+    ulimits      = jsonencode([])
+    log_group    = aws_cloudwatch_log_group.monitoring_metrics.name
+    region       = data.aws_region.current.name
+    mount_points = jsonencode([])
+
+    environment_variables = jsonencode([
+      {
+        "name" : "HTTP_PROXY",
+        "value" : "http://${aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name}:${var.internet_proxy_port}"
+      },
+      {
+        "name" : "HTTPS_PROXY",
+        "value" : "http://${aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name}:${var.internet_proxy_port}"
+      },
+      {
+        "name" : "NO_PROXY",
+        "value" : "127.0.0.1,s3.${var.region}.amazonaws.com,secretsmanager.${var.region}.amazonaws.com,${local.environment}.services.${var.parent_domain_name}"
+      },
+      {
+        "name" : "SECRET_ID",
+        "value" : aws_secretsmanager_secret.monitoring_secrets[0].id
+      },
+      {
+        "name": "entryPoint",
+        "value": jsonencode(["grafana_sidecar_entrypoint.sh"])
       }
     ])
   }
