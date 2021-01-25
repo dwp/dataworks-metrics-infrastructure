@@ -67,7 +67,7 @@ folders=$(curl http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@localhost:3000/api/fol
  done
  if [ ! -z $FOLDER_UID ] && [ $FOLDER_UID != '[]' ] ; then
      echo "Updating folder permissions"
-     curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d '{"items": [{"role": "Editor","permission": 2}]}' https://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@localhost:3000/api/folders/$FOLDER_UID/permissions
+     curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d '{"items": [{"role": "Editor","permission": 2}]}' http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@localhost:3000/api/folders/$FOLDER_UID/permissions
  else
      echo "No folder UID found, permissions not updated"
  fi
