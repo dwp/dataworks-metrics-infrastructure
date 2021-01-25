@@ -69,6 +69,7 @@ data "template_file" "grafana_sidecar_definition" {
     log_group    = aws_cloudwatch_log_group.monitoring_metrics.name
     region       = data.aws_region.current.name
     mount_points = jsonencode([])
+    config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
     environment_variables = jsonencode([
       {
