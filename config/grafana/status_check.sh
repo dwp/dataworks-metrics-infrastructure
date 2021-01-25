@@ -1,5 +1,4 @@
 #!/bin/sh
-set -e
 http_code="000"
 
 # Checks Grafana service is available.
@@ -8,6 +7,7 @@ while [[ $http_code != "200" ]]; do
     curl -sL -w '%{http_code}' http://localhost:3000 -o /dev/null;
 done
 
+set -e
 # If either of the AWS credentials variables were provided, validate them
 if [ -n "${AWS_ACCESS_KEY_ID}${AWS_SECRET_ACCESS_KEY}" ]; then
     if [ -z "${AWS_ACCESS_KEY_ID}" -o -z "${AWS_SECRET_ACCESS_KEY}" ]; then
