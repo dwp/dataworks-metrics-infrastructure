@@ -11,6 +11,11 @@ resource "aws_ecs_task_definition" "grafana" {
   tags                     = merge(local.tags, { Name = var.name })
 }
 
+volume {
+    name      = "grafana_config"
+    host_path = {}
+  }
+
 data "template_file" "grafana_definition" {
   count    = local.is_management_env ? 1 : 0
   template = file("${path.module}/container_definition.tpl")
@@ -27,7 +32,12 @@ data "template_file" "grafana_definition" {
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
-    mount_points = jsonencode([])
+    mount_points = jsonencode([
+      {
+        "container_path" : "/etc/grafana",
+        "source_volume" : "grafana_config"
+      }
+    ])
 
     environment_variables = jsonencode([
       {
@@ -58,18 +68,20 @@ data "template_file" "grafana_sidecar_definition" {
   count    = local.is_management_env ? 1 : 0
   template = file("${path.module}/container_definition.tpl")
   vars = {
-    name         = "grafana_sidecar"
-    group_name   = "grafana_sidecar"
-    cpu          = var.fargate_cpu
-    image_url    = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_awscli_url, var.image_versions.awscli)
-    memory       = var.fargate_memory
-    user         = "nobody"
-    ports        = jsonencode([80])
-    ulimits      = jsonencode([])
-    log_group    = aws_cloudwatch_log_group.monitoring_metrics.name
-    region       = data.aws_region.current.name
-    mount_points = jsonencode([])
+    name          = "grafana_sidecar"
+    group_name    = "grafana_sidecar"
+    cpu           = var.fargate_cpu
+    image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_awscli_url, var.image_versions.awscli)
+    memory        = var.fargate_memory
+    user          = "nobody"
+    ports         = jsonencode([80])
+    ulimits       = jsonencode([])
+    log_group     = aws_cloudwatch_log_group.monitoring_metrics.name
+    region        = data.aws_region.current.name
+    mount_points  = jsonencode([])
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+    essential     = false
+    volumes_from = jsonencode([{"sourceContainer": "grafana"}])
 
     environment_variables = jsonencode([
       {
@@ -90,7 +102,7 @@ data "template_file" "grafana_sidecar_definition" {
       },
       {
         "name" : "entryPoint",
-        "value" : file("${path.module}/config/grafana/status_check.sh")
+        "value" : ["/etc/grafana/status_check.sh"]
       }
     ])
   }
