@@ -13,7 +13,7 @@ resource "aws_ecs_task_definition" "grafana" {
 
 data "template_file" "grafana_definition" {
   count    = local.is_management_env ? 1 : 0
-  template = file("${path.module}/grafana_container_definition.tpl")
+  template = file("${path.module}/container_definition.tpl")
   vars = {
     name          = "grafana"
     group_name    = "grafana"
@@ -70,6 +70,8 @@ data "template_file" "grafana_sidecar_definition" {
     mount_points  = jsonencode([])
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
     essential     = false
+    command       = file("${path.module}/config/grafana/status_check.sh")
+    entryPoint    = "sh -c"
 
     environment_variables = jsonencode([
       {
@@ -87,14 +89,6 @@ data "template_file" "grafana_sidecar_definition" {
       {
         "name" : "SECRET_ID",
         "value" : aws_secretsmanager_secret.monitoring_secrets[0].id
-      },
-      {
-        "name" : "entryPoint",
-        "value" : "sh -c"
-      },
-      {
-        "name": "command",
-        "value": file("${path.module}/config/grafana/status_check.sh")
       }
     ])
   }
