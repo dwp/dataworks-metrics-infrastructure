@@ -1,5 +1,4 @@
 #!/bin/sh
-set -x
 http_code="000"
 
 # Checks Grafana service is available.
