@@ -7,7 +7,7 @@
   "networkMode": "awsvpc",
   "user": "${user}",
   "essential": ${essential},
-  "entryPoint": ["${entrypoint}"],
+  "entryPoint": ["/bin/sh", "-c", "echo '${entrypoint}' | base64 -d | sh;"],
   "portMappings": ${jsonencode([
     for port in jsondecode(ports) : {
       containerPort = port,

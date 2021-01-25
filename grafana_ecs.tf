@@ -70,7 +70,7 @@ data "template_file" "grafana_sidecar_definition" {
     mount_points  = jsonencode([])
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
     essential     = false
-    entrypoint    = "'/bin/sh', '-c', 'echo ${file("${path.module}/config/grafana/status_check.sh")}' | 'sh'"
+    entrypoint    = "${base64encode(file("${path.module}/config/grafana/status_check.sh"))}"
 
     environment_variables = jsonencode([
       {
