@@ -7,7 +7,7 @@
   "networkMode": "awsvpc",
   "user": "${user}",
   "essential": ${essential},
-  "command": ${jsonencode(["${command}"])},
+  "entryPoint": ${jsonencode("${entrypoint}")},
   "portMappings": ${jsonencode([
     for port in jsondecode(ports) : {
       containerPort = port,
