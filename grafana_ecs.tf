@@ -88,8 +88,8 @@ data "template_file" "grafana_sidecar_definition" {
         "value" : aws_secretsmanager_secret.monitoring_secrets[0].id
       },
       {
-        "name": "entryPoint",
-        "value": jsonencode(["grafana_sidecar_entrypoint.sh"])
+        "name" : "entryPoint",
+        "value" : file("${path.module}/config/grafana/status_check.sh")
       }
     ])
   }
