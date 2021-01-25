@@ -70,7 +70,7 @@ data "template_file" "grafana_sidecar_definition" {
     mount_points  = jsonencode([])
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
     essential     = false
-    entryPoint    = "echo $ENTRYPOINT > entrypoint.sh && chmod +x entrypoint.sh && ./entrypoint.sh"
+    entryPoint    = "echo $ENTRYPOINT > /tmp/entrypoint.sh && chmod +x /tmp/entrypoint.sh && /tmp/entrypoint.sh"
 
     environment_variables = jsonencode([
       {
