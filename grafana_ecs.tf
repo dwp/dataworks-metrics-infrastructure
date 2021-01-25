@@ -10,7 +10,7 @@ resource "aws_ecs_task_definition" "grafana" {
   container_definitions    = "[${data.template_file.grafana_definition[local.primary_role_index].rendered}, ${data.template_file.grafana_sidecar_definition[local.primary_role_index].rendered}]"
   tags                     = merge(local.tags, { Name = var.name })
 
-volume {
+  volume {
     name      = "grafana_config"
     host_path = {}
   }
@@ -82,7 +82,7 @@ data "template_file" "grafana_sidecar_definition" {
     mount_points  = jsonencode([])
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
     essential     = false
-    volumes_from = jsonencode([{"sourceContainer": "grafana"}])
+    volumes_from  = jsonencode([{ "sourceContainer" : "grafana" }])
 
     environment_variables = jsonencode([
       {
