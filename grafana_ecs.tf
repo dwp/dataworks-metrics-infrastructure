@@ -9,12 +9,6 @@ resource "aws_ecs_task_definition" "grafana" {
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.grafana_definition[local.primary_role_index].rendered}, ${data.template_file.grafana_sidecar_definition[local.primary_role_index].rendered}]"
   tags                     = merge(local.tags, { Name = var.name })
-
-  volume {
-    name      = "grafana_config"
-    host_path = "{}"
-  }
-
 }
 
 data "template_file" "grafana_definition" {
@@ -32,14 +26,6 @@ data "template_file" "grafana_definition" {
     log_group     = aws_cloudwatch_log_group.monitoring_metrics.name
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
-    volumes_from  = jsonencode([])
-
-    mount_points = jsonencode([
-      {
-        "container_path" : "/etc/grafana",
-        "source_volume" : "grafana_config"
-      }
-    ])
 
     environment_variables = jsonencode([
       {
@@ -83,7 +69,6 @@ data "template_file" "grafana_sidecar_definition" {
     mount_points  = jsonencode([])
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
     essential     = false
-    volumes_from  = jsonencode([{ "source_container" : "grafana" }])
 
     environment_variables = jsonencode([
       {
@@ -104,7 +89,11 @@ data "template_file" "grafana_sidecar_definition" {
       },
       {
         "name" : "entryPoint",
-        "value" : "/etc/grafana/status_check.sh"
+        "value" : "sh -c"
+      },
+      {
+        "name": "command",
+        "value": file("${path.module}/config/grafana/status_check.sh")
       }
     ])
   }

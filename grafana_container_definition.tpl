@@ -2,11 +2,7 @@
   "cpu": ${cpu},
   "image": "${image_url}",
   "memory": ${memory},
-  "volumesFrom": ${jsonencode([
-    for volume in jsondecode(volumes_from) : {
-      sourceContainer = volume.source_container
-    }
-  ])},
+  "volumesFrom": [],
   "name": "${name}",
   "networkMode": "awsvpc",
   "user": "${user}",
