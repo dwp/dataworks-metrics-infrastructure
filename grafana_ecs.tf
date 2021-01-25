@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "grafana" {
 
 volume {
     name      = "grafana_config"
-    host_path = {}
+    host_path = "{}"
   }
 
 }
