@@ -2,10 +2,11 @@
   "cpu": ${cpu},
   "image": "${image_url}",
   "memory": ${memory},
-  "volumesFrom": [],
+  "volumesFrom": ${volumes_from},
   "name": "${name}",
   "networkMode": "awsvpc",
   "user": "${user}",
+  "essential": true,
   "portMappings": ${jsonencode([
     for port in jsondecode(ports) : {
       containerPort = port,

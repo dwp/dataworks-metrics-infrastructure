@@ -19,7 +19,7 @@ resource "aws_ecs_task_definition" "grafana" {
 
 data "template_file" "grafana_definition" {
   count    = local.is_management_env ? 1 : 0
-  template = file("${path.module}/container_definition.tpl")
+  template = file("${path.module}/grafana_container_definition.tpl")
   vars = {
     name          = "grafana"
     group_name    = "grafana"
@@ -32,6 +32,7 @@ data "template_file" "grafana_definition" {
     log_group     = aws_cloudwatch_log_group.monitoring_metrics.name
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+    volumes_from  = jsonencode([])
 
     mount_points = jsonencode([
       {
@@ -67,7 +68,7 @@ data "template_file" "grafana_definition" {
 
 data "template_file" "grafana_sidecar_definition" {
   count    = local.is_management_env ? 1 : 0
-  template = file("${path.module}/container_definition.tpl")
+  template = file("${path.module}/grafana_container_definition.tpl")
   vars = {
     name          = "grafana_sidecar"
     group_name    = "grafana_sidecar"
