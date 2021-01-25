@@ -104,7 +104,7 @@ data "template_file" "grafana_sidecar_definition" {
       },
       {
         "name" : "entryPoint",
-        "value" : ["/etc/grafana/status_check.sh"]
+        "value" : "/etc/grafana/status_check.sh"
       }
     ])
   }
