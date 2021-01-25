@@ -62,7 +62,7 @@ data "template_file" "grafana_sidecar_definition" {
     cpu           = var.fargate_cpu
     image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_awscli_url, var.image_versions.awscli)
     memory        = var.fargate_memory
-    user          = "nobody"
+    user          = "root"
     ports         = jsonencode([80])
     ulimits       = jsonencode([])
     log_group     = aws_cloudwatch_log_group.monitoring_metrics.name
