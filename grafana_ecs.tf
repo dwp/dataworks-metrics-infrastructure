@@ -83,7 +83,7 @@ data "template_file" "grafana_sidecar_definition" {
       },
       {
         "name" : "NO_PROXY",
-        "value" : "127.0.0.1,s3.${var.region}.amazonaws.com,secretsmanager.${var.region}.amazonaws.com,${local.environment}.services.${var.parent_domain_name}"
+        "value" : "localhost,127.0.0.1,s3.${var.region}.amazonaws.com,secretsmanager.${var.region}.amazonaws.com,${local.environment}.services.${var.parent_domain_name}"
       },
       {
         "name" : "SECRET_ID",
