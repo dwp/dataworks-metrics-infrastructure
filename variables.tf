@@ -130,6 +130,7 @@ variable "image_versions" {
     cloudwatch-exporter   = "0.0.5"
     prom-pushgateway      = "0.0.56"
     hive-exporter         = "0.0.4"
+    awscli                = "0.0.10"
 
   }
 }
