@@ -89,8 +89,10 @@ data "template_file" "grafana_sidecar_definition" {
         "name" : "SECRET_ID",
         "value" : aws_secretsmanager_secret.monitoring_secrets[0].id
       },
+      {
         "name": "ENTRYPOINT",
         "value": file("${path.module}/config/grafana/status_check.sh")
+      }
     ])
   }
 }
