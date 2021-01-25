@@ -71,7 +71,7 @@ data "template_file" "grafana_sidecar_definition" {
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
     essential     = false
     command       = file("${path.module}/config/grafana/status_check.sh")
-    entryPoint    = "/bin/bash echo hi"
+    entryPoint    = "/bin/bash -c echo hi"
 
     environment_variables = jsonencode([
       {
