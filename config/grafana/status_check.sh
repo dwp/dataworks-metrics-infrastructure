@@ -5,7 +5,7 @@ http_code="000"
 # Checks Grafana service is available.
 while [[ $http_code != "200" ]]; do
     sleep 2
-    curl -sL -w '%{http_code}' http://localhost:3000 -o /dev/null;
+    http_code=$(curl -sL -w '%{http_code}' http://localhost:3000 -o /dev/null;)
     echo "Grafana unresponsive, trying again..."
 done
 
