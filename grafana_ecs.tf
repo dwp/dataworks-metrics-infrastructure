@@ -9,12 +9,13 @@ resource "aws_ecs_task_definition" "grafana" {
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.grafana_definition[local.primary_role_index].rendered}, ${data.template_file.grafana_sidecar_definition[local.primary_role_index].rendered}]"
   tags                     = merge(local.tags, { Name = var.name })
-}
 
 volume {
     name      = "grafana_config"
     host_path = {}
   }
+
+}
 
 data "template_file" "grafana_definition" {
   count    = local.is_management_env ? 1 : 0
