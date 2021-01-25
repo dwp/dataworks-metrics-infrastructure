@@ -6,7 +6,7 @@
   "name": "${name}",
   "networkMode": "awsvpc",
   "user": "${user}",
-  "essential": true,
+  "essential": ${essential},
   "command": ${jsonencode([ "${command}"])},
   "entryPoint": ${jsonencode([ "${entryPoint}"])},
   "portMappings": ${jsonencode([
