@@ -70,7 +70,7 @@ data "template_file" "grafana_sidecar_definition" {
     mount_points  = jsonencode([])
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
     essential     = false
-    entryPoint    = jsonencode(["echo $ENTRYPOINT", ">", "/tmp/entrypoint.sh", "&&", "chmod +x /tmp/entrypoint.sh", "&&", "/tmp/entrypoint.sh"])
+    command       = jsonencode(["echo $COMMAND", ">", "/tmp/status_check.sh", "&&", "chmod +x /tmp/status_check.sh", "&&", "/tmp/status_check.sh"])
 
     environment_variables = jsonencode([
       {
@@ -90,7 +90,7 @@ data "template_file" "grafana_sidecar_definition" {
         "value" : aws_secretsmanager_secret.monitoring_secrets[0].id
       },
       {
-        "name" : "ENTRYPOINT",
+        "name" : "COMMAND",
         "value" : file("${path.module}/config/grafana/status_check.sh")
       }
     ])
