@@ -59,7 +59,7 @@ folders=$(curl http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@localhost:3000/api/fol
  echo $folders
  for row in $(echo "${folders}" | jq -r '.[] | @base64'); do
      _jq() {
-     echo ${row} | base64 --decode | jq -r ${1}
+     echo ${row} | base64 -d | jq -r ${1}
      }
      if [ $(_jq '.title') == "private" ]; then
          FOLDER_UID=$(_jq '.uid')
