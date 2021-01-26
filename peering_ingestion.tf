@@ -14,9 +14,9 @@ resource "aws_route" "ingest_prometheus" {
 }
 
 resource "aws_route" "prometheus_secondary_ingest" {
-  count                     = local.is_management_env ? 0 : length(data.terraform_remote_state.aws_ingestion.outputs.ingestion_subnets.cidr_block)
+  count                     = local.is_management_env ? 0 : local.zone_count
   route_table_id            = module.vpc.outputs.private_route_tables[local.secondary_role_index][count.index]
-  destination_cidr_block    = data.terraform_remote_state.aws_ingestion.outputs.ingestion_subnets.cidr_block[count.index]
+  destination_cidr_block    = local.cidr_block_ingest_vpc
   vpc_peering_connection_id = aws_vpc_peering_connection.ingestion[0].id
 }
 
