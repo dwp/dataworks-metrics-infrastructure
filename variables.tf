@@ -126,10 +126,11 @@ variable "image_versions" {
     thanos                = "0.0.21"
     alertmanager          = "0.0.5"
     ecs-service-discovery = "0.0.3"
-    grafana               = "0.0.10"
+    grafana               = "0.0.11"
     cloudwatch-exporter   = "0.0.5"
     prom-pushgateway      = "0.0.56"
     hive-exporter         = "0.0.4"
+    awscli                = "0.0.10"
 
   }
 }
