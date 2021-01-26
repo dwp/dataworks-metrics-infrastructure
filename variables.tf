@@ -46,12 +46,16 @@ variable "fargate_memory" {
   default = "512"
 }
 
+variable "ec2_memory" {
+  default = "1024"
+}
+
 variable "receiver_cpu" {
   default = "512"
 }
 
 variable "receiver_memory" {
-  default = "1024"
+  default = "1536"
 }
 
 variable "store_cpu" {
@@ -122,8 +126,8 @@ variable "desired_capacity" {
 variable "image_versions" {
   description = "pinned image versions to use"
   default = {
-    prometheus            = "0.0.13"
-    thanos                = "0.0.21"
+    prometheus            = "0.0.14"
+    thanos                = "0.0.22"
     alertmanager          = "0.0.5"
     ecs-service-discovery = "0.0.3"
     grafana               = "0.0.11"

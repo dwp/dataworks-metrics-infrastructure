@@ -40,7 +40,7 @@ data "template_file" "prometheus_definition" {
     group_name         = "prometheus"
     cpu                = var.fargate_cpu
     image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_prometheus_url, var.image_versions.prometheus)
-    memory             = var.receiver_memory
+    memory             = var.ec2_memory
     memory_reservation = var.fargate_memory
     user               = "nobody"
     ports              = jsonencode([var.prometheus_port])
@@ -84,7 +84,7 @@ data "template_file" "ecs_service_discovery_definition" {
     group_name         = "ecs_service_discovery"
     cpu                = var.fargate_cpu
     image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_ecs_service_discovery_url, var.image_versions.ecs-service-discovery)
-    memory             = var.receiver_memory
+    memory             = var.ec2_memory
     memory_reservation = var.fargate_memory
     user               = "nobody"
     ports              = jsonencode([])
