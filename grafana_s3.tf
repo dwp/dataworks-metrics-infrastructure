@@ -50,6 +50,15 @@ resource "aws_s3_bucket_object" "grafana" {
   tags       = merge(local.tags, { Name = var.name })
 }
 
+resource "aws_s3_bucket_object" "status_check" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/status_check.sh"
+  content    = file("${path.module}/config/grafana/status_check.sh")
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
+}
+
 resource "aws_s3_bucket_object" "grafana_datasource_config" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
