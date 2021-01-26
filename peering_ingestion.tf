@@ -27,7 +27,7 @@ resource "aws_security_group_rule" "emr_common_allow_ingress_prometheus" {
   protocol                 = "tcp"
   from_port                = 9100
   to_port                  = 9100
-  security_group_id        = data.terraform_remote_state.aws_ingest-consumers.outputs.security_group.k2hb_common # this needs to be k2hb
+  security_group_id        = data.terraform_remote_state.aws_ingest-consumers.outputs.security_group.k2hb_common
   source_security_group_id = aws_security_group.prometheus.id
 }
 
