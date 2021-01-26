@@ -193,20 +193,6 @@ data "terraform_remote_state" "aws_analytical_env_app" {
   }
 }
 
-data "terraform_remote_state" "aws_ingest-consumers" {
-  backend   = "s3"
-  workspace = lookup(local.common_workspace, terraform.workspace)
-
-  config = {
-    bucket         = "{{state_file_bucket}}"
-    key            = "terraform/dataworks/dataworks-aws-ingest-consumers.tfstate"
-    region         = "{{state_file_region}}"
-    encrypt        = true
-    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
-    dynamodb_table = "remote_state_locks"
-  }
-}
-
 variable "assume_role" {
   default = "ci"
 }
