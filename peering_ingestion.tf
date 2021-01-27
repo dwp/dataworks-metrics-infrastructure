@@ -31,7 +31,7 @@ resource "aws_security_group_rule" "k2hb_allow_ingress_prometheus" {
   source_security_group_id = aws_security_group.prometheus.id
 }
 
-resource "aws_security_group_rule" "prometheus_allow_egress_emr_common" {
+resource "aws_security_group_rule" "prometheus_allow_egress_k2hb" {
   count                    = local.is_management_env ? 0 : 1
   description              = "Allow prometheus ${var.secondary} to access ingest ec2 node metrics"
   type                     = "egress"
