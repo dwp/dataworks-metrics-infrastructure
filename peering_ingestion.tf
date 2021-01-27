@@ -33,7 +33,7 @@ resource "aws_security_group_rule" "k2hb_allow_ingress_prometheus" {
 
 resource "aws_security_group_rule" "prometheus_allow_egress_k2hb" {
   count                    = local.is_management_env ? 0 : 1
-  description              = "Allow prometheus ${var.secondary} to access ingest ec2 node metrics"
+  description              = "Allow prometheus ${var.secondary} to access ingest k2hb ec2 node metrics"
   type                     = "egress"
   protocol                 = "tcp"
   from_port                = 9100
