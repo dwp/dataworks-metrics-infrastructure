@@ -20,7 +20,7 @@ resource "aws_route" "prometheus_ingest" {
   vpc_peering_connection_id = aws_vpc_peering_connection.ingestion[0].id
 }
 
-resource "aws_security_group_rule" "emr_common_allow_ingress_prometheus" {
+resource "aws_security_group_rule" "k2hb_allow_ingress_prometheus" {
   count                    = local.is_management_env ? 0 : 1
   description              = "Allow prometheus ${var.secondary} to access ingest ec2 node metrics"
   type                     = "ingress"
