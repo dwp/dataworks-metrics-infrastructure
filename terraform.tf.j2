@@ -207,13 +207,13 @@ data "terraform_remote_state" "aws_ingest-consumers" {
   }
 }
 
-data "terraform_remote_state" "aws-sdx" {
+data "terraform_remote_state" "aws_sdx" {
   backend   = "s3"
   workspace = lookup(local.common_workspace, terraform.workspace)
 
   config = {
     bucket         = "{{state_file_bucket}}"
-    key            = "terraform/dataworks/aws-sdx.tfstate"
+    key            = "terraform/dataworks/aws_sdx.tfstate"
     region         = "{{state_file_region}}"
     encrypt        = true
     kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
