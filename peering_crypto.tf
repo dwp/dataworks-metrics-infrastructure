@@ -5,7 +5,6 @@ resource "aws_vpc_peering_connection" "crypto" {
   auto_accept = true
   tags        = merge(local.tags, { Name = var.name })
 }
-<<<<<<< HEAD
 
 resource "aws_route" "crypto_prometheus" {
   count                     = local.is_management_env ? 1 : 0
@@ -13,5 +12,3 @@ resource "aws_route" "crypto_prometheus" {
   destination_cidr_block    = local.cidr_block[local.environment].mon-slave-vpc
   vpc_peering_connection_id = aws_vpc_peering_connection.crypto[0].id
 }
-=======
->>>>>>> 7f396502d644397fce606d602800e28d5739c2c2
