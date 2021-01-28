@@ -224,10 +224,24 @@ data "terraform_remote_state" "aws_sdx" {
 data "terraform_remote_state" "dataworks-aws-data-egress" {
   backend   = "s3"
   workspace = lookup(local.common_workspace, terraform.workspace)
-
+  
   config = {
     bucket         = "{{state_file_bucket}}"
     key            = "terraform/dataworks/dataworks-aws-data-egress.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "aws_crypto" {
+  backend   = "s3"
+  workspace = local.crypto_workspace[local.slave_peerings[local.environment]]
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-crypto.tfstate"
     region         = "{{state_file_region}}"
     encrypt        = true
     kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
@@ -304,6 +318,11 @@ locals {
   master_peerings = {
     management-dev = ["management-dev", "development", "qa", "integration"]
     management = ["management", "preprod", "production"]
+  }
+
+  crypto_workspace = {
+    management-dev = "management-dev"
+    management     = "management"
   }
 
   dns_zone_ids = {
