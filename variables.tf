@@ -58,6 +58,10 @@ variable "receiver_memory" {
   default = "1536"
 }
 
+variable "prometheus_memory" {
+  default = "1536"
+}
+
 variable "store_cpu" {
   default = "1024"
 }
