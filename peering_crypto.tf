@@ -12,3 +12,10 @@ resource "aws_route" "crypto_prometheus" {
   destination_cidr_block    = local.cidr_block[local.environment].mon-slave-vpc
   vpc_peering_connection_id = aws_vpc_peering_connection.crypto[0].id
 }
+
+resource "aws_route" "prometheus_crypto" {
+  count                     = local.is_management_env ? local.zone_count : 0
+  route_table_id            = module.vpc.outputs.private_route_tables[local.secondary_role_index][count.index]
+  destination_cidr_block    = data.terraform_remote_state.aws_crypto.outputs.crypto_vpc.cidr_block
+  vpc_peering_connection_id = aws_vpc_peering_connection.crypto[0].id
+}
