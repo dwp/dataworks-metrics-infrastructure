@@ -40,7 +40,7 @@ data "template_file" "prometheus_definition" {
     group_name         = "prometheus"
     cpu                = var.fargate_cpu
     image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_prometheus_url, var.image_versions.prometheus)
-    memory             = var.ec2_memory
+    memory             = var.prometheus_memory
     memory_reservation = var.fargate_memory
     user               = "nobody"
     ports              = jsonencode([var.prometheus_port])
