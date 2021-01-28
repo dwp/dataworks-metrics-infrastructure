@@ -241,7 +241,7 @@ data "terraform_remote_state" "aws_crypto" {
 
   config = {
     bucket         = "{{state_file_bucket}}"
-    key            = "env:/${local.environment}/terraform/dataworks/aws-crypto.tfstate"
+    key            = "terraform/dataworks/aws-crypto.tfstate"
     region         = "{{state_file_region}}"
     encrypt        = true
     kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
