@@ -224,7 +224,7 @@ data "terraform_remote_state" "aws_sdx" {
 data "terraform_remote_state" "dataworks-aws-data-egress" {
   backend   = "s3"
   workspace = lookup(local.common_workspace, terraform.workspace)
-  
+
   config = {
     bucket         = "{{state_file_bucket}}"
     key            = "terraform/dataworks/dataworks-aws-data-egress.tfstate"
