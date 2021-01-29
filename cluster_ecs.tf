@@ -106,6 +106,7 @@ resource "aws_launch_template" "metrics_cluster" {
       region        = data.aws_region.current.name
       folder        = "/mnt/config"
       mnt_bucket    = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+      name          = local.metrics_ecs_friendly_name
     }
   ))
 
@@ -242,6 +243,7 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
       region        = data.aws_region.current.name
       folder        = "/mnt/config"
       mnt_bucket    = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+      name          = local.metrics_ecs_friendly_name
     }
   ))
 
