@@ -94,15 +94,15 @@ data "template_file" "grafana_sidecar_definition" {
 }
 
 resource "aws_ecs_service" "grafana" {
-  count            = local.is_management_env ? 1 : 0
-  name             = "grafana"
-  cluster          = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition  = aws_ecs_task_definition.grafana[local.primary_role_index].arn
-  platform_version = var.platform_version
-  desired_count    = 1
-  launch_type      = "FARGATE"
+  count                              = local.is_management_env ? 1 : 0
+  name                               = "grafana"
+  cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
+  task_definition                    = aws_ecs_task_definition.grafana[local.primary_role_index].arn
+  platform_version                   = var.platform_version
+  desired_count                      = 1
+  launch_type                        = "FARGATE"
   deployment_minimum_healthy_percent = 100
-  deployment_maximum_percent = 200
+  deployment_maximum_percent         = 200
 
   network_configuration {
     security_groups = [aws_security_group.grafana[0].id, aws_security_group.monitoring_common[local.primary_role_index].id]
