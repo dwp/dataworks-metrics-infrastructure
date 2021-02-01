@@ -168,6 +168,8 @@ resource "aws_ecs_service" "prometheus" {
   desired_count        = 3
   launch_type          = "EC2"
   force_new_deployment = true
+  deployment_minimum_healthy_percent = 75
+  deployment_maximum_percent = 125
 
   network_configuration {
     security_groups = [aws_security_group.prometheus.id, aws_security_group.monitoring_common[local.secondary_role_index].id]

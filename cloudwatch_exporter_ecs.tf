@@ -47,6 +47,8 @@ resource "aws_ecs_service" "cloudwatch_exporter" {
   platform_version = var.platform_version
   desired_count    = 1
   launch_type      = "FARGATE"
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent = 200
 
   network_configuration {
     security_groups = [aws_security_group.cloudwatch_exporter.id, aws_security_group.monitoring_common[local.secondary_role_index].id]

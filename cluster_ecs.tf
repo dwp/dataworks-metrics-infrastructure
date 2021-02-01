@@ -208,7 +208,7 @@ resource "aws_autoscaling_group" "mgmt_metrics_cluster" {
   instance_refresh {
     strategy = "Rolling"
     preferences {
-      min_healthy_percentage = 50
+      min_healthy_percentage = 25
     }
   }
 

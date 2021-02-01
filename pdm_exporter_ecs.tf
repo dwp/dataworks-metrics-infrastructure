@@ -54,6 +54,8 @@ resource "aws_ecs_service" "pdm_exporter" {
   platform_version = var.platform_version
   desired_count    = 1
   launch_type      = "FARGATE"
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent = 200
 
   network_configuration {
     security_groups = [aws_security_group.pdm_exporter[local.primary_role_index].id, aws_security_group.monitoring_common[local.secondary_role_index].id]

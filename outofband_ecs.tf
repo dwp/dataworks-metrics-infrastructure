@@ -127,6 +127,8 @@ resource "aws_ecs_service" "outofband" {
   desired_count        = 3
   launch_type          = "EC2"
   force_new_deployment = true
+  deployment_minimum_healthy_percent = 75
+  deployment_maximum_percent = 125
 
   network_configuration {
     security_groups = [aws_security_group.outofband[local.primary_role_index].id, aws_security_group.monitoring_common[local.primary_role_index].id]
