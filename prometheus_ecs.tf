@@ -3,7 +3,7 @@ resource "aws_ecs_task_definition" "prometheus" {
   network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
   cpu                      = "2048"
-  memory                   = "4096"
+  memory                   = "12288"
   task_role_arn            = aws_iam_role.prometheus.arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.prometheus_definition.rendered}, ${data.template_file.thanos_receiver_prometheus_definition.rendered}, ${data.template_file.ecs_service_discovery_definition.rendered}]"
@@ -40,7 +40,7 @@ data "template_file" "prometheus_definition" {
     group_name         = "prometheus"
     cpu                = var.fargate_cpu
     image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_prometheus_url, var.image_versions.prometheus)
-    memory             = var.prometheus_memory
+    memory             = var.prometheus_memory[local.environment]
     memory_reservation = var.fargate_memory
     user               = "nobody"
     ports              = jsonencode([var.prometheus_port])
@@ -120,7 +120,7 @@ data "template_file" "thanos_receiver_prometheus_definition" {
     group_name         = "thanos"
     cpu                = var.fargate_cpu
     image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_thanos_url, var.image_versions.thanos)
-    memory             = var.receiver_memory
+    memory             = var.receiver_memory[local.environment]
     memory_reservation = var.fargate_memory
     user               = "nobody"
     ports              = jsonencode([var.thanos_port_grpc, var.thanos_port_remote_write])

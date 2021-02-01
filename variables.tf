@@ -55,11 +55,27 @@ variable "receiver_cpu" {
 }
 
 variable "receiver_memory" {
-  default = "2048"
+  default = {
+    development    = "2048"
+    qa             = "2048"
+    integration    = "2048"
+    preprod        = "2048"
+    production     = "4096"
+    management     = "4096"
+    management-dev = "2048"
+  }
 }
 
 variable "prometheus_memory" {
-  default = "2048"
+  default = {
+    development    = "2048"
+    qa             = "2048"
+    integration    = "2048"
+    preprod        = "2048"
+    production     = "4096"
+    management     = "4096"
+    management-dev = "2048"
+  }
 }
 
 variable "store_cpu" {
