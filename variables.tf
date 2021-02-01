@@ -150,8 +150,8 @@ variable "metrics_ecs_cluster_ec2_size" {
     qa             = "t3.large"
     integration    = "t3.large"
     preprod        = "t3.large"
-    production     = "t3.large"
-    management     = "t3.large"
+    production     = "t3.xlarge"
+    management     = "t3.xlarge"
     management-dev = "t3.large"
   }
 }
