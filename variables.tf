@@ -38,6 +38,30 @@ variable "platform_version" {
   default     = "1.4.0"
 }
 
+variable "prometheus_task_cpu" {
+  default = {
+    development    = "2048"
+    qa             = "2048"
+    integration    = "2048"
+    preprod        = "2048"
+    production     = "2048"
+    management     = "2048"
+    management-dev = "2048"
+  }
+}
+
+variable "prometheus_task_memory" {
+  default = {
+    development    = "4096"
+    qa             = "4096"
+    integration    = "4096"
+    preprod        = "4096"
+    production     = "8192"
+    management     = "8192"
+    management-dev = "4096"
+  }
+}
+
 variable "fargate_cpu" {
   default = "512"
 }
@@ -48,6 +72,10 @@ variable "fargate_memory" {
 
 variable "ec2_memory" {
   default = "1024"
+}
+
+variable "prometheus_cpu" {
+  default = "512"
 }
 
 variable "receiver_cpu" {

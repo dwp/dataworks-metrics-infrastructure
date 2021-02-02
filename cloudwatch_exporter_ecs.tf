@@ -41,12 +41,14 @@ data "template_file" "cloudwatch_exporter_definition" {
 }
 
 resource "aws_ecs_service" "cloudwatch_exporter" {
-  name             = "cloudwatch-exporter"
-  cluster          = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition  = aws_ecs_task_definition.cloudwatch_exporter.arn
-  platform_version = var.platform_version
-  desired_count    = 1
-  launch_type      = "FARGATE"
+  name                               = "cloudwatch-exporter"
+  cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
+  task_definition                    = aws_ecs_task_definition.cloudwatch_exporter.arn
+  platform_version                   = var.platform_version
+  desired_count                      = 1
+  launch_type                        = "FARGATE"
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
 
   network_configuration {
     security_groups = [aws_security_group.cloudwatch_exporter.id, aws_security_group.monitoring_common[local.secondary_role_index].id]
