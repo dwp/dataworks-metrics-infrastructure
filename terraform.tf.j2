@@ -275,7 +275,21 @@ data "terraform_remote_state" "orchestration-service" {
     kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
     dynamodb_table = "remote_state_locks"
   }
-}
+} 
+
+data "terraform_remote_state" "ucfs-claimant" {
+  backend   = "s3"
+  workspace = lookup(local.common_workspace, terraform.workspace)
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/ucfs-claimant.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+} 
 
 variable "assume_role" {
   default = "ci"
