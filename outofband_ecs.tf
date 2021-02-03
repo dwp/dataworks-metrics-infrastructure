@@ -3,8 +3,8 @@ resource "aws_ecs_task_definition" "outofband" {
   family                   = "outofband"
   network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
-  cpu                      = "2048"
-  memory                   = "4096"
+  cpu                      = var.prometheus_task_cpu[local.environment]
+  memory                   = var.prometheus_task_memory[local.environment]
   task_role_arn            = aws_iam_role.outofband[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.outofband_definition[local.primary_role_index].rendered}, ${data.template_file.thanos_receiver_outofband_definition[local.primary_role_index].rendered}]"
@@ -39,10 +39,10 @@ data "template_file" "outofband_definition" {
   vars = {
     name               = "outofband"
     group_name         = "prometheus"
-    cpu                = var.fargate_cpu
+    cpu                = var.prometheus_cpu
     image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_prometheus_url, var.image_versions.prometheus)
-    memory             = var.receiver_memory
-    memory_reservation = var.fargate_memory
+    memory             = var.prometheus_memory[local.environment]
+    memory_reservation = var.ec2_memory
     user               = "nobody"
     ports              = jsonencode([var.prometheus_port])
     ulimits            = jsonencode([])
@@ -80,10 +80,10 @@ data "template_file" "thanos_receiver_outofband_definition" {
   vars = {
     name               = "thanos-receiver"
     group_name         = "thanos"
-    cpu                = var.fargate_cpu
+    cpu                = var.receiver_cpu
     image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_thanos_url, var.image_versions.thanos)
-    memory             = var.receiver_memory
-    memory_reservation = var.fargate_memory
+    memory             = var.receiver_memory[local.environment]
+    memory_reservation = var.ec2_memory
     user               = "nobody"
     ports              = jsonencode([var.thanos_port_grpc, var.thanos_port_remote_write])
     ulimits            = jsonencode([])
@@ -120,13 +120,15 @@ data "template_file" "thanos_receiver_outofband_definition" {
 }
 
 resource "aws_ecs_service" "outofband" {
-  count                = local.is_management_env ? 1 : 0
-  name                 = "outofband"
-  cluster              = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition      = aws_ecs_task_definition.outofband[local.primary_role_index].arn
-  desired_count        = 3
-  launch_type          = "EC2"
-  force_new_deployment = true
+  count                              = local.is_management_env ? 1 : 0
+  name                               = "outofband"
+  cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
+  task_definition                    = aws_ecs_task_definition.outofband[local.primary_role_index].arn
+  desired_count                      = 3
+  launch_type                        = "EC2"
+  force_new_deployment               = true
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
 
   network_configuration {
     security_groups = [aws_security_group.outofband[local.primary_role_index].id, aws_security_group.monitoring_common[local.primary_role_index].id]

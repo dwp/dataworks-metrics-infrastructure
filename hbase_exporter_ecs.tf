@@ -47,13 +47,15 @@ data "template_file" "hbase_exporter_definition" {
 }
 
 resource "aws_ecs_service" "hbase_exporter" {
-  count            = local.is_management_env ? 0 : 1
-  name             = "hbase-exporter"
-  cluster          = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition  = aws_ecs_task_definition.hbase_exporter[local.secondary_role_index].arn
-  platform_version = var.platform_version
-  desired_count    = 1
-  launch_type      = "FARGATE"
+  count                              = local.is_management_env ? 0 : 1
+  name                               = "hbase-exporter"
+  cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
+  task_definition                    = aws_ecs_task_definition.hbase_exporter[local.secondary_role_index].arn
+  platform_version                   = var.platform_version
+  desired_count                      = 1
+  launch_type                        = "FARGATE"
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
 
   network_configuration {
     security_groups = [aws_security_group.hbase_exporter[local.secondary_role_index].id, aws_security_group.monitoring_common[local.secondary_role_index].id]
