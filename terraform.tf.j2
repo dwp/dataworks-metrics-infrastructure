@@ -314,7 +314,7 @@ variable "region" {
 }
 
 provider "aws" {
-  version = "~> 3.22.0"
+  version = "~> 3.25.0"
   region  = var.region
 
   assume_role {
@@ -323,7 +323,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  version = "~> 3.22.0"
+  version = "~> 3.25.0"
   alias   = "management"
   region  = var.region
 
@@ -471,6 +471,46 @@ locals {
     production  = "False"
     management     = "False"
     management-dev = "False"
+  }
+
+  ebs_volume_size = {
+    development = 667
+    qa          = 667
+    integration = 667
+    preprod     = 667
+    production  = 667
+    management     = 667
+    management-dev = 667
+  }
+
+  ebs_volume_type = {
+    development = "gp3"
+    qa          = "gp3"
+    integration = "gp3"
+    preprod     = "gp3"
+    production  = "gp3"
+    management     = "gp3"
+    management-dev = "gp3"
+  }
+
+  mgmt_ebs_volume_size = {
+    development = 667
+    qa          = 667
+    integration = 667
+    preprod     = 667
+    production  = 667
+    management     = 667
+    management-dev = 667
+  }
+
+  mgmt_ebs_volume_type = {
+    development = "gp3"
+    qa          = "gp3"
+    integration = "gp3"
+    preprod     = "gp3"
+    production  = "gp3"
+    management     = "gp3"
+    management-dev = "gp3"
   }
 
   metrics_ecs_asg_tags = merge(
