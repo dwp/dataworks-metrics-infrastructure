@@ -95,6 +95,10 @@ scrape_configs:
         port: 7101
         filters: []
     relabel_configs:
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
+        regex: "MASTER|CORE"
+        replacement: $1
+        action: keep
       - source_labels: [__meta_ec2_tag_Name]
         regex: (.*)
         target_label: instance
@@ -113,6 +117,10 @@ scrape_configs:
         port: 7103
         filters: []
     relabel_configs:
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
+        regex: "MASTER|CORE"
+        replacement: $1
+        action: keep
       - source_labels: [__meta_ec2_tag_Name]
         regex: (.*)
         target_label: instance
@@ -131,6 +139,10 @@ scrape_configs:
         port: 7105
         filters: []
     relabel_configs:
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
+        regex: "MASTER|CORE"
+        replacement: $1
+        action: keep
       - source_labels: [__meta_ec2_tag_Name]
         regex: (.*)
         target_label: instance
@@ -149,6 +161,10 @@ scrape_configs:
         port: 7107
         filters: []
     relabel_configs:
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
+        regex: "MASTER|CORE"
+        replacement: $1
+        action: keep
       - source_labels: [__meta_ec2_tag_Name]
         regex: (.*)
         target_label: instance

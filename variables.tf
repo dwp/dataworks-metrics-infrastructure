@@ -40,13 +40,13 @@ variable "platform_version" {
 
 variable "prometheus_task_cpu" {
   default = {
-    development    = "2048"
-    qa             = "2048"
-    integration    = "2048"
-    preprod        = "2048"
+    development    = "1024"
+    qa             = "1024"
+    integration    = "1024"
+    preprod        = "1024"
     production     = "2048"
     management     = "2048"
-    management-dev = "2048"
+    management-dev = "1024"
   }
 }
 
@@ -75,11 +75,27 @@ variable "ec2_memory" {
 }
 
 variable "prometheus_cpu" {
-  default = "512"
+  default = {
+    development    = "256"
+    qa             = "256"
+    integration    = "256"
+    preprod        = "256"
+    production     = "512"
+    management     = "512"
+    management-dev = "256"
+  }
 }
 
 variable "receiver_cpu" {
-  default = "512"
+  default = {
+    development    = "256"
+    qa             = "256"
+    integration    = "256"
+    preprod        = "256"
+    production     = "512"
+    management     = "512"
+    management-dev = "256"
+  }
 }
 
 variable "receiver_memory" {
@@ -205,4 +221,3 @@ variable "ecs_hardened_ami_id" {
   type        = string
   default     = "ami-049bba1a08b31ff8e"
 }
-
