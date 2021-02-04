@@ -38,7 +38,7 @@ data "template_file" "prometheus_definition" {
   vars = {
     name               = "prometheus"
     group_name         = "prometheus"
-    cpu                = var.prometheus_cpu
+    cpu                = var.prometheus_cpu[local.environment]
     image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_prometheus_url, var.image_versions.prometheus)
     memory             = var.prometheus_memory[local.environment]
     memory_reservation = var.ec2_memory
@@ -118,7 +118,7 @@ data "template_file" "thanos_receiver_prometheus_definition" {
   vars = {
     name               = "thanos-receiver"
     group_name         = "thanos"
-    cpu                = var.receiver_cpu
+    cpu                = var.receiver_cpu[local.environment]
     image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_thanos_url, var.image_versions.thanos)
     memory             = var.receiver_memory[local.environment]
     memory_reservation = var.ec2_memory
@@ -168,8 +168,8 @@ resource "aws_ecs_service" "prometheus" {
   desired_count                      = 3
   launch_type                        = "EC2"
   force_new_deployment               = true
-  deployment_minimum_healthy_percent = 100
-  deployment_maximum_percent         = 200
+  deployment_minimum_healthy_percent = 0
+  deployment_maximum_percent         = 100
 
   network_configuration {
     security_groups = [aws_security_group.prometheus.id, aws_security_group.monitoring_common[local.secondary_role_index].id]
