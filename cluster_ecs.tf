@@ -153,6 +153,17 @@ resource "aws_launch_template" "metrics_cluster" {
       }
     )
   }
+
+  tag_specifications {
+    resource_type = "volume"
+
+    tags = merge(
+      local.tags,
+      {
+        Name = local.metrics_friendly_name,
+      }
+    )
+  }
 }
 
 resource "aws_ecs_capacity_provider" "mgmt_metrics_cluster" {
@@ -286,6 +297,17 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
         Persistence         = "Ignore",
         propagate_at_launch = true,
         InstanceRefresh     = ""
+      }
+    )
+  }
+
+  tag_specifications {
+    resource_type = "volume"
+
+    tags = merge(
+      local.tags,
+      {
+        Name = "mgmt-${local.metrics_friendly_name}",
       }
     )
   }
