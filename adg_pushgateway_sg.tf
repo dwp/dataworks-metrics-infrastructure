@@ -75,4 +75,3 @@ resource "aws_security_group_rule" "allow_htme_egress_adg_pushgateway" {
   security_group_id        = data.terraform_remote_state.aws_internal_compute.outputs.htme_sg.id
   source_security_group_id = aws_security_group.adg_pushgateway[0].id
 }
-  
