@@ -47,6 +47,7 @@ data "template_file" "outofband_definition" {
     ports              = jsonencode([var.prometheus_port])
     ulimits            = jsonencode([])
     log_group          = aws_cloudwatch_log_group.monitoring_metrics.name
+    essential          = true
     region             = data.aws_region.current.name
     config_bucket      = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
@@ -88,6 +89,7 @@ data "template_file" "thanos_receiver_outofband_definition" {
     ports              = jsonencode([var.thanos_port_grpc, var.thanos_port_remote_write])
     ulimits            = jsonencode([])
     log_group          = aws_cloudwatch_log_group.monitoring_metrics.name
+    essential          = true
     region             = data.aws_region.current.name
     config_bucket      = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
