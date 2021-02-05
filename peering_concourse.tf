@@ -20,46 +20,68 @@ resource "aws_route" "prometheus_secondary_concourse" {
   vpc_peering_connection_id = aws_vpc_peering_connection.concourse[0].id
 }
 
-# resource "aws_security_group_rule" "concourse_allow_ingress_prometheus" {
-#   count                    = local.is_management_env ? 1 : 0
-#   description              = "Allow prometheus ${var.secondary} to access concourse metrics"
-#   type                     = "ingress"
-#   protocol                 = "tcp"
-#   from_port                = var.prometheus_port
-#   to_port                  = var.prometheus_port
-#   security_group_id        = data.terraform_remote_state.aws_concourse.outputs.concourse_web_sg
-#   source_security_group_id = aws_security_group.prometheus.id
-# }
+resource "aws_security_group_rule" "concourse_allow_ingress_prometheus" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow prometheus ${var.secondary} to access concourse metrics"
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = var.prometheus_port
+  to_port                  = var.prometheus_port
+  security_group_id        = data.terraform_remote_state.aws_concourse.outputs.concourse_web_sg
+  source_security_group_id = aws_security_group.prometheus.id
+}
 
-# resource "aws_security_group_rule" "prometheus_allow_egress_concourse" {
-#   count                    = local.is_management_env ? 1 : 0
-#   description              = "Allow prometheus ${var.secondary} to access concourse metrics"
-#   type                     = "egress"
-#   protocol                 = "tcp"
-#   from_port                = var.prometheus_port
-#   to_port                  = var.prometheus_port
-#   security_group_id        = aws_security_group.prometheus.id
-#   source_security_group_id = data.terraform_remote_state.aws_concourse.outputs.concourse_web_sg
-# }
+resource "aws_security_group_rule" "prometheus_allow_egress_concourse" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow prometheus ${var.secondary} to access concourse metrics"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = var.prometheus_port
+  to_port                  = var.prometheus_port
+  security_group_id        = aws_security_group.prometheus.id
+  source_security_group_id = data.terraform_remote_state.aws_concourse.outputs.concourse_web_sg
+}
 
-# resource "aws_security_group_rule" "concourse_worker_node_allow_ingress_prometheus" {
-#   count                    = local.is_management_env ? 1 : 0
-#   description              = "Allow prometheus ${var.secondary} to access concourse worker node metrics"
-#   type                     = "ingress"
-#   protocol                 = "tcp"
-#   from_port                = 9100
-#   to_port                  = 9100
-#   security_group_id        = data.terraform_remote_state.aws_concourse.outputs.concourse_worker_sg
-#   source_security_group_id = aws_security_group.prometheus.id
-# }
+resource "aws_security_group_rule" "concourse_web_node_allow_ingress_prometheus" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow prometheus ${var.secondary} to access concourse web node metrics"
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = 9100
+  to_port                  = 9100
+  security_group_id        = data.terraform_remote_state.aws_concourse.outputs.concourse_web_sg
+  source_security_group_id = aws_security_group.prometheus.id
+}
 
-# resource "aws_security_group_rule" "prometheus_allow_egress_concourse_worker_node" {
-#   count                    = local.is_management_env ? 1 : 0
-#   description              = "Allow prometheus ${var.secondary} to access concourse worker node metrics"
-#   type                     = "egress"
-#   protocol                 = "tcp"
-#   from_port                = 9100
-#   to_port                  = 9100
-#   security_group_id        = aws_security_group.prometheus.id
-#   source_security_group_id = data.terraform_remote_state.aws_concourse.outputs.concourse_worker_sg
-# }
+resource "aws_security_group_rule" "prometheus_allow_egress_concourse_web_node" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow prometheus ${var.secondary} to access concourse web node metrics"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = 9100
+  to_port                  = 9100
+  security_group_id        = aws_security_group.prometheus.id
+  source_security_group_id = data.terraform_remote_state.aws_concourse.outputs.concourse_web_sg
+}
+
+resource "aws_security_group_rule" "concourse_worker_node_allow_ingress_prometheus" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow prometheus ${var.secondary} to access concourse worker node metrics"
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = 9100
+  to_port                  = 9100
+  security_group_id        = data.terraform_remote_state.aws_concourse.outputs.concourse_worker_sg
+  source_security_group_id = aws_security_group.prometheus.id
+}
+
+resource "aws_security_group_rule" "prometheus_allow_egress_concourse_worker_node" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow prometheus ${var.secondary} to access concourse worker node metrics"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = 9100
+  to_port                  = 9100
+  security_group_id        = aws_security_group.prometheus.id
+  source_security_group_id = data.terraform_remote_state.aws_concourse.outputs.concourse_worker_sg
+}
