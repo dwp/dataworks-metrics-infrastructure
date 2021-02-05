@@ -64,6 +64,7 @@ resource "aws_security_group_rule" "allow_htme_ingress_adg_pushgateway" {
   security_group_id        = aws_security_group.adg_pushgateway[0].id
   source_security_group_id = data.terraform_remote_state.aws_internal_compute.outputs.htme_sg.id
 }
+
 resource "aws_security_group_rule" "allow_htme_egress_adg_pushgateway" {
   count                    = local.is_management_env ? 0 : 1
   description              = "Allows HTME to access ADG pushgateway"
@@ -74,3 +75,4 @@ resource "aws_security_group_rule" "allow_htme_egress_adg_pushgateway" {
   security_group_id        = data.terraform_remote_state.aws_internal_compute.outputs.htme_sg.id
   source_security_group_id = aws_security_group.adg_pushgateway[0].id
 }
+  
