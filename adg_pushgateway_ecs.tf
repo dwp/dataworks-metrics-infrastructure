@@ -51,7 +51,7 @@ resource "aws_ecs_service" "adg_pushgateway" {
 
   network_configuration {
     security_groups = [aws_security_group.adg_pushgateway[local.primary_role_index].id]
-    subnets         = data.terraform_remote_state.aws_internal_compute.outputs.adg_subnet.ids
+    subnets         = data.terraform_remote_state.aws_internal_compute.outputs.adg_subnet_new.ids
   }
 
   service_registries {
