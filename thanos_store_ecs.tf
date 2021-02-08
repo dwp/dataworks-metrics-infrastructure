@@ -19,7 +19,7 @@ data "template_file" "thanos_store_definition" {
     group_name    = "thanos"
     cpu           = var.store_cpu
     image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_thanos_url, var.image_versions.thanos)
-    memory        = var.fargate_memory
+    memory        = var.thanos_store_task_memory[local.environment]
     user          = "nobody"
     ports         = jsonencode([var.thanos_port_grpc])
     ulimits       = jsonencode([var.ulimits])
