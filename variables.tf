@@ -62,6 +62,13 @@ variable "prometheus_task_memory" {
   }
 }
 
+variable "thanos_store_task_memory" {
+  default = {
+    management     = "2048"
+    management-dev = "512"
+  }
+}
+
 variable "fargate_cpu" {
   default = "512"
 }
