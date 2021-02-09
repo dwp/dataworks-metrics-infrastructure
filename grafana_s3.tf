@@ -41,6 +41,42 @@ data template_file "concourse_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/concourse_dashboard.json")
 }
 
+data template_file "HDFS_DataNode" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/HDFS-DataNode.json")
+}
+
+data template_file "HDFS_NameNode" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/HDFS-NameNode.json")
+}
+
+data template_file "JVM_Metrics" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/JVM_Metrics.json")
+}
+
+data template_file "Log_Metrics" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/Log_Metrics.json")
+}
+
+data template_file "OS_Level_Metrics" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/OS_Level_Metrics.json")
+}
+
+data template_file "RPC_Metrics" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/RPC_Metrics.json")
+}
+
+data template_file "YARN_Node_Manager" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/YARN-Node_Manager.json")
+}
+
+data template_file "YARN_Queues" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/YARN-Queues.json")
+}
+
+data template_file "YARN_ResourceManager" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/YARN-ResourceManager.json")
+}
+
 resource "aws_s3_bucket_object" "grafana" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
@@ -118,6 +154,87 @@ resource "aws_s3_bucket_object" "concourse_dashboard" {
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/grafana/provisioning/dashboards/private/concourse_dashboard.json"
   content    = data.template_file.concourse_dashboard.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_s3_bucket_object" "HDFS_DataNode" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/private/EMR/HDFS-DataNode.json"
+  content    = data.template_file.HDFS_DataNode.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_s3_bucket_object" "HDFS_NameNode" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/private/EMR/HDFS_NameNode.json"
+  content    = data.template_file.HDFS_NameNode.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_s3_bucket_object" "JVM_Metrics" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/private/EMR/JVM_Metrics.json"
+  content    = data.template_file.JVM_Metrics.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_s3_bucket_object" "Log_Metrics" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/private/EMR/Log_Metrics.json"
+  content    = data.template_file.Log_Metrics.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_s3_bucket_object" "OS_Level_Metrics" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/private/EMR/OS_Level_Metrics.json"
+  content    = data.template_file.OS_Level_Metrics.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_s3_bucket_object" "RPC_Metrics" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/private/EMR/RPC_Metrics.json"
+  content    = data.template_file.RPC_Metrics.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_s3_bucket_object" "YARN_Node_Manager" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/private/EMR/YARN_Node_Manager.json"
+  content    = data.template_file.YARN_Node_Manager.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_s3_bucket_object" "YARN_Queues" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/private/EMR/YARN_Queues.json"
+  content    = data.template_file.YARN_Queues.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_s3_bucket_object" "YARN_ResourceManager" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/private/EMR/YARN_ResourceManager.json"
+  content    = data.template_file.YARN_ResourceManager.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   tags       = merge(local.tags, { Name = var.name })
 }
