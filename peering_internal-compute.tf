@@ -20,13 +20,6 @@ resource "aws_route" "prometheus_secondary_internal_compute" {
   vpc_peering_connection_id = aws_vpc_peering_connection.internal_compute[0].id
 }
 
-resource "aws_route" "adg_prometheus_secondary" {
-  count                     = local.is_management_env ? 0 : 1
-  route_table_id            = data.terraform_remote_state.aws_internal_compute.outputs.route_table_ids.adg_new
-  destination_cidr_block    = local.cidr_block[local.environment].mon-slave-vpc
-  vpc_peering_connection_id = aws_vpc_peering_connection.internal_compute[0].id
-}
-
 resource "aws_route" "adg_new_prometheus_secondary" {
   count                     = local.is_management_env ? 0 : 1
   route_table_id            = data.terraform_remote_state.aws_internal_compute.outputs.route_table_ids.adg_new
