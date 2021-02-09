@@ -40,7 +40,7 @@ scrape_configs:
         action: replace
         target_label: __metrics_path__
         regex: (.+)
-  - job_name: node-exporter
+  - job_name: global-node-exporter
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -53,6 +53,32 @@ scrape_configs:
         port: 9100
         filters: []
     relabel_configs:
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
+        regex: "MASTER|CORE"
+        replacement: $1
+        action: drop
+      - source_labels: [__meta_ec2_tag_Name]
+        regex: (.*)
+        target_label: instance
+        replacement: $1
+        action: replace
+  - job_name: emr-node-exporter
+    honor_timestamps: true
+    scrape_interval: 1m
+    scrape_timeout: 10s
+    metrics_path: /metrics
+    scheme: http
+    ec2_sd_configs:
+      - endpoint: ""
+        region: eu-west-2
+        refresh_interval: 1m
+        port: 9100
+        filters: []
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
+        regex: "MASTER|CORE"
+        replacement: $1
+        action: keep
       - source_labels: [__meta_ec2_tag_Name]
         regex: (.*)
         target_label: instance
