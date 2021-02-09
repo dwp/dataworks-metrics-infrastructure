@@ -197,11 +197,11 @@ variable "desired_capacity" {
 variable "image_versions" {
   description = "pinned image versions to use"
   default = {
-    prometheus            = "0.0.14"
-    thanos                = "0.0.22"
+    prometheus            = "0.0.15"
+    thanos                = "0.0.23"
     alertmanager          = "0.0.5"
     ecs-service-discovery = "0.0.3"
-    grafana               = "0.0.11"
+    grafana               = "0.0.12"
     cloudwatch-exporter   = "0.0.5"
     prom-pushgateway      = "0.0.56"
     hive-exporter         = "0.0.4"
