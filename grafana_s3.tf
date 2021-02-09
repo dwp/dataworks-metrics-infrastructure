@@ -158,11 +158,11 @@ resource "aws_s3_bucket_object" "concourse_dashboard" {
   tags       = merge(local.tags, { Name = var.name })
 }
 
-resource "aws_s3_bucket_object" "HDFS-DataNode" {
+resource "aws_s3_bucket_object" "HDFS_DataNode" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/grafana/provisioning/dashboards/private/EMR/HDFS-DataNode.json"
-  content    = data.template_file.HDFS-DataNode.rendered
+  content    = data.template_file.HDFS_DataNode.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   tags       = merge(local.tags, { Name = var.name })
 }
