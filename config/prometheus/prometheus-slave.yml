@@ -1,6 +1,7 @@
 global:
   external_labels:
     role: ${environment}
+    monitor: "DataWorks AWS"
   scrape_interval: 1m
   scrape_timeout: 10s
   evaluation_interval: 1m
@@ -30,7 +31,8 @@ scrape_configs:
         target_label: instance
         replacement: $1
         action: replace
-  - job_name: "ecs-service-discovery"
+
+  - job_name: ecs-service-discovery
     scrape_interval: 1m
     file_sd_configs:
       - files:
@@ -40,6 +42,12 @@ scrape_configs:
         action: replace
         target_label: __metrics_path__
         regex: (.+)
+      - source_labels: [job]
+        regex: (.*)
+        target_label: instance
+        replacement: $1
+        action: replace
+
   - job_name: global-node-exporter
     honor_timestamps: true
     scrape_interval: 1m
@@ -62,6 +70,7 @@ scrape_configs:
         target_label: instance
         replacement: $1
         action: replace
+
   - job_name: emr-node-exporter
     honor_timestamps: true
     scrape_interval: 1m
@@ -84,7 +93,12 @@ scrape_configs:
         target_label: instance
         replacement: $1
         action: replace
-  - job_name: jmx-hdfs-namenode
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
+        target_label: cluster_id
+
+  - job_name: hdfs-namenode
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -98,7 +112,7 @@ scrape_configs:
         filters: []
     relabel_configs:
       - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
-        regex: "MASTER|CORE"
+        regex: MASTER
         replacement: $1
         action: keep
       - source_labels: [__meta_ec2_tag_Name]
@@ -106,7 +120,10 @@ scrape_configs:
         target_label: instance
         replacement: $1
         action: replace
-  - job_name: jmx-hdfs-datanode
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
+        target_label: cluster_id
+
+  - job_name: hdfs-datanode
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -120,7 +137,7 @@ scrape_configs:
         filters: []
     relabel_configs:
       - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
-        regex: "MASTER|CORE"
+        regex: "CORE"
         replacement: $1
         action: keep
       - source_labels: [__meta_ec2_tag_Name]
@@ -128,7 +145,10 @@ scrape_configs:
         target_label: instance
         replacement: $1
         action: replace
-  - job_name: jmx-yarn-resource-manager
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
+        target_label: cluster_id
+
+  - job_name: yarn-resource-manager
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -142,7 +162,7 @@ scrape_configs:
         filters: []
     relabel_configs:
       - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
-        regex: "MASTER|CORE"
+        regex: MASTER
         replacement: $1
         action: keep
       - source_labels: [__meta_ec2_tag_Name]
@@ -150,7 +170,10 @@ scrape_configs:
         target_label: instance
         replacement: $1
         action: replace
-  - job_name: jmx-yarn-node-manager
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
+        target_label: cluster_id
+
+  - job_name: yarn-node-manager
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -164,14 +187,16 @@ scrape_configs:
         filters: []
     relabel_configs:
       - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
-        regex: "MASTER|CORE"
+        regex: MASTER
         replacement: $1
-        action: keep
+        action: drop
       - source_labels: [__meta_ec2_tag_Name]
         regex: (.*)
         target_label: instance
         replacement: $1
         action: replace
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
+        target_label: cluster_id
 
 remote_write:
   - url: http://localhost:10903/api/v1/receive
