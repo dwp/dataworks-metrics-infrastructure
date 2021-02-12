@@ -7,3 +7,4 @@ datasources:
     access: proxy
     url: http://${thanos_query_hostname}:9090
     editable: false
+    httpMethod: POST
