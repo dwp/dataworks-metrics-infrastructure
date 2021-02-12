@@ -61,13 +61,11 @@ folders=$(curl http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@localhost:3000/api/fol
      _jq() {
      echo ${row} | base64 -d | jq -r ${1}
      }
-     if [ $(_jq '.title') == "private" ]; then
-         FOLDER_UID=$(_jq '.uid')
-     fi
+     FOLDER_UID=$(_jq '.uid')
+    if [ ! -z $FOLDER_UID ] && [ $FOLDER_UID != '[]' ] ; then
+        echo "Updating folder permissions"
+        curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d '{"items": [{"role": "Editor","permission": 2}]}' http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@localhost:3000/api/folders/$FOLDER_UID/permissions
+    else
+        echo "No folder UID found, permissions not updated"
+    fi
  done
- if [ ! -z $FOLDER_UID ] && [ $FOLDER_UID != '[]' ] ; then
-     echo "Updating folder permissions"
-     curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d '{"items": [{"role": "Editor","permission": 2}]}' http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@localhost:3000/api/folders/$FOLDER_UID/permissions
- else
-     echo "No folder UID found, permissions not updated"
- fi
