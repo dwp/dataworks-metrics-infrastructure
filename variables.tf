@@ -76,6 +76,48 @@ variable "store_memory" {
   }
 }
 
+variable "store_task_cpu" {
+  default = {
+    management     = "2048"
+    management-dev = "1024"
+  }
+}
+
+variable "store_task_memory" {
+  default = {
+    management     = "4096"
+    management-dev = "2048"
+  }
+}
+
+variable "query_cpu" {
+  default = {
+    management     = "2048"
+    management-dev = "1024"
+  }
+}
+
+variable "query_memory" {
+  default = {
+    management     = "4096"
+    management-dev = "2048"
+  }
+}
+
+variable "query_task_cpu" {
+  default = {
+    management     = "2048"
+    management-dev = "1024"
+  }
+}
+
+variable "query_task_memory" {
+  default = {
+    management     = "4096"
+    management-dev = "2048"
+  }
+}
+
 variable "fargate_cpu" {
   default = "512"
 }
