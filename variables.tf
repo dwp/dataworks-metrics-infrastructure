@@ -62,10 +62,17 @@ variable "prometheus_task_memory" {
   }
 }
 
-variable "thanos_store_task_memory" {
+variable "store_cpu" {
   default = {
     management     = "2048"
-    management-dev = "512"
+    management-dev = "1024"
+  }
+}
+
+variable "store_memory" {
+  default = {
+    management     = "4096"
+    management-dev = "2048"
   }
 }
 
@@ -127,10 +134,6 @@ variable "prometheus_memory" {
     management     = "4096"
     management-dev = "2048"
   }
-}
-
-variable "store_cpu" {
-  default = "1024"
 }
 
 variable "https_port" {

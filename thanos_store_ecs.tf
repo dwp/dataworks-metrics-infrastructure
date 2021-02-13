@@ -3,7 +3,7 @@ resource "aws_ecs_task_definition" "thanos_store" {
   family                   = "thanos-store"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "1024"
+  cpu                      = "2048"
   memory                   = "4096"
   task_role_arn            = aws_iam_role.thanos_store[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
@@ -19,7 +19,7 @@ data "template_file" "thanos_store_definition" {
     group_name    = "thanos"
     cpu           = var.store_cpu
     image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_thanos_url, var.image_versions.thanos)
-    memory        = var.thanos_store_task_memory[local.environment]
+    memory        = var.store_memory[local.environment]
     user          = "nobody"
     ports         = jsonencode([var.thanos_port_grpc])
     ulimits       = jsonencode([var.ulimits])
