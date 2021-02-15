@@ -31,6 +31,8 @@ spruce:
         regexp: ".*.yml"
       - with_in: ci/jobs/cycle-containers/adg-pushgateway/
         regexp: ".*.yml"
+      - with_in: ci/jobs/cycle-containers/sdx-pushgateway/
+        regexp: ".*.yml"
     to: aviator_pipeline.yml
 fly:
   name: metrics-infrastructure
