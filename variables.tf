@@ -92,29 +92,29 @@ variable "store_task_memory" {
 
 variable "query_cpu" {
   default = {
-    management     = "2048"
-    management-dev = "1024"
+    management     = "4096"
+    management-dev = "2048"
   }
 }
 
 variable "query_memory" {
   default = {
-    management     = "4096"
-    management-dev = "2048"
+    management     = "8192"
+    management-dev = "4096"
   }
 }
 
 variable "query_task_cpu" {
   default = {
-    management     = "2048"
-    management-dev = "1024"
+    management     = "4096"
+    management-dev = "2048"
   }
 }
 
 variable "query_task_memory" {
   default = {
-    management     = "4096"
-    management-dev = "2048"
+    management     = "8192"
+    management-dev = "4096"
   }
 }
 
