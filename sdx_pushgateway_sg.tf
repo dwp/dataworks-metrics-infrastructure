@@ -40,7 +40,7 @@ resource "aws_security_group_rule" "allow_sdx_ingress_sdx_pushgateway" {
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = aws_security_group.sdx_pushgateway[0].id
-  source_security_group_id = data.terraform_remote_state.aws_analytical_dataset_generation.outputs.sdx_common_sg.id
+  source_security_group_id = data.terraform_remote_state.aws_sdx.outputs.sdx_common_sg.id
 }
 
 resource "aws_security_group_rule" "allow_sdx_egress_sdx_pushgateway" {
@@ -50,7 +50,7 @@ resource "aws_security_group_rule" "allow_sdx_egress_sdx_pushgateway" {
   protocol                 = "tcp"
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
-  security_group_id        = data.terraform_remote_state.aws_analytical_dataset_generation.outputs.sdx_common_sg.id
+  security_group_id        = data.terraform_remote_state.aws_sdx.outputs.sdx_common_sg.id
   source_security_group_id = aws_security_group.sdx_pushgateway[0].id
 }
 
