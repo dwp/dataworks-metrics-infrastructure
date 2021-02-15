@@ -86,6 +86,10 @@ scrape_configs:
         port: 9100
         filters: []
     relabel_configs:
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-analytical-dataset-generator|aws-pdm-dataset-generator"
+        replacement: $1
+        action: drop
       - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
         regex: "MASTER|CORE"
         replacement: $1
@@ -99,8 +103,70 @@ scrape_configs:
         target_label: instance_id
       - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
         target_label: cluster_id
+
+  - job_name: ADG-node-exporter
+    honor_timestamps: true
+    scrape_interval: 1m
+    scrape_timeout: 10s
+    metrics_path: /metrics
+    scheme: http
+    ec2_sd_configs:
+      - endpoint: ""
+        region: eu-west-2
+        refresh_interval: 1m
+        port: 9100
+        filters: []
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
+        regex: "MASTER|CORE"
+        replacement: $1
+        action: keep
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-analytical-dataset-generator"
+        replacement: $1
+        action: keep
+      - source_labels: [__meta_ec2_tag_Name]
+        regex: (.*)
+        target_label: instance
+        replacement: $1
+        action: replace
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance_id
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
+        target_label: cluster_id
       - source_labels: [__meta_ec2_tag_snapshot_type]
         target_label: cluster_role
+
+  - job_name: PDM-node-exporter
+    honor_timestamps: true
+    scrape_interval: 1m
+    scrape_timeout: 10s
+    metrics_path: /metrics
+    scheme: http
+    ec2_sd_configs:
+      - endpoint: ""
+        region: eu-west-2
+        refresh_interval: 1m
+        port: 9100
+        filters: []
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
+        regex: "MASTER|CORE"
+        replacement: $1
+        action: keep
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-pdm-dataset-generator"
+        replacement: $1
+        action: keep
+      - source_labels: [__meta_ec2_tag_Name]
+        regex: (.*)
+        target_label: instance
+        replacement: $1
+        action: replace
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance_id
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
+        target_label: cluster_id
 
   - job_name: hdfs-namenode
     honor_timestamps: true
