@@ -195,3 +195,24 @@ meta:
               touch terraform-success/success
         outputs:
           - name: terraform-success
+    create-terraform-success:
+      task: create-terraform-success
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: hashicorp/terraform
+            version: ((dataworks.terraform_version))
+            tag: ((dataworks.terraform_version))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              touch ../terraform-success/success
+          dir: dataworks-metrics-infrastructure
+        inputs:
+          - name: dataworks-metrics-infrastructure
+        outputs:
+          - name: terraform-success

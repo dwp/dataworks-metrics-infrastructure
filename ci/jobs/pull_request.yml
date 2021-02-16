@@ -10,12 +10,18 @@ jobs:
     params:
       path: dataworks-metrics-infrastructure-pr
       status: pending
+
+  - .: (( inject meta.plan.create-terraform-success ))
+    input_mapping:
+      dataworks-metrics-infrastructure: dataworks-metrics-infrastructure-pr
+
   - .: (( inject meta.plan.terraform-bootstrap ))
     task: terraform-bootstrap-management
     input_mapping:
       dataworks-metrics-infrastructure: dataworks-metrics-infrastructure-pr
     params:
       TF_WORKSPACE: management
+
   - .: (( inject meta.plan.terraform-plan ))
     task: terraform-plan-management
     input_mapping:
@@ -27,12 +33,14 @@ jobs:
       params:
         path: dataworks-metrics-infrastructure-pr
         status: failure
+
   - .: (( inject meta.plan.terraform-bootstrap ))
     task: terraform-bootstrap-qa
     input_mapping:
       dataworks-metrics-infrastructure: dataworks-metrics-infrastructure-pr
     params:
       TF_WORKSPACE: qa
+
   - .: (( inject meta.plan.terraform-plan ))
     task: terraform-plan-qa
     input_mapping:
