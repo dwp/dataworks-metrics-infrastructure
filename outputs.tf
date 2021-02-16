@@ -23,7 +23,7 @@ output "sdx_pushgateway_security_group" {
 }
 
 output "sdx_pushgateway_hostname" {
-  value = "${aws_service_discovery_service.sdx_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.sdx_services.name}"
+  value = "${aws_service_discovery_service.sdx_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.sdx_services[0].name}"
 }
 
 output "monitoring_bucket" {
