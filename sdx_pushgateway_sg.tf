@@ -1,5 +1,4 @@
 resource "aws_security_group" "sdx_pushgateway" {
-  count       = 1
   name        = "sdx-pushgateway"
   description = "Rules necesary for pulling container image"
   vpc_id      = data.terraform_remote_state.aws_sdx.outputs.vpc.vpc.id
@@ -16,7 +15,7 @@ resource "aws_security_group_rule" "allow_sdx_pushgateway_egress_https" {
   protocol          = "tcp"
   from_port         = var.https_port
   to_port           = var.https_port
-  security_group_id = aws_security_group.sdx_pushgateway[0].id
+  security_group_id = aws_security_group.sdx_pushgateway.id
   prefix_list_ids   = [data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.prefix_list_ids.s3]
 }
 
@@ -26,7 +25,7 @@ resource "aws_security_group_rule" "allow_prometheus_ingress_sdx_pushgateway" {
   protocol                 = "tcp"
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
-  security_group_id        = aws_security_group.sdx_pushgateway[0].id
+  security_group_id        = aws_security_group.sdx_pushgateway.id
   source_security_group_id = aws_security_group.prometheus.id
 }
 
@@ -37,7 +36,7 @@ resource "aws_security_group_rule" "allow_snapshot_sender_ingress_sdx_pushgatewa
   protocol                 = "tcp"
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
-  security_group_id        = aws_security_group.sdx_pushgateway[0].id
+  security_group_id        = aws_security_group.sdx_pushgateway.id
   source_security_group_id = data.terraform_remote_state.snapshot_sender.outputs.security_group.snapshot_sender
 }
 
@@ -49,5 +48,5 @@ resource "aws_security_group_rule" "allow_snapshot_sender_egress_sdx_pushgateway
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = data.terraform_remote_state.snapshot_sender.outputs.security_group.snapshot_sender
-  source_security_group_id = aws_security_group.sdx_pushgateway[0].id
+  source_security_group_id = aws_security_group.sdx_pushgateway.id
 }

@@ -47,12 +47,12 @@ resource "aws_ecs_service" "sdx_pushgateway" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [aws_security_group.sdx_pushgateway[0].id]
+    security_groups = [aws_security_group.sdx_pushgateway.id]
     subnets         = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.*.id
   }
 
   service_registries {
-    registry_arn   = aws_service_discovery_service.sdx_pushgateway[0].arn
+    registry_arn   = aws_service_discovery_service.sdx_pushgateway.arn
     container_name = "sdx-pushgateway"
   }
 
@@ -60,18 +60,16 @@ resource "aws_ecs_service" "sdx_pushgateway" {
 }
 
 resource "aws_service_discovery_private_dns_namespace" "sdx_services" {
-  count = 1
   name  = "${local.environment}.sdx.services.${var.parent_domain_name}"
   vpc   = data.terraform_remote_state.aws_sdx.outputs.vpc.vpc.id
   tags  = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_service_discovery_service" "sdx_pushgateway" {
-  count = 1
   name  = "sdx-pushgateway"
 
   dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.sdx_services[0].id
+    namespace_id = aws_service_discovery_private_dns_namespace.sdx_services.id
 
     dns_records {
       ttl  = 10
