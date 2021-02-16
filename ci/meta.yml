@@ -134,7 +134,14 @@ meta:
                 cp ../terraform-config/outputs.tf modules/vpc/outputs.tf
                 terraform workspace show
                 terraform init
-                terraform plan -detailed-exitcode
+
+                if [[ "${SKIP_EXIT_CODE}" == "true" ]]; then
+                  echo "Performing plan with no exit code check due to SKIP_EXIT_CODE of '${SKIP_EXIT_CODE}'"
+                  terraform plan
+                else
+                  echo "Performing plan with exit code check due to SKIP_EXIT_CODE of '${SKIP_EXIT_CODE}'"
+                  terraform plan -detailed-exitcode
+                fi
               else
                   echo "Nothing to plan exiting"
                   exit 0 
@@ -182,6 +189,7 @@ meta:
       params:
         AWS_DEFAULT_REGION: ((dataworks.aws_region))
         AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
+
     admin-enable:
       task: admin-enable
       config:

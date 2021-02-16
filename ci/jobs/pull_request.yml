@@ -30,6 +30,7 @@ jobs:
       dataworks-metrics-infrastructure: dataworks-metrics-infrastructure-pr
     params:
       TF_WORKSPACE: management
+      SKIP_EXIT_CODE: "true"
     on_failure:
       put: dataworks-metrics-infrastructure-pr
       params:
@@ -50,6 +51,7 @@ jobs:
       dataworks-metrics-infrastructure: dataworks-metrics-infrastructure-pr
     params:
       TF_WORKSPACE: qa
+      SKIP_EXIT_CODE: "true"
     on_failure:
       put: dataworks-metrics-infrastructure-pr
       params:
