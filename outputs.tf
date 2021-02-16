@@ -19,11 +19,11 @@ output "adg_pushgateway_hostname" {
 }
 
 output "sdx_pushgateway_security_group" {
-  value = aws_security_group.sdx_pushgateway[0].id
+  value = aws_security_group.sdx_pushgateway.id
 }
 
 output "sdx_pushgateway_hostname" {
-  value = "${aws_service_discovery_service.sdx_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.sdx_services[0].name}"
+  value = "${aws_service_discovery_service.sdx_pushgateway.name}.${aws_service_discovery_private_dns_namespace.sdx_services.name}"
 }
 
 output "monitoring_bucket" {

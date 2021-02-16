@@ -8,14 +8,14 @@ resource "aws_vpc_peering_connection" "sdx" {
 resource "aws_route" "sdx_prometheus" {
   route_table_id            = data.terraform_remote_state.aws_sdx.outputs.route_table_sdx_connectivity.id
   destination_cidr_block    = local.cidr_block[local.environment].mon-slave-vpc
-  vpc_peering_connection_id = aws_vpc_peering_connection.sdx[0].id
+  vpc_peering_connection_id = aws_vpc_peering_connection.sdx.id
 }
 
 resource "aws_route" "prometheus_sdx" {
   count                     = local.zone_count
   route_table_id            = module.vpc.outputs.private_route_tables[local.secondary_role_index][count.index]
   destination_cidr_block    = local.cidr_block[local.environment].sdx-vpc
-  vpc_peering_connection_id = aws_vpc_peering_connection.sdx[0].id
+  vpc_peering_connection_id = aws_vpc_peering_connection.sdx.id
 }
 
 resource "aws_security_group_rule" "sdx_allow_ingress_prometheus" {
