@@ -33,6 +33,7 @@ meta:
         AWS_DEFAULT_REGION: ((dataworks.aws_region))
         GRAFANA_USER: ((dataworks-secrets.grafana_user_mgt_dev))
         GRAFANA_PASSWORD: ((dataworks-secrets.grafana_password_mgt_dev)) 
+        
     terraform-bootstrap:
       task: terraform-bootstrap
       config:
@@ -62,6 +63,7 @@ meta:
       params:
         AWS_REGION: eu-west-2
         AWS_SECRETS_ROLE: arn:aws:iam::((aws_account.management-dev)):role/ci
+
     terraform-apply:
       task: terraform-apply
       config:
@@ -107,6 +109,7 @@ meta:
       params:
         TF_CLI_ARGS_apply: -lock-timeout=300s
         TF_INPUT: "false"
+
     terraform-plan:
       task: terraform-plan
       config:
@@ -131,7 +134,14 @@ meta:
                 cp ../terraform-config/outputs.tf modules/vpc/outputs.tf
                 terraform workspace show
                 terraform init
-                terraform plan -detailed-exitcode
+
+                if [[ "${SKIP_EXIT_CODE}" == "true" ]]; then
+                  echo "Performing plan with no exit code check due to SKIP_EXIT_CODE of '${SKIP_EXIT_CODE}'"
+                  terraform plan
+                else
+                  echo "Performing plan with exit code check due to SKIP_EXIT_CODE of '${SKIP_EXIT_CODE}'"
+                  terraform plan -detailed-exitcode
+                fi
               else
                   echo "Nothing to plan exiting"
                   exit 0 
@@ -146,6 +156,7 @@ meta:
       params:
         TF_CLI_ARGS_plan: -lock-timeout=300s
         TF_INPUT: "false"
+
     cycle-containers:
       task: cycle-containers
       config:
@@ -178,6 +189,7 @@ meta:
       params:
         AWS_DEFAULT_REGION: ((dataworks.aws_region))
         AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
+
     admin-enable:
       task: admin-enable
       config:
@@ -193,5 +205,27 @@ meta:
             - -exc
             - |
               touch terraform-success/success
+        outputs:
+          - name: terraform-success
+
+    create-terraform-success:
+      task: create-terraform-success
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: hashicorp/terraform
+            version: ((dataworks.terraform_version))
+            tag: ((dataworks.terraform_version))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              touch ../terraform-success/success
+          dir: dataworks-metrics-infrastructure
+        inputs:
+          - name: dataworks-metrics-infrastructure
         outputs:
           - name: terraform-success
