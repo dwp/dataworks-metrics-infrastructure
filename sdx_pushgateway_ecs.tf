@@ -71,7 +71,7 @@ resource "aws_service_discovery_service" "sdx_pushgateway" {
   name  = "sdx-pushgateway"
 
   dns_config {
-    namespace_id = [aws_service_discovery_private_dns_namespace.sdx_services[0].id]
+    namespace_id = aws_service_discovery_private_dns_namespace.sdx_services[0].id
 
     dns_records {
       ttl  = 10
