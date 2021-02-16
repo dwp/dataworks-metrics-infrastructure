@@ -16,22 +16,23 @@ jobs:
       dataworks-metrics-infrastructure: dataworks-metrics-infrastructure-pr
     params:
       TF_WORKSPACE: management
-      AWS_SECRETS_ROLE: arn:aws:iam::((aws_account.management)):role/ci
-  - .: (( inject meta.plan.terraform-plan-pr ))
+  - .: (( inject meta.plan.terraform-plan ))
     task: terraform-plan-management
-    config:
-      params:
-        TF_WORKSPACE: management
+    params:
+      TF_WORKSPACE: management
     on_failure:
       put: dataworks-metrics-infrastructure-pr
       params:
         path: dataworks-metrics-infrastructure-pr
         status: failure
-  - .: (( inject meta.plan.terraform-plan-pr ))
+  - .: (( inject meta.plan.terraform-bootstrap ))
+    task: terraform-bootstrap-qa
+    params:
+      TF_WORKSPACE: qa
+  - .: (( inject meta.plan.terraform-plan ))
     task: terraform-plan-qa
-    config:
-      params:
-        TF_WORKSPACE: qa
+    params:
+      TF_WORKSPACE: qa
     on_failure:
       put: dataworks-metrics-infrastructure-pr
       params:
