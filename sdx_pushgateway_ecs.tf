@@ -4,9 +4,9 @@ resource "aws_ecs_task_definition" "sdx_pushgateway" {
   requires_compatibilities = ["FARGATE"]
   cpu                      = "512"
   memory                   = "4096"
-  task_role_arn            = aws_iam_role.sdx_pushgateway[local.primary_role_index].arn
+  task_role_arn            = aws_iam_role.sdx_pushgateway.arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
-  container_definitions    = "[${data.template_file.sdx_pushgateway_definition[local.primary_role_index].rendered}]"
+  container_definitions    = "[${data.template_file.sdx_pushgateway_definition.rendered}]"
   tags                     = merge(local.tags, { Name = var.name })
 }
 
