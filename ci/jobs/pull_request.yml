@@ -21,6 +21,7 @@ jobs:
       dataworks-metrics-infrastructure: dataworks-metrics-infrastructure-pr
     params:
       TF_WORKSPACE: management
+      AWS_SECRETS_ROLE: arn:aws:iam::((aws_account.management)):role/ci
 
   - .: (( inject meta.plan.terraform-plan ))
     task: terraform-plan-management
@@ -40,6 +41,7 @@ jobs:
       dataworks-metrics-infrastructure: dataworks-metrics-infrastructure-pr
     params:
       TF_WORKSPACE: qa
+      AWS_SECRETS_ROLE: arn:aws:iam::((aws_account.management-dev)):role/ci
 
   - .: (( inject meta.plan.terraform-plan ))
     task: terraform-plan-qa
