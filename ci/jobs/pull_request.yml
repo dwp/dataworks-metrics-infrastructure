@@ -18,6 +18,8 @@ jobs:
       TF_WORKSPACE: management
   - .: (( inject meta.plan.terraform-plan ))
     task: terraform-plan-management
+    input_mapping:
+      dataworks-metrics-infrastructure: dataworks-metrics-infrastructure-pr
     params:
       TF_WORKSPACE: management
     on_failure:
@@ -27,10 +29,14 @@ jobs:
         status: failure
   - .: (( inject meta.plan.terraform-bootstrap ))
     task: terraform-bootstrap-qa
+    input_mapping:
+      dataworks-metrics-infrastructure: dataworks-metrics-infrastructure-pr
     params:
       TF_WORKSPACE: qa
   - .: (( inject meta.plan.terraform-plan ))
     task: terraform-plan-qa
+    input_mapping:
+      dataworks-metrics-infrastructure: dataworks-metrics-infrastructure-pr
     params:
       TF_WORKSPACE: qa
     on_failure:
