@@ -1,6 +1,5 @@
 resource "aws_security_group" "sdx_pushgateway" {
   count = local.is_management_env ? 0 : 1
-  count       = 1
   name        = "sdx-pushgateway"
   description = "Rules necesary for pulling container image"
   vpc_id      = data.terraform_remote_state.aws_sdx.outputs.vpc.vpc.id

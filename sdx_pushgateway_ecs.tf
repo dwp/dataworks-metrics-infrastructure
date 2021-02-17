@@ -64,7 +64,6 @@ resource "aws_ecs_service" "sdx_pushgateway" {
 
 resource "aws_service_discovery_private_dns_namespace" "sdx_services" {
   count = local.is_management_env ? 0 : 1
-  count = 1
   name  = "${local.environment}.sdx.services.${var.parent_domain_name}"
   vpc   = data.terraform_remote_state.aws_sdx.outputs.vpc.vpc.id
   tags  = merge(local.tags, { Name = var.name })
@@ -72,7 +71,6 @@ resource "aws_service_discovery_private_dns_namespace" "sdx_services" {
 
 resource "aws_service_discovery_service" "sdx_pushgateway" {
   count = local.is_management_env ? 0 : 1
-  count = 1
   name  = "sdx-pushgateway"
 
   dns_config {
