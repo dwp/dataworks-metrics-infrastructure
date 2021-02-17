@@ -26,6 +26,14 @@ output "sdx_pushgateway_hostname" {
   value = "${aws_service_discovery_service.sdx_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.sdx_services[0].name}"
 }
 
+output "ingest_pushgateway_security_group" {
+  value = aws_security_group.ingest_pushgateway[0].id
+}
+
+output "ingest_pushgateway_hostname" {
+  value = "${aws_service_discovery_service.ingest_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.ingest_services[0].name}"
+}
+
 output "monitoring_bucket" {
   value = {
     id  = local.is_management_env ? aws_s3_bucket.monitoring[local.primary_role_index].id : null_resource.dummy.id

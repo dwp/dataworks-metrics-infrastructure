@@ -1,21 +1,21 @@
-resource "aws_ecs_task_definition" "sdx_pushgateway" {
-  count = local.is_management_env ? 0 : 1
-  family                   = "sdx-pushgateway"
+resource "aws_ecs_task_definition" "ingest_pushgateway" {
+  count                    = local.is_management_env ? 0 : 1
+  family                   = "ingest-pushgateway"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "512"
   memory                   = "4096"
-  task_role_arn            = aws_iam_role.sdx_pushgateway.arn
+  task_role_arn            = aws_iam_role.ingest_pushgateway[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
-  container_definitions    = "[${data.template_file.sdx_pushgateway_definition.rendered}]"
+  container_definitions    = "[${data.template_file.ingest_pushgateway_definition[local.primary_role_index].rendered}]"
   tags                     = merge(local.tags, { Name = var.name })
 }
 
-data "template_file" "sdx_pushgateway_definition" {
-  count = local.is_management_env ? 0 : 1
+data "template_file" "ingest_pushgateway_definition" {
+  count    = local.is_management_env ? 0 : 1
   template = file("${path.module}/container_definition.tpl")
   vars = {
-    name          = "sdx-pushgateway"
+    name          = "ingest-pushgateway"
     group_name    = "pushgateway"
     cpu           = var.fargate_cpu
     image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_pushgateway_url, var.image_versions.prom-pushgateway)
@@ -38,11 +38,11 @@ data "template_file" "sdx_pushgateway_definition" {
   }
 }
 
-resource "aws_ecs_service" "sdx_pushgateway" {
-  count = local.is_management_env ? 0 : 1
-  name                               = "sdx-pushgateway"
+resource "aws_ecs_service" "ingest_pushgateway" {
+  count                              = local.is_management_env ? 0 : 1
+  name                               = "ingest-pushgateway"
   cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition                    = aws_ecs_task_definition.sdx_pushgateway.arn
+  task_definition                    = aws_ecs_task_definition.ingest_pushgateway[local.primary_role_index].arn
   platform_version                   = var.platform_version
   desired_count                      = 1
   launch_type                        = "FARGATE"
@@ -50,33 +50,31 @@ resource "aws_ecs_service" "sdx_pushgateway" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [aws_security_group.sdx_pushgateway[0].id]
-    subnets         = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.*.id
+    security_groups = [aws_security_group.ingest_pushgateway[local.primary_role_index].id]
+    subnets         = data.terraform_remote_state.aws_ingestion.outputs.ingestion_subnets.id
   }
 
   service_registries {
-    registry_arn   = aws_service_discovery_service.sdx_pushgateway[0].arn
-    container_name = "sdx-pushgateway"
+    registry_arn   = aws_service_discovery_service.ingest_pushgateway[local.primary_role_index].arn
+    container_name = "ingest-pushgateway"
   }
 
   tags = merge(local.tags, { Name = var.name })
 }
 
-resource "aws_service_discovery_private_dns_namespace" "sdx_services" {
+resource "aws_service_discovery_private_dns_namespace" "ingest_services" {
   count = local.is_management_env ? 0 : 1
-  count = 1
-  name  = "${local.environment}.sdx.services.${var.parent_domain_name}"
-  vpc   = data.terraform_remote_state.aws_sdx.outputs.vpc.vpc.id
+  name  = "${local.environment}.ingest.services.${var.parent_domain_name}"
+  vpc   = data.terraform_remote_state.aws_ingestion.outputs.vpc.vpc.vpc.id
   tags  = merge(local.tags, { Name = var.name })
 }
 
-resource "aws_service_discovery_service" "sdx_pushgateway" {
+resource "aws_service_discovery_service" "ingest_pushgateway" {
   count = local.is_management_env ? 0 : 1
-  count = 1
-  name  = "sdx-pushgateway"
+  name  = "ingest-pushgateway"
 
   dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.sdx_services[0].id
+    namespace_id = aws_service_discovery_private_dns_namespace.ingest_services[0].id
 
     dns_records {
       ttl  = 10
