@@ -1,5 +1,5 @@
 resource "aws_ecs_task_definition" "sdx_pushgateway" {
-  count = local.is_management_env ? 0 : 1
+  count                    = local.is_management_env ? 0 : 1
   family                   = "sdx-pushgateway"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "sdx_pushgateway" {
 }
 
 data "template_file" "sdx_pushgateway_definition" {
-  count = local.is_management_env ? 0 : 1
+  count    = local.is_management_env ? 0 : 1
   template = file("${path.module}/container_definition.tpl")
   vars = {
     name          = "sdx-pushgateway"
@@ -39,7 +39,7 @@ data "template_file" "sdx_pushgateway_definition" {
 }
 
 resource "aws_ecs_service" "sdx_pushgateway" {
-  count = local.is_management_env ? 0 : 1
+  count                              = local.is_management_env ? 0 : 1
   name                               = "sdx-pushgateway"
   cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
   task_definition                    = aws_ecs_task_definition.sdx_pushgateway.arn
