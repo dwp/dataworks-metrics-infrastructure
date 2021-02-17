@@ -19,7 +19,7 @@ output "adg_pushgateway_hostname" {
 }
 
 output "sdx_pushgateway_security_group" {
-  value = local.is_management_env ? null_resource.dummy.id : aws_security_group.sdx_pushgateway.id
+  value = local.is_management_env ? null_resource.dummy.id : aws_security_group.sdx_pushgateway[0].id
 }
 
 output "sdx_pushgateway_hostname" {

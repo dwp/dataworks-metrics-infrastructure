@@ -50,7 +50,7 @@ resource "aws_ecs_service" "sdx_pushgateway" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [aws_security_group.sdx_pushgateway.id]
+    security_groups = [aws_security_group.sdx_pushgateway[0].id]
     subnets         = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.*.id
   }
 

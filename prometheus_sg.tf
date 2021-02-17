@@ -38,7 +38,7 @@ resource "aws_security_group_rule" "allow_prometheus_egress_sdx_pushgateway" {
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = aws_security_group.prometheus.id
-  source_security_group_id = aws_security_group.sdx_pushgateway.id
+  source_security_group_id = aws_security_group.sdx_pushgateway[0].id
 }
 
 resource "aws_security_group_rule" "allow_prometheus_egress_pdm_exporter" {
