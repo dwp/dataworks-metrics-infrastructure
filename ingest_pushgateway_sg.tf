@@ -32,28 +32,6 @@ resource "aws_security_group_rule" "allow_prometheus_ingress_ingest_pushgateway"
   source_security_group_id = aws_security_group.prometheus.id
 }
 
-resource "aws_security_group_rule" "allow_ingest_ingress_ingest_pushgateway" {
-  count                    = local.is_management_env ? 0 : 1
-  description              = "Allows ingest to access ingest pushgateway"
-  type                     = "ingress"
-  protocol                 = "tcp"
-  from_port                = var.pushgateway_port
-  to_port                  = var.pushgateway_port
-  security_group_id        = aws_security_group.ingest_pushgateway[0].id
-  source_security_group_id = data.terraform_remote_state.aws_analytical_dataset_generation.outputs.ingest_common_sg.id
-}
-
-resource "aws_security_group_rule" "allow_ingest_egress_ingest_pushgateway" {
-  count                    = local.is_management_env ? 0 : 1
-  description              = "Allows ingest to access ingest pushgateway"
-  type                     = "egress"
-  protocol                 = "tcp"
-  from_port                = var.pushgateway_port
-  to_port                  = var.pushgateway_port
-  security_group_id        = data.terraform_remote_state.aws_analytical_dataset_generation.outputs.ingest_common_sg.id
-  source_security_group_id = aws_security_group.ingest_pushgateway[0].id
-}
-
 resource "aws_security_group_rule" "allow_k2hb_ingress_ingest_pushgateway" {
   count                    = local.is_management_env ? 0 : 1
   description              = "Allows K2HB to access ingest pushgateway"
