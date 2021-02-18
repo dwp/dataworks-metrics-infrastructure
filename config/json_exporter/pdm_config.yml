@@ -93,8 +93,8 @@ metrics:
   path: $.gauges.'runtime_step_2metrics-setup'.value
 - name: runtime_step_3clean_dictionary_data
   path: $.gauges.'runtime_step_3clean_dictionary_data'.value
-- name: runtime_step_4create_db
-  path: $.gauges.'runtime_step_4create_db'.value
+- name: runtime_step_4create_databases
+  path: $.gauges.'runtime_step_4create_databases'.value
 - name: runtime_step_5intial_transactional_load
   path: $.gauges.'runtime_step_5intial_transactional_load'.value
 - name: runtime_step_6transactional
@@ -109,16 +109,6 @@ metrics:
   path: $.gauges.'runtime_step_10views'.value
 - name: runtime_step_11create_pii_csv_files
   path: $.gauges.'runtime_step_11create_pii_csv_files'.value
-- name: runtime_step_12row_count
-  path: $.gauges.'runtime_step_12row-count'.value
-- name: rowcount_uc_pdm_transform
-  path: $.gauges.'rowcount_uc_pdm_transform'.value
-- name: rowcount_uc_pdm_transactional
-  path: $.gauges.'rowcount_uc_pdm_transactional'.value
-- name: rowcount_uc_pdm_model
-  path: $.gauges.'rowcount_uc_pdm_model'.value
-- name: rowcount_uc
-  path: $.gauges.'rowcount_uc'.value
 - name: state_step_1create_hive_dynamo_table
   path: $.gauges.'state_step_1create-hive-dynamo-table'.value
 - name: state_step_2metrics_setup
@@ -139,7 +129,6 @@ metrics:
   path: $.gauges.'state_step_9model'.value
 - name: state_step_10views
   path: $.gauges.'state_step_10views'.value
-- name: state_step_11create_pii_csv_files
-  path: $.gauges.'state_step_11create_pii_csv_files'.value
-- name: state_step_12row_count
-  path: $.gauges.'state_step_12row-count'.value
+- name: state_step_11create_views_tables
+  path: $.gauges.'state_step_11create-views-tables'.value
+
