@@ -93,8 +93,8 @@ metrics:
   path: $.gauges.'runtime_step_2metrics-setup'.value
 - name: runtime_step_3clean_dictionary_data
   path: $.gauges.'runtime_step_3clean_dictionary_data'.value
-- name: runtime_step_4create_db
-  path: $.gauges.'runtime_step_4create_db'.value
+- name: runtime_step_4create_databases
+  path: $.gauges.'runtime_step_4create_databases'.value
 - name: runtime_step_5intial_transactional_load
   path: $.gauges.'runtime_step_5intial_transactional_load'.value
 - name: runtime_step_6transactional
