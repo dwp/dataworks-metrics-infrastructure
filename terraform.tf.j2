@@ -325,7 +325,7 @@ data "terraform_remote_state" "aws_ucfs_claimant_consumer" {
 
   config = {
     bucket         = "{{state_file_bucket}}"
-    key            = "terraform/dataworks/ucfs-claimant-kafka-consumer.tfstate"
+    key            = "terraform/dataworks/dataworks-aws-ucfs-claimant-consumer.tfstate"
     region         = "{{state_file_region}}"
     encrypt        = true
     kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
