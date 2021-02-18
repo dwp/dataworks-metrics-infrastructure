@@ -109,16 +109,6 @@ metrics:
   path: $.gauges.'runtime_step_10views'.value
 - name: runtime_step_11create_pii_csv_files
   path: $.gauges.'runtime_step_11create_pii_csv_files'.value
-- name: runtime_step_12row_count
-  path: $.gauges.'runtime_step_12row-count'.value
-- name: rowcount_uc_pdm_transform
-  path: $.gauges.'rowcount_uc_pdm_transform'.value
-- name: rowcount_uc_pdm_transactional
-  path: $.gauges.'rowcount_uc_pdm_transactional'.value
-- name: rowcount_uc_pdm_model
-  path: $.gauges.'rowcount_uc_pdm_model'.value
-- name: rowcount_uc
-  path: $.gauges.'rowcount_uc'.value
 - name: state_step_1create_hive_dynamo_table
   path: $.gauges.'state_step_1create-hive-dynamo-table'.value
 - name: state_step_2metrics_setup
@@ -141,5 +131,4 @@ metrics:
   path: $.gauges.'state_step_10views'.value
 - name: state_step_11create_pii_csv_files
   path: $.gauges.'state_step_11create_pii_csv_files'.value
-- name: state_step_12row_count
-  path: $.gauges.'state_step_12row-count'.value
+
