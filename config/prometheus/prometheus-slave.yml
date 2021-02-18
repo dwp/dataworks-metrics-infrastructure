@@ -1,12 +1,13 @@
 global:
   external_labels:
     role: ${environment}
+    monitor: "DataWorks AWS"
   scrape_interval: 1m
   scrape_timeout: 10s
   evaluation_interval: 1m
 
 scrape_configs:
-  - job_name: ci
+  - job_name: concourse-metrics
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -21,7 +22,7 @@ scrape_configs:
     relabel_configs:
       - source_labels: [__meta_ec2_tag_Name]
         separator: ;
-        regex: concourse-web
+        regex: ^ci-concourse-web-[a-z0-9]{8}$
         replacement: $1
         action: keep
       - source_labels: [__meta_ec2_tag_Name, __meta_ec2_availability_zone]
@@ -30,7 +31,8 @@ scrape_configs:
         target_label: instance
         replacement: $1
         action: replace
-  - job_name: "ecs-service-discovery"
+
+  - job_name: ecs-service-discovery
     scrape_interval: 1m
     file_sd_configs:
       - files:
@@ -40,7 +42,13 @@ scrape_configs:
         action: replace
         target_label: __metrics_path__
         regex: (.+)
-  - job_name: concourse-worker
+      - source_labels: [job]
+        regex: (.*)
+        target_label: instance
+        replacement: $1
+        action: replace
+
+  - job_name: global-node-exporter
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -53,18 +61,50 @@ scrape_configs:
         port: 9100
         filters: []
     relabel_configs:
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
+        regex: "MASTER|CORE"
+        replacement: $1
+        action: drop
       - source_labels: [__meta_ec2_tag_Name]
-        separator: ;
-        regex: ^ci-concourse-worker-eu-west-2[abc]-[a-z0-9]{8}$
+        regex: (.*)
+        target_label: instance
+        replacement: $1
+        action: replace
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance_id
+
+  - job_name: emr-node-exporter
+    honor_timestamps: true
+    scrape_interval: 1m
+    scrape_timeout: 10s
+    metrics_path: /metrics
+    scheme: http
+    ec2_sd_configs:
+      - endpoint: ""
+        region: eu-west-2
+        refresh_interval: 1m
+        port: 9100
+        filters: []
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-analytical-dataset-generator|aws-pdm-dataset-generator"
+        replacement: $1
+        action: drop
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
+        regex: "MASTER|CORE"
         replacement: $1
         action: keep
-      - source_labels: [__meta_ec2_tag_Name, __meta_ec2_availability_zone]
-        separator: ;
+      - source_labels: [__meta_ec2_tag_Name]
         regex: (.*)
         target_label: instance
         replacement: $1
         action: replace
-  - job_name: node-exporter
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance_id
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
+        target_label: cluster_id
+
+  - job_name: ADG-node-exporter
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -77,12 +117,58 @@ scrape_configs:
         port: 9100
         filters: []
     relabel_configs:
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
+        regex: "MASTER|CORE"
+        replacement: $1
+        action: keep
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-analytical-dataset-generator"
+        replacement: $1
+        action: keep
       - source_labels: [__meta_ec2_tag_Name]
         regex: (.*)
         target_label: instance
         replacement: $1
         action: replace
-  - job_name: jmx-hdfs-namenode
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance_id
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
+        target_label: cluster_id
+      - source_labels: [__meta_ec2_tag_snapshot_type]
+        target_label: cluster_role
+
+  - job_name: PDM-node-exporter
+    honor_timestamps: true
+    scrape_interval: 1m
+    scrape_timeout: 10s
+    metrics_path: /metrics
+    scheme: http
+    ec2_sd_configs:
+      - endpoint: ""
+        region: eu-west-2
+        refresh_interval: 1m
+        port: 9100
+        filters: []
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
+        regex: "MASTER|CORE"
+        replacement: $1
+        action: keep
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-pdm-dataset-generator"
+        replacement: $1
+        action: keep
+      - source_labels: [__meta_ec2_tag_Name]
+        regex: (.*)
+        target_label: instance
+        replacement: $1
+        action: replace
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance_id
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
+        target_label: cluster_id
+
+  - job_name: hdfs-namenode
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -95,12 +181,23 @@ scrape_configs:
         port: 7101
         filters: []
     relabel_configs:
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
+        regex: MASTER
+        replacement: $1
+        action: keep
       - source_labels: [__meta_ec2_tag_Name]
         regex: (.*)
         target_label: instance
         replacement: $1
         action: replace
-  - job_name: jmx-hdfs-datanode
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance_id
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
+        target_label: cluster_id
+      - source_labels: [__meta_ec2_tag_snapshot_type]
+        target_label: cluster_role
+
+  - job_name: hdfs-datanode
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -113,12 +210,23 @@ scrape_configs:
         port: 7103
         filters: []
     relabel_configs:
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
+        regex: "CORE"
+        replacement: $1
+        action: keep
       - source_labels: [__meta_ec2_tag_Name]
         regex: (.*)
         target_label: instance
         replacement: $1
         action: replace
-  - job_name: jmx-yarn-resource-manager
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance_id
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
+        target_label: cluster_id
+      - source_labels: [__meta_ec2_tag_snapshot_type]
+        target_label: cluster_role
+
+  - job_name: yarn-resource-manager
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -131,12 +239,23 @@ scrape_configs:
         port: 7105
         filters: []
     relabel_configs:
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
+        regex: MASTER
+        replacement: $1
+        action: keep
       - source_labels: [__meta_ec2_tag_Name]
         regex: (.*)
         target_label: instance
         replacement: $1
         action: replace
-  - job_name: jmx-yarn-node-manager
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance_id
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
+        target_label: cluster_id
+      - source_labels: [__meta_ec2_tag_snapshot_type]
+        target_label: cluster_role
+
+  - job_name: yarn-node-manager
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -149,11 +268,21 @@ scrape_configs:
         port: 7107
         filters: []
     relabel_configs:
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_instance_group_role]
+        regex: MASTER
+        replacement: $1
+        action: drop
       - source_labels: [__meta_ec2_tag_Name]
         regex: (.*)
         target_label: instance
         replacement: $1
         action: replace
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance_id
+      - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
+        target_label: cluster_id
+      - source_labels: [__meta_ec2_tag_snapshot_type]
+        target_label: cluster_role
 
 remote_write:
   - url: http://localhost:10903/api/v1/receive

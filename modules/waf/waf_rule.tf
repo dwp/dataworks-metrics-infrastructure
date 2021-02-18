@@ -72,6 +72,13 @@ resource "aws_wafregional_rule" "mitigate_sqli" {
 
   # Don't do mitigate_sqli for Prometheus/Grafana is it blocks legitimate requests
   predicate {
+    data_id = aws_wafregional_ipset.admin_remote_ipset.id
+    negated = true
+    type    = "IPMatch"
+  }
+
+  # Don't do mitigate_sqli for Prometheus/Grafana is it blocks legitimate requests
+  predicate {
     data_id = aws_wafregional_byte_match_set.match_admin_url.id
     negated = true
     type    = "ByteMatch"
@@ -100,6 +107,13 @@ resource "aws_wafregional_rule" "restrict_sizes" {
   name        = "restrict-sizes"
   metric_name = "restrictsizes"
   tags        = var.tags
+
+  # Don't do restrict_sizes for Prometheus/Grafana is it blocks legitimate requests
+  predicate {
+    data_id = aws_wafregional_ipset.admin_remote_ipset.id
+    negated = true
+    type    = "IPMatch"
+  }
 
   predicate {
     data_id = aws_wafregional_size_constraint_set.size_restrictions.id

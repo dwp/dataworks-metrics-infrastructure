@@ -94,7 +94,7 @@ data "aws_iam_policy_document" "pdm_exporter_read_metrics" {
     ]
 
     resources = [
-      data.terraform_remote_state.aws_analytical_dataset_generation.outputs.published_bucket.arn,
+      data.terraform_remote_state.common.outputs.published_bucket.arn,
     ]
   }
 
@@ -106,7 +106,7 @@ data "aws_iam_policy_document" "pdm_exporter_read_metrics" {
     ]
 
     resources = [
-      "${data.terraform_remote_state.aws_analytical_dataset_generation.outputs.published_bucket.arn}/metrics/pdm-metrics.json",
+      "${data.terraform_remote_state.common.outputs.published_bucket.arn}/metrics/pdm-metrics.json",
     ]
   }
 
@@ -118,7 +118,7 @@ data "aws_iam_policy_document" "pdm_exporter_read_metrics" {
     ]
 
     resources = [
-      data.terraform_remote_state.aws_analytical_dataset_generation.outputs.published_bucket_cmk.arn,
+      data.terraform_remote_state.common.outputs.published_bucket_cmk.arn,
     ]
   }
 }

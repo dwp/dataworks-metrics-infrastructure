@@ -1,5 +1,6 @@
 jobs:
   - name: qa
+    max_in_flight: 1
     plan:
       - get: dw-al2-ecs-ami
       - get: dataworks-metrics-infrastructure

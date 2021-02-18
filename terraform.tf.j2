@@ -221,6 +221,104 @@ data "terraform_remote_state" "aws_sdx" {
   }
 }
 
+data "terraform_remote_state" "dataworks-aws-data-egress" {
+  backend   = "s3"
+  workspace = lookup(local.common_workspace, terraform.workspace)
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/dataworks-aws-data-egress.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "aws_crypto" {
+  backend   = "s3"
+  workspace = local.crypto_workspace[local.slave_peerings[local.environment]]
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-crypto.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "analytical-service-infra" {
+  backend   = "s3"
+  workspace = lookup(local.common_workspace, terraform.workspace)
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/analytical-service-infra.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "orchestration-service" {
+  backend   = "s3"
+  workspace = lookup(local.common_workspace, terraform.workspace)
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/orchestration-service.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "snapshot_sender" {
+  backend   = "s3"
+  workspace = lookup(local.common_workspace, terraform.workspace)
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-snapshot-sender.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "ucfs-claimant" {
+  backend   = "s3"
+  workspace = lookup(local.common_workspace, terraform.workspace)
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/ucfs-claimant.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+} 
+
+data "terraform_remote_state" "aws-azkaban" {
+  backend   = "s3"
+  workspace = lookup(local.common_workspace, terraform.workspace)
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-azkaban.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+} 
+
 variable "assume_role" {
   default = "ci"
 }
@@ -230,7 +328,7 @@ variable "region" {
 }
 
 provider "aws" {
-  version = "~> 3.22.0"
+  version = "~> 3.25.0"
   region  = var.region
 
   assume_role {
@@ -239,7 +337,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  version = "~> 3.22.0"
+  version = "~> 3.25.0"
   alias   = "management"
   region  = var.region
 
@@ -290,6 +388,11 @@ locals {
   master_peerings = {
     management-dev = ["management-dev", "development", "qa", "integration"]
     management = ["management", "preprod", "production"]
+  }
+
+  crypto_workspace = {
+    management-dev = "management-dev"
+    management     = "management"
   }
 
   dns_zone_ids = {
@@ -382,6 +485,46 @@ locals {
     production  = "False"
     management     = "False"
     management-dev = "False"
+  }
+
+  ebs_volume_size = {
+    development = 667
+    qa          = 667
+    integration = 667
+    preprod     = 667
+    production  = 667
+    management     = 667
+    management-dev = 667
+  }
+
+  ebs_volume_type = {
+    development = "gp3"
+    qa          = "gp3"
+    integration = "gp3"
+    preprod     = "gp3"
+    production  = "gp3"
+    management     = "gp3"
+    management-dev = "gp3"
+  }
+
+  mgmt_ebs_volume_size = {
+    development = 667
+    qa          = 667
+    integration = 667
+    preprod     = 667
+    production  = 667
+    management     = 667
+    management-dev = 667
+  }
+
+  mgmt_ebs_volume_type = {
+    development = "gp3"
+    qa          = "gp3"
+    integration = "gp3"
+    preprod     = "gp3"
+    production  = "gp3"
+    management     = "gp3"
+    management-dev = "gp3"
   }
 
   metrics_ecs_asg_tags = merge(

@@ -2,8 +2,8 @@ resource "aws_ecs_task_definition" "prometheus" {
   family                   = "prometheus"
   network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
-  cpu                      = "2048"
-  memory                   = "4096"
+  cpu                      = var.prometheus_task_cpu[local.environment]
+  memory                   = var.prometheus_task_memory[local.environment]
   task_role_arn            = aws_iam_role.prometheus.arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.prometheus_definition.rendered}, ${data.template_file.thanos_receiver_prometheus_definition.rendered}, ${data.template_file.ecs_service_discovery_definition.rendered}]"
@@ -38,14 +38,15 @@ data "template_file" "prometheus_definition" {
   vars = {
     name               = "prometheus"
     group_name         = "prometheus"
-    cpu                = var.fargate_cpu
+    cpu                = var.prometheus_cpu[local.environment]
     image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_prometheus_url, var.image_versions.prometheus)
-    memory             = var.ec2_memory
-    memory_reservation = var.fargate_memory
+    memory             = var.prometheus_memory[local.environment]
+    memory_reservation = var.ec2_memory
     user               = "nobody"
     ports              = jsonencode([var.prometheus_port])
     ulimits            = jsonencode([])
     log_group          = aws_cloudwatch_log_group.monitoring_metrics.name
+    essential          = true
     region             = data.aws_region.current.name
     config_bucket      = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
@@ -90,6 +91,7 @@ data "template_file" "ecs_service_discovery_definition" {
     ports              = jsonencode([])
     ulimits            = jsonencode([])
     log_group          = aws_cloudwatch_log_group.monitoring_metrics.name
+    essential          = false
     region             = data.aws_region.current.name
     config_bucket      = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
@@ -118,14 +120,15 @@ data "template_file" "thanos_receiver_prometheus_definition" {
   vars = {
     name               = "thanos-receiver"
     group_name         = "thanos"
-    cpu                = var.fargate_cpu
+    cpu                = var.receiver_cpu[local.environment]
     image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_thanos_url, var.image_versions.thanos)
-    memory             = var.receiver_memory
-    memory_reservation = var.fargate_memory
+    memory             = var.receiver_memory[local.environment]
+    memory_reservation = var.ec2_memory
     user               = "nobody"
     ports              = jsonencode([var.thanos_port_grpc, var.thanos_port_remote_write])
     ulimits            = jsonencode([])
     log_group          = aws_cloudwatch_log_group.monitoring_metrics.name
+    essential          = true
     region             = data.aws_region.current.name
     config_bucket      = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
@@ -162,12 +165,14 @@ data "template_file" "thanos_receiver_prometheus_definition" {
 }
 
 resource "aws_ecs_service" "prometheus" {
-  name                 = "prometheus"
-  cluster              = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition      = aws_ecs_task_definition.prometheus.arn
-  desired_count        = 3
-  launch_type          = "EC2"
-  force_new_deployment = true
+  name                               = "prometheus"
+  cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
+  task_definition                    = aws_ecs_task_definition.prometheus.arn
+  desired_count                      = 3
+  launch_type                        = "EC2"
+  force_new_deployment               = true
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
 
   network_configuration {
     security_groups = [aws_security_group.prometheus.id, aws_security_group.monitoring_common[local.secondary_role_index].id]

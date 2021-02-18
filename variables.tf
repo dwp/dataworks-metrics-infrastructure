@@ -38,6 +38,86 @@ variable "platform_version" {
   default     = "1.4.0"
 }
 
+variable "prometheus_task_cpu" {
+  default = {
+    development    = "1024"
+    qa             = "1024"
+    integration    = "1024"
+    preprod        = "1024"
+    production     = "2048"
+    management     = "2048"
+    management-dev = "1024"
+  }
+}
+
+variable "prometheus_task_memory" {
+  default = {
+    development    = "4096"
+    qa             = "4096"
+    integration    = "4096"
+    preprod        = "4096"
+    production     = "8192"
+    management     = "8192"
+    management-dev = "4096"
+  }
+}
+
+variable "store_cpu" {
+  default = {
+    management     = "2048"
+    management-dev = "1024"
+  }
+}
+
+variable "store_memory" {
+  default = {
+    management     = "4096"
+    management-dev = "2048"
+  }
+}
+
+variable "store_task_cpu" {
+  default = {
+    management     = "2048"
+    management-dev = "1024"
+  }
+}
+
+variable "store_task_memory" {
+  default = {
+    management     = "4096"
+    management-dev = "2048"
+  }
+}
+
+variable "query_cpu" {
+  default = {
+    management     = "4096"
+    management-dev = "2048"
+  }
+}
+
+variable "query_memory" {
+  default = {
+    management     = "8192"
+    management-dev = "4096"
+  }
+}
+
+variable "query_task_cpu" {
+  default = {
+    management     = "4096"
+    management-dev = "2048"
+  }
+}
+
+variable "query_task_memory" {
+  default = {
+    management     = "8192"
+    management-dev = "4096"
+  }
+}
+
 variable "fargate_cpu" {
   default = "512"
 }
@@ -50,16 +130,52 @@ variable "ec2_memory" {
   default = "1024"
 }
 
+variable "prometheus_cpu" {
+  default = {
+    development    = "256"
+    qa             = "256"
+    integration    = "256"
+    preprod        = "256"
+    production     = "512"
+    management     = "512"
+    management-dev = "256"
+  }
+}
+
 variable "receiver_cpu" {
-  default = "512"
+  default = {
+    development    = "256"
+    qa             = "256"
+    integration    = "256"
+    preprod        = "256"
+    production     = "512"
+    management     = "512"
+    management-dev = "256"
+  }
 }
 
 variable "receiver_memory" {
-  default = "1536"
+  default = {
+    development    = "2048"
+    qa             = "2048"
+    integration    = "2048"
+    preprod        = "2048"
+    production     = "4096"
+    management     = "4096"
+    management-dev = "2048"
+  }
 }
 
-variable "store_cpu" {
-  default = "1024"
+variable "prometheus_memory" {
+  default = {
+    development    = "2048"
+    qa             = "2048"
+    integration    = "2048"
+    preprod        = "2048"
+    production     = "4096"
+    management     = "4096"
+    management-dev = "2048"
+  }
 }
 
 variable "https_port" {
@@ -126,11 +242,11 @@ variable "desired_capacity" {
 variable "image_versions" {
   description = "pinned image versions to use"
   default = {
-    prometheus            = "0.0.14"
-    thanos                = "0.0.22"
+    prometheus            = "0.0.15"
+    thanos                = "0.0.23"
     alertmanager          = "0.0.5"
     ecs-service-discovery = "0.0.3"
-    grafana               = "0.0.11"
+    grafana               = "0.0.12"
     cloudwatch-exporter   = "0.0.5"
     prom-pushgateway      = "0.0.56"
     hive-exporter         = "0.0.4"
@@ -146,8 +262,8 @@ variable "metrics_ecs_cluster_ec2_size" {
     qa             = "t3.large"
     integration    = "t3.large"
     preprod        = "t3.large"
-    production     = "t3.large"
-    management     = "t3.large"
+    production     = "t3.xlarge"
+    management     = "t3.xlarge"
     management-dev = "t3.large"
   }
 }
@@ -157,4 +273,3 @@ variable "ecs_hardened_ami_id" {
   type        = string
   default     = "ami-049bba1a08b31ff8e"
 }
-

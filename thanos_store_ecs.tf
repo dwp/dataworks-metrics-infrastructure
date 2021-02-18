@@ -3,8 +3,8 @@ resource "aws_ecs_task_definition" "thanos_store" {
   family                   = "thanos-store"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "1024"
-  memory                   = "4096"
+  cpu                      = var.store_task_cpu[local.environment]
+  memory                   = var.store_task_memory[local.environment]
   task_role_arn            = aws_iam_role.thanos_store[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.thanos_store_definition[local.primary_role_index].rendered}]"
@@ -17,9 +17,9 @@ data "template_file" "thanos_store_definition" {
   vars = {
     name          = "thanos-store"
     group_name    = "thanos"
-    cpu           = var.store_cpu
+    cpu           = var.store_cpu[local.environment]
     image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_thanos_url, var.image_versions.thanos)
-    memory        = var.fargate_memory
+    memory        = var.store_memory[local.environment]
     user          = "nobody"
     ports         = jsonencode([var.thanos_port_grpc])
     ulimits       = jsonencode([var.ulimits])
@@ -43,14 +43,16 @@ data "template_file" "thanos_store_definition" {
 }
 
 resource "aws_ecs_service" "thanos_store" {
-  count                = local.is_management_env ? 1 : 0
-  name                 = "thanos-store"
-  cluster              = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition      = aws_ecs_task_definition.thanos_store[local.primary_role_index].arn
-  platform_version     = var.platform_version
-  desired_count        = 1
-  launch_type          = "FARGATE"
-  force_new_deployment = true
+  count                              = local.is_management_env ? 1 : 0
+  name                               = "thanos-store"
+  cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
+  task_definition                    = aws_ecs_task_definition.thanos_store[local.primary_role_index].arn
+  platform_version                   = var.platform_version
+  desired_count                      = 1
+  launch_type                        = "FARGATE"
+  force_new_deployment               = true
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
 
   network_configuration {
     security_groups = [aws_security_group.thanos_store[0].id, aws_security_group.monitoring_common[local.primary_role_index].id]
