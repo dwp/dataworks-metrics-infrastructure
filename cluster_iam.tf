@@ -160,6 +160,30 @@ data "aws_iam_policy_document" "metrics_cluster_monitoring_logging" {
   }
 }
 
+resource "aws_iam_role_policy_attachment" "metrics_cluster_monitoring_tagging" {
+  role       = aws_iam_role.metrics_cluster.name
+  policy_arn = aws_iam_policy.metrics_cluster_monitoring_tagging.arn
+}
+
+resource "aws_iam_policy" "metrics_cluster_monitoring_tagging" {
+  name        = "MetricsClusterTaggingPolicy"
+  description = "Allow Metrics cluster to modify tags"
+  policy      = data.aws_iam_policy_document.metrics_cluster_monitoring_tagging.json
+}
+
+data "aws_iam_policy_document" "metrics_cluster_monitoring_tagging" {
+  statement {
+    sid    = "EnableEC2PermissionsHost"
+    effect = "Allow"
+
+    actions = [
+      "ec2:ModifyInstanceMetadataOptions",
+      "ec2:*Tags",
+    ]
+    resources = ["arn:aws:ec2:${var.region}:${local.account[local.environment]}:instance/*"]
+  }
+}
+
 resource "aws_iam_role_policy_attachment" "metrics_cluster_ecs_cwasp" {
   role       = aws_iam_role.metrics_cluster.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"

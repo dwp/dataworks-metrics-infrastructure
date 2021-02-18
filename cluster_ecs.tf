@@ -106,6 +106,7 @@ resource "aws_launch_template" "metrics_cluster" {
       region        = data.aws_region.current.name
       folder        = "/mnt/config"
       mnt_bucket    = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+      name          = local.metrics_ecs_friendly_name
     }
   ))
 
@@ -119,9 +120,8 @@ resource "aws_launch_template" "metrics_cluster" {
     device_name = "/dev/xvda"
 
     ebs {
-      volume_size           = 1024
-      volume_type           = "io1"
-      iops                  = "2000"
+      volume_size           = local.ebs_volume_size[local.environment]
+      volume_type           = local.ebs_volume_type[local.environment]
       delete_on_termination = true
       encrypted             = true
     }
@@ -150,6 +150,17 @@ resource "aws_launch_template" "metrics_cluster" {
         Persistence         = "Ignore",
         propagate_at_launch = true,
         InstanceRefresh     = ""
+      }
+    )
+  }
+
+  tag_specifications {
+    resource_type = "volume"
+
+    tags = merge(
+      local.tags,
+      {
+        Name = local.metrics_friendly_name,
       }
     )
   }
@@ -207,7 +218,7 @@ resource "aws_autoscaling_group" "mgmt_metrics_cluster" {
   instance_refresh {
     strategy = "Rolling"
     preferences {
-      min_healthy_percentage = 50
+      min_healthy_percentage = 25
     }
   }
 
@@ -242,6 +253,7 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
       region        = data.aws_region.current.name
       folder        = "/mnt/config"
       mnt_bucket    = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+      name          = local.metrics_ecs_friendly_name
     }
   ))
 
@@ -255,9 +267,8 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
     device_name = "/dev/xvda"
 
     ebs {
-      volume_size           = 1024
-      volume_type           = "io1"
-      iops                  = "2000"
+      volume_size           = local.mgmt_ebs_volume_size[local.environment]
+      volume_type           = local.mgmt_ebs_volume_type[local.environment]
       delete_on_termination = true
       encrypted             = true
     }
@@ -286,6 +297,17 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
         Persistence         = "Ignore",
         propagate_at_launch = true,
         InstanceRefresh     = ""
+      }
+    )
+  }
+
+  tag_specifications {
+    resource_type = "volume"
+
+    tags = merge(
+      local.tags,
+      {
+        Name = "mgmt-${local.metrics_friendly_name}",
       }
     )
   }

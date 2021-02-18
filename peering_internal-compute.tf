@@ -20,16 +20,30 @@ resource "aws_route" "prometheus_secondary_internal_compute" {
   vpc_peering_connection_id = aws_vpc_peering_connection.internal_compute[0].id
 }
 
-resource "aws_route" "adg_prometheus_secondary" {
+resource "aws_route" "adg_new_prometheus_secondary" {
   count                     = local.is_management_env ? 0 : 1
-  route_table_id            = data.terraform_remote_state.aws_internal_compute.outputs.route_table_ids.adg
+  route_table_id            = data.terraform_remote_state.aws_internal_compute.outputs.route_table_ids.adg_new
   destination_cidr_block    = local.cidr_block[local.environment].mon-slave-vpc
   vpc_peering_connection_id = aws_vpc_peering_connection.internal_compute[0].id
 }
 
-resource "aws_route" "pdm_prometheus_secondary" {
+resource "aws_route" "pdm_new_prometheus_secondary" {
   count                     = local.is_management_env ? 0 : 1
-  route_table_id            = data.terraform_remote_state.aws_internal_compute.outputs.route_table_ids.pdm
+  route_table_id            = data.terraform_remote_state.aws_internal_compute.outputs.route_table_ids.pdm_new
+  destination_cidr_block    = local.cidr_block[local.environment].mon-slave-vpc
+  vpc_peering_connection_id = aws_vpc_peering_connection.internal_compute[0].id
+}
+
+resource "aws_route" "htme_prometheus_secondary" {
+  count                     = local.is_management_env ? 0 : 1
+  route_table_id            = data.terraform_remote_state.aws_internal_compute.outputs.route_table_ids.htme
+  destination_cidr_block    = local.cidr_block[local.environment].mon-slave-vpc
+  vpc_peering_connection_id = aws_vpc_peering_connection.internal_compute[0].id
+}
+
+resource "aws_route" "hdi_prometheus_secondary" {
+  count                     = local.is_management_env ? 0 : 1
+  route_table_id            = data.terraform_remote_state.aws_internal_compute.outputs.route_table_ids.historic_importer
   destination_cidr_block    = local.cidr_block[local.environment].mon-slave-vpc
   vpc_peering_connection_id = aws_vpc_peering_connection.internal_compute[0].id
 }
@@ -318,4 +332,48 @@ resource "aws_security_group_rule" "prometheus_allow_egress_pdm" {
   to_port                  = var.prometheus_port
   security_group_id        = aws_security_group.prometheus.id
   source_security_group_id = data.terraform_remote_state.aws_pdm_dataset_generation.outputs.pdm_common_sg.id
+}
+
+resource "aws_security_group_rule" "prometheus_allow_egress_htme" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allow prometheus ${var.secondary} to access HTME metrics"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = 9100
+  to_port                  = 9100
+  security_group_id        = aws_security_group.prometheus.id
+  source_security_group_id = data.terraform_remote_state.aws_internal_compute.outputs.htme_sg.id
+}
+
+resource "aws_security_group_rule" "htme_allow_ingress_prometheus" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allow prometheus ${var.secondary} to access HTME metrics"
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = 9100
+  to_port                  = 9100
+  security_group_id        = data.terraform_remote_state.aws_internal_compute.outputs.htme_sg.id
+  source_security_group_id = aws_security_group.prometheus.id
+}
+
+resource "aws_security_group_rule" "prometheus_allow_egress_historic_importer" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allow prometheus ${var.secondary} to access HDI metrics"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = 9100
+  to_port                  = 9100
+  security_group_id        = aws_security_group.prometheus.id
+  source_security_group_id = data.terraform_remote_state.aws_internal_compute.outputs.historic_importer_sg.id
+}
+
+resource "aws_security_group_rule" "historic_importer_allow_ingress_prometheus" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allow prometheus ${var.secondary} to access HDI metrics"
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = 9100
+  to_port                  = 9100
+  security_group_id        = data.terraform_remote_state.aws_internal_compute.outputs.historic_importer_sg.id
+  source_security_group_id = aws_security_group.prometheus.id
 }

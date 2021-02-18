@@ -2,7 +2,7 @@ data template_file "hbase_exporter" {
   count    = local.is_management_env ? 0 : 1
   template = file("${path.module}/config/json_exporter/hbase_config.yml")
   vars = {
-    metrics_bucket = data.terraform_remote_state.aws_analytical_dataset_generation.outputs.published_bucket.id
+    metrics_bucket = data.terraform_remote_state.common.outputs.published_bucket.id
     metrics_key    = "metrics/hbase-metrics.json"
   }
 }

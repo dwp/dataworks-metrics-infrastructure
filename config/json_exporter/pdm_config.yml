@@ -129,6 +129,6 @@ metrics:
   path: $.gauges.'state_step_9model'.value
 - name: state_step_10views
   path: $.gauges.'state_step_10views'.value
-- name: state_step_11create_pii_csv_files
-  path: $.gauges.'state_step_11create_pii_csv_files'.value
+- name: state_step_11create_views_tables
+  path: $.gauges.'state_step_11create-views-tables'.value
 
