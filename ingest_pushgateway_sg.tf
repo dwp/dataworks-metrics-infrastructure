@@ -54,9 +54,9 @@ resource "aws_security_group_rule" "allow_k2hb_egress_ingest_pushgateway" {
   source_security_group_id = aws_security_group.ingest_pushgateway[0].id
 }
 
-resource "aws_security_group_rule" "allow_k2hb_ingress_claiment_api_consumers_pushgateway" {
+resource "aws_security_group_rule" "allow_k2hb_ingress_claimant_api_consumers_pushgateway" {
   count                    = local.is_management_env ? 0 : 1
-  description              = "Allows claiment api consumers to access ingest pushgateway"
+  description              = "Allows claimant api consumers to access ingest pushgateway"
   type                     = "ingress"
   protocol                 = "tcp"
   from_port                = var.pushgateway_port
@@ -65,9 +65,9 @@ resource "aws_security_group_rule" "allow_k2hb_ingress_claiment_api_consumers_pu
   source_security_group_id = data.terraform_remote_state.aws_ucfs_claimant_consumer.outputs.claimant_api_kafka_consumer_sg.id
 }
 
-resource "aws_security_group_rule" "allow_claiment_api_consumers_egress_ingest_pushgateway" {
+resource "aws_security_group_rule" "allow_claimant_api_consumers_egress_ingest_pushgateway" {
   count                    = local.is_management_env ? 0 : 1
-  description              = "Allows claiment api consumers to access ingest pushgateway"
+  description              = "Allows claimant api consumers to access ingest pushgateway"
   type                     = "egress"
   protocol                 = "tcp"
   from_port                = var.pushgateway_port
