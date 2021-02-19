@@ -1,0 +1,9 @@
+jobs:
+  - name: cycle-ingest-pushgateway-integration
+    plan:
+      - .: (( inject meta.plan.admin-enable ))
+      - .: (( inject meta.plan.cycle-containers ))
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
+          CLUSTER: metrics
+          SERVICE: ingest-pushgateway
