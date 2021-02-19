@@ -7,6 +7,17 @@ resources:
     webhook_token: ((dataworks.concourse_github_webhook_token))
     check_every: 1m
 
+  - name: dataworks-metrics-infrastructure-update-pipeline
+    type: git
+    source:
+      branch: master
+      uri: https://github.com/dwp/dataworks-metrics-infrastructure.git
+      paths:
+        - ci/*
+        - aviator.yml
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+    check_every: 5m
+
   - name: dataworks-metrics-infrastructure
     type: git
     source:

@@ -8,9 +8,11 @@ groups:
       - production
       - management-dev
       - management
+
   - name: pull-request
     jobs:
       - dataworks-metrics-infrastructure-pr
+
   - name: admin-management
     jobs:
       - cycle-grafana-management
@@ -22,6 +24,7 @@ groups:
       - cycle-alertmanager-management
       - cycle-prometheus-management
       - cycle-cloudwatch-exporter-management
+
   - name: admin-management-dev
     jobs:
       - cycle-grafana-management-dev
@@ -33,6 +36,7 @@ groups:
       - cycle-alertmanager-management-dev
       - cycle-prometheus-management-dev
       - cycle-cloudwatch-exporter-management-dev
+
   - name: admin-development
     jobs:
       - cycle-prometheus-development
@@ -42,6 +46,8 @@ groups:
       - cycle-adg-pushgateway-development
       - cycle-sdx-pushgateway-development
       - cycle-htme-pushgateway-development
+      - cycle-ingest-pushgateway-development
+
   - name: admin-qa
     jobs:
       - cycle-prometheus-qa
@@ -51,6 +57,8 @@ groups:
       - cycle-adg-pushgateway-qa
       - cycle-sdx-pushgateway-qa
       - cycle-htme-pushgateway-qa
+      - cycle-ingest-pushgateway-qa
+
   - name: admin-integration
     jobs:
       - cycle-prometheus-integration
@@ -60,6 +68,8 @@ groups:
       - cycle-adg-pushgateway-integration
       - cycle-sdx-pushgateway-integration
       - cycle-htme-pushgateway-integration
+      - cycle-ingest-pushgateway-integration
+
   - name: admin-preprod
     jobs:
       - cycle-prometheus-preprod
@@ -69,6 +79,8 @@ groups:
       - cycle-adg-pushgateway-preprod
       - cycle-sdx-pushgateway-preprod
       - cycle-htme-pushgateway-preprod
+      - cycle-ingest-pushgateway-preprod
+
   - name: admin-production
     jobs:
       - cycle-prometheus-production
@@ -78,3 +90,8 @@ groups:
       - cycle-adg-pushgateway-production
       - cycle-sdx-pushgateway-production
       - cycle-htme-pushgateway-production
+      - cycle-ingest-pushgateway-production
+
+  - name: update-pipeline
+    jobs:
+      - update-pipeline
