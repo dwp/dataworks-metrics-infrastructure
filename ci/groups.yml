@@ -41,6 +41,7 @@ groups:
       - cycle-pdm-exporter-development
       - cycle-adg-pushgateway-development
       - cycle-sdx-pushgateway-development
+      - cycle-htme-pushgateway-development
   - name: admin-qa
     jobs:
       - cycle-prometheus-qa
@@ -49,6 +50,7 @@ groups:
       - cycle-pdm-exporter-qa
       - cycle-adg-pushgateway-qa
       - cycle-sdx-pushgateway-qa
+      - cycle-htme-pushgateway-qa
   - name: admin-integration
     jobs:
       - cycle-prometheus-integration
@@ -57,6 +59,7 @@ groups:
       - cycle-pdm-exporter-integration
       - cycle-adg-pushgateway-integration
       - cycle-sdx-pushgateway-integration
+      - cycle-htme-pushgateway-integration
   - name: admin-preprod
     jobs:
       - cycle-prometheus-preprod
@@ -65,6 +68,7 @@ groups:
       - cycle-pdm-exporter-preprod
       - cycle-adg-pushgateway-preprod
       - cycle-sdx-pushgateway-preprod
+      - cycle-htme-pushgateway-preprod
   - name: admin-production
     jobs:
       - cycle-prometheus-production
@@ -73,3 +77,4 @@ groups:
       - cycle-pdm-exporter-production
       - cycle-adg-pushgateway-production
       - cycle-sdx-pushgateway-production
+      - cycle-htme-pushgateway-production
