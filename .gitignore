@@ -18,7 +18,6 @@ aviator_pipeline.yml
 *.iml
 .idea/
 
-ci/jobs/*.yml
 modules/vpc/outputs.tf
 modules/vpc/vpc.tf
 config/grafana/provisioning/dashboards
