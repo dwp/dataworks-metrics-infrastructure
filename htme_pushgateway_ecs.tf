@@ -51,7 +51,7 @@ resource "aws_ecs_service" "htme_pushgateway" {
 
   network_configuration {
     security_groups = [aws_security_group.htme_pushgateway[local.primary_role_index].id]
-    subnets         = data.terraform_remote_state.aws_internal_compute.outputs.htme_subnet_new.ids
+    subnets         = data.terraform_remote_state.aws_internal_compute.outputs.htme_subnet.ids
   }
 
   service_registries {
