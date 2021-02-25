@@ -9,6 +9,7 @@ static:
           - Minimum
         period: 60
         length: 300
+
   - namespace: AWS/EC2
     name: security
     regions:
@@ -19,45 +20,119 @@ static:
           - Maximum
         period: 60
         length: 300
+
   - namespace: AWS/Events
-    name: adgTerminatedWithErrorsRule
+    name: adgFullFailed
     regions:
       - ${region}
     dimensions:
       - name: RuleName
-        value: adg_terminated_with_errors_rule
+        value: adg_full_failed
     metrics:
       - name: TriggeredRules
         statistics:
           - Sum
         period: 60
         length: 300
+
   - namespace: AWS/Events
-    name: adgSuccess
+    name: adgFullTerminated
     regions:
       - ${region}
     dimensions:
       - name: RuleName
-        value: adg_success
+        value: adg_full_terminated
     metrics:
       - name: TriggeredRules
         statistics:
           - Sum
         period: 60
         length: 300
+
   - namespace: AWS/Events
-    name: pdmTerminatedWithErrorsRule
+    name: adgFullSuccess
     regions:
       - ${region}
     dimensions:
       - name: RuleName
-        value: pdm_terminated_with_errors_rule
+        value: adg_full_success
     metrics:
       - name: TriggeredRules
         statistics:
           - Sum
         period: 60
         length: 300
+
+  - namespace: AWS/Events
+    name: adgIncrementalFailed
+    regions:
+      - ${region}
+    dimensions:
+      - name: RuleName
+        value: adg_incremental_failed
+    metrics:
+      - name: TriggeredRules
+        statistics:
+          - Sum
+        period: 60
+        length: 300
+
+  - namespace: AWS/Events
+    name: adgIncrementalTerminated
+    regions:
+      - ${region}
+    dimensions:
+      - name: RuleName
+        value: adg_incremental_terminated
+    metrics:
+      - name: TriggeredRules
+        statistics:
+          - Sum
+        period: 60
+        length: 300
+
+  - namespace: AWS/Events
+    name: adgIncrementalSuccess
+    regions:
+      - ${region}
+    dimensions:
+      - name: RuleName
+        value: adg_incremental_success
+    metrics:
+      - name: TriggeredRules
+        statistics:
+          - Sum
+        period: 60
+        length: 300
+
+  - namespace: AWS/Events
+    name: pdmFailed
+    regions:
+      - ${region}
+    dimensions:
+      - name: RuleName
+        value: pdm_failed
+    metrics:
+      - name: TriggeredRules
+        statistics:
+          - Sum
+        period: 60
+        length: 300
+
+  - namespace: AWS/Events
+    name: pdmTerminated
+    regions:
+      - ${region}
+    dimensions:
+      - name: RuleName
+        value: pdm_terminated
+    metrics:
+      - name: TriggeredRules
+        statistics:
+          - Sum
+        period: 60
+        length: 300
+
   - namespace: AWS/Events
     name: pdmSuccess
     regions:
