@@ -44,8 +44,8 @@ variable "prometheus_task_cpu" {
     qa             = "1024"
     integration    = "1024"
     preprod        = "1024"
-    production     = "2048"
-    management     = "2048"
+    production     = "4096"
+    management     = "4096"
     management-dev = "1024"
   }
 }
@@ -56,8 +56,8 @@ variable "prometheus_task_memory" {
     qa             = "4096"
     integration    = "4096"
     preprod        = "4096"
-    production     = "8192"
-    management     = "8192"
+    production     = "16384"
+    management     = "16384"
     management-dev = "4096"
   }
 }
