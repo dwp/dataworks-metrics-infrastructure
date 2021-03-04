@@ -136,8 +136,8 @@ variable "prometheus_cpu" {
     qa             = "256"
     integration    = "256"
     preprod        = "256"
-    production     = "512"
-    management     = "512"
+    production     = "1024"
+    management     = "1024"
     management-dev = "256"
   }
 }
@@ -148,8 +148,8 @@ variable "receiver_cpu" {
     qa             = "256"
     integration    = "256"
     preprod        = "256"
-    production     = "512"
-    management     = "512"
+    production     = "1024"
+    management     = "1024"
     management-dev = "256"
   }
 }
@@ -160,8 +160,8 @@ variable "receiver_memory" {
     qa             = "2048"
     integration    = "2048"
     preprod        = "2048"
-    production     = "4096"
-    management     = "4096"
+    production     = "8192"
+    management     = "8192"
     management-dev = "2048"
   }
 }
@@ -172,8 +172,8 @@ variable "prometheus_memory" {
     qa             = "2048"
     integration    = "2048"
     preprod        = "2048"
-    production     = "4096"
-    management     = "4096"
+    production     = "8192"
+    management     = "8192"
     management-dev = "2048"
   }
 }
@@ -262,8 +262,8 @@ variable "metrics_ecs_cluster_ec2_size" {
     qa             = "t3.large"
     integration    = "t3.large"
     preprod        = "t3.large"
-    production     = "t3.xlarge"
-    management     = "t3.xlarge"
+    production     = "t3.2xlarge"
+    management     = "t3.2xlarge"
     management-dev = "t3.large"
   }
 }
