@@ -63,7 +63,7 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_hbase_exporter"
   source_security_group_id = aws_security_group.hbase_exporter[0].id
 }
 
-resource "aws_security_group_rule" "allow_192976_egress_htme_pushgateway" {
+resource "aws_security_group_rule" "allow_metrics_cluster_egress_htme_pushgateway" {
   count                    = local.is_management_env ? 0 : 1
   description              = "Allows metrics cluster to access HTME pushgateway"
   type                     = "egress"
