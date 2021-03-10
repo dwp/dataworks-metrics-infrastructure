@@ -72,6 +72,8 @@ scrape_configs:
         action: replace
       - source_labels: [__meta_ec2_instance_id]
         target_label: instance_id
+      - source_labels: [__meta_ec2_tag_Correlation_Id]
+        target_label: correlation_id
 
   - job_name: emr-node-exporter
     honor_timestamps: true
@@ -103,6 +105,8 @@ scrape_configs:
         target_label: instance_id
       - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
         target_label: cluster_id
+      - source_labels: [__meta_ec2_tag_Correlation_Id]
+        target_label: correlation_id
 
   - job_name: ADG-node-exporter
     honor_timestamps: true
@@ -136,6 +140,8 @@ scrape_configs:
         target_label: cluster_id
       - source_labels: [__meta_ec2_tag_snapshot_type]
         target_label: cluster_role
+      - source_labels: [__meta_ec2_tag_Correlation_Id]
+        target_label: correlation_id
 
   - job_name: PDM-node-exporter
     honor_timestamps: true
@@ -167,6 +173,8 @@ scrape_configs:
         target_label: instance_id
       - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
         target_label: cluster_id
+      - source_labels: [__meta_ec2_tag_Correlation_Id]
+        target_label: correlation_id
 
   - job_name: hdfs-namenode
     honor_timestamps: true
@@ -196,6 +204,8 @@ scrape_configs:
         target_label: cluster_id
       - source_labels: [__meta_ec2_tag_snapshot_type]
         target_label: cluster_role
+      - source_labels: [__meta_ec2_tag_Correlation_Id]
+        target_label: correlation_id
 
   - job_name: hdfs-datanode
     honor_timestamps: true
@@ -225,6 +235,8 @@ scrape_configs:
         target_label: cluster_id
       - source_labels: [__meta_ec2_tag_snapshot_type]
         target_label: cluster_role
+      - source_labels: [__meta_ec2_tag_Correlation_Id]
+        target_label: correlation_id
 
   - job_name: yarn-resource-manager
     honor_timestamps: true
@@ -254,6 +266,8 @@ scrape_configs:
         target_label: cluster_id
       - source_labels: [__meta_ec2_tag_snapshot_type]
         target_label: cluster_role
+      - source_labels: [__meta_ec2_tag_Correlation_Id]
+        target_label: correlation_id
 
   - job_name: yarn-node-manager
     honor_timestamps: true
@@ -283,6 +297,8 @@ scrape_configs:
         target_label: cluster_id
       - source_labels: [__meta_ec2_tag_snapshot_type]
         target_label: cluster_role
+      - source_labels: [__meta_ec2_tag_Correlation_Id]
+        target_label: correlation_id
 
 remote_write:
   - url: http://localhost:10903/api/v1/receive
