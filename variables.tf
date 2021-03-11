@@ -40,81 +40,81 @@ variable "platform_version" {
 
 variable "prometheus_task_cpu" {
   default = {
-    development    = "1024"
-    qa             = "1024"
-    integration    = "1024"
-    preprod        = "1024"
+    development    = "4096"
+    qa             = "4096"
+    integration    = "4096"
+    preprod        = "4096"
     production     = "4096"
     management     = "4096"
-    management-dev = "1024"
+    management-dev = "4096"
   }
 }
 
 variable "prometheus_task_memory" {
   default = {
-    development    = "4096"
-    qa             = "4096"
-    integration    = "4096"
-    preprod        = "4096"
+    development    = "16384"
+    qa             = "16384"
+    integration    = "16384"
+    preprod        = "16384"
     production     = "16384"
     management     = "16384"
-    management-dev = "4096"
+    management-dev = "16384"
   }
 }
 
 variable "store_cpu" {
   default = {
     management     = "2048"
-    management-dev = "1024"
+    management-dev = "2048"
   }
 }
 
 variable "store_memory" {
   default = {
     management     = "4096"
-    management-dev = "2048"
+    management-dev = "4096"
   }
 }
 
 variable "store_task_cpu" {
   default = {
     management     = "2048"
-    management-dev = "1024"
+    management-dev = "2048"
   }
 }
 
 variable "store_task_memory" {
   default = {
     management     = "4096"
-    management-dev = "2048"
+    management-dev = "4096"
   }
 }
 
 variable "query_cpu" {
   default = {
     management     = "4096"
-    management-dev = "2048"
+    management-dev = "4096"
   }
 }
 
 variable "query_memory" {
   default = {
     management     = "8192"
-    management-dev = "4096"
+    management-dev = "8192"
   }
 }
 
 variable "query_task_cpu" {
   default = {
     management     = "4096"
-    management-dev = "2048"
+    management-dev = "4096"
   }
 }
 
 variable "query_task_memory" {
   default = {
     management     = "8192"
-    management-dev = "4096"
+    management-dev = "8192"
   }
 }
 
@@ -132,49 +132,49 @@ variable "ec2_memory" {
 
 variable "prometheus_cpu" {
   default = {
-    development    = "256"
-    qa             = "256"
-    integration    = "256"
-    preprod        = "256"
+    development    = "1024"
+    qa             = "1024"
+    integration    = "1024"
+    preprod        = "1024"
     production     = "1024"
     management     = "1024"
-    management-dev = "256"
+    management-dev = "1024"
   }
 }
 
 variable "receiver_cpu" {
   default = {
-    development    = "256"
-    qa             = "256"
-    integration    = "256"
-    preprod        = "256"
+    development    = "1024"
+    qa             = "1024"
+    integration    = "1024"
+    preprod        = "1024"
     production     = "1024"
     management     = "1024"
-    management-dev = "256"
+    management-dev = "1024"
   }
 }
 
 variable "receiver_memory" {
   default = {
-    development    = "2048"
-    qa             = "2048"
-    integration    = "2048"
-    preprod        = "2048"
+    development    = "8192"
+    qa             = "8192"
+    integration    = "8192"
+    preprod        = "8192"
     production     = "8192"
     management     = "8192"
-    management-dev = "2048"
+    management-dev = "8192"
   }
 }
 
 variable "prometheus_memory" {
   default = {
-    development    = "2048"
-    qa             = "2048"
-    integration    = "2048"
-    preprod        = "2048"
+    development    = "8192"
+    qa             = "8192"
+    integration    = "8192"
+    preprod        = "8192"
     production     = "8192"
     management     = "8192"
-    management-dev = "2048"
+    management-dev = "8192"
   }
 }
 
@@ -258,13 +258,13 @@ variable "image_versions" {
 
 variable "metrics_ecs_cluster_ec2_size" {
   default = {
-    development    = "t3.large"
-    qa             = "t3.large"
-    integration    = "t3.large"
-    preprod        = "t3.large"
+    development    = "t3.2xlarge"
+    qa             = "t3.2xlarge"
+    integration    = "t3.2xlarge"
+    preprod        = "t3.2xlarge"
     production     = "t3.2xlarge"
     management     = "t3.2xlarge"
-    management-dev = "t3.large"
+    management-dev = "t3.2xlarge"
   }
 }
 
