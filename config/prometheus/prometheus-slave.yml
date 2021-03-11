@@ -214,6 +214,21 @@ scrape_configs:
         target_label: instance
         replacement: $1
         action: replace
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-pdm-dataset-generator"
+        target_label: application
+        replacement: "PDM"
+        action: replace
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-analytical-dataset-generator"
+        target_label: application
+        replacement: "ADG"
+        action: replace
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-analytical-env"
+        target_label: application
+        replacement: "AE"
+        action: replace
       - source_labels: [__meta_ec2_instance_id]
         target_label: instance_id
       - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
@@ -248,6 +263,21 @@ scrape_configs:
         regex: (.*)
         target_label: instance
         replacement: $1
+        action: replace
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-pdm-dataset-generator"
+        target_label: application
+        replacement: "PDM"
+        action: replace
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-analytical-dataset-generator"
+        target_label: application
+        replacement: "ADG"
+        action: replace
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-analytical-env"
+        target_label: application
+        replacement: "AE"
         action: replace
       - source_labels: [__meta_ec2_instance_id]
         target_label: instance_id
@@ -284,6 +314,21 @@ scrape_configs:
         target_label: instance
         replacement: $1
         action: replace
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-pdm-dataset-generator"
+        target_label: application
+        replacement: "PDM"
+        action: replace
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-analytical-dataset-generator"
+        target_label: application
+        replacement: "ADG"
+        action: replace
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-analytical-env"
+        target_label: application
+        replacement: "AE"
+        action: replace
       - source_labels: [__meta_ec2_instance_id]
         target_label: instance_id
       - source_labels: [__meta_ec2_tag_aws_elasticmapreduce_job_flow_id]
@@ -318,6 +363,21 @@ scrape_configs:
         regex: (.*)
         target_label: instance
         replacement: $1
+        action: replace
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-pdm-dataset-generator"
+        target_label: application
+        replacement: "PDM"
+        action: replace
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-analytical-dataset-generator"
+        target_label: application
+        replacement: "ADG"
+        action: replace
+      - source_labels: [__meta_ec2_tag_Application]
+        regex: "aws-analytical-env"
+        target_label: application
+        replacement: "AE"
         action: replace
       - source_labels: [__meta_ec2_instance_id]
         target_label: instance_id
