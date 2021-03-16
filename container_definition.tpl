@@ -8,7 +8,7 @@
   "user": "${user}",
   "linuxParameters": {
     "initProcessEnabled": true
-  }
+  },
   "portMappings": ${jsonencode([
     for port in jsondecode(ports) : {
       containerPort = port,
