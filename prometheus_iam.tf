@@ -163,13 +163,11 @@ data "aws_iam_policy_document" "monitoring_bucket_read_write" {
 }
 
 resource "aws_iam_role_policy_attachment" "prometheus_ecs_exec" {
-  count      = local.is_management_env ? 1 : 0
-  role       = aws_iam_role.prometheus[local.primary_role_index].name
-  policy_arn = aws_iam_policy.prometheus_ecs_exec[local.primary_role_index].arn
+  role       = aws_iam_role.prometheus.name
+  policy_arn = aws_iam_policy.prometheus_ecs_exec.arn
 }
 
 resource "aws_iam_policy" "prometheus_ecs_exec" {
-  count       = local.is_management_env ? 1 : 0
   name        = "PrometheusECSExecPolicy"
   description = "Allow Prometheus container to exec from cli"
   policy      = data.aws_iam_policy_document.prometheus_ecs_exec.json

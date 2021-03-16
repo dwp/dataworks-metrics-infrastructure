@@ -95,8 +95,8 @@ data "aws_iam_policy_document" "cloudwatch_exporter_read_cloudwatch" {
 }
 
 resource "aws_iam_role_policy_attachment" "cloudwatch_exporter_ecs_exec" {
-  role       = aws_iam_role.cloudwatch_exporter[local.primary_role_index].name
-  policy_arn = aws_iam_policy.cloudwatch_exporter_ecs_exec[local.primary_role_index].arn
+  role       = aws_iam_role.cloudwatch_exporter.name
+  policy_arn = aws_iam_policy.cloudwatch_exporter_ecs_exec.arn
 }
 
 resource "aws_iam_policy" "cloudwatch_exporter_ecs_exec" {
