@@ -6,6 +6,9 @@
   "name": "${name}",
   "networkMode": "awsvpc",
   "user": "${user}",
+  "linuxParameters": {
+    "initProcessEnabled": true
+  }
   "portMappings": ${jsonencode([
     for port in jsondecode(ports) : {
       containerPort = port,
