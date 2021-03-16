@@ -161,3 +161,31 @@ data "aws_iam_policy_document" "monitoring_bucket_read_write" {
     ]
   }
 }
+
+resource "aws_iam_role_policy_attachment" "prometheus_ecs_exec" {
+  role       = aws_iam_role.prometheus.name
+  policy_arn = aws_iam_policy.prometheus_ecs_exec.arn
+}
+
+resource "aws_iam_policy" "prometheus_ecs_exec" {
+  name        = "PrometheusECSExecPolicy"
+  description = "Allow Prometheus container to exec from cli"
+  policy      = data.aws_iam_policy_document.prometheus_ecs_exec.json
+}
+
+data "aws_iam_policy_document" "prometheus_ecs_exec" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ssmmessages:CreateControlChannel",
+      "ssmmessages:CreateDataChannel",
+      "ssmmessages:OpenControlChannel",
+      "ssmmessages:OpenDataChannel"
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+}

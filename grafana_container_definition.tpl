@@ -7,6 +7,9 @@
   "networkMode": "awsvpc",
   "user": "${user}",
   "essential": ${essential},
+  "linuxParameters": {
+    "initProcessEnabled": true
+  },
   "entryPoint": ["/bin/sh", "-c", "echo '${entrypoint}' | base64 -d | sh;"],
   "portMappings": ${jsonencode([
     for port in jsondecode(ports) : {

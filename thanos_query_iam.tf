@@ -68,3 +68,33 @@ data "aws_iam_policy_document" "thanos_query_read_config" {
     ]
   }
 }
+
+resource "aws_iam_role_policy_attachment" "thanos_query_ecs_exec" {
+  count      = local.is_management_env ? 1 : 0
+  role       = aws_iam_role.thanos_query[local.primary_role_index].name
+  policy_arn = aws_iam_policy.thanos_query_ecs_exec[local.primary_role_index].arn
+}
+
+resource "aws_iam_policy" "thanos_query_ecs_exec" {
+  count       = local.is_management_env ? 1 : 0
+  name        = "ThanosQueryECSExecPolicy"
+  description = "Allow ThanosQuery container to exec from cli"
+  policy      = data.aws_iam_policy_document.thanos_query_ecs_exec.json
+}
+
+data "aws_iam_policy_document" "thanos_query_ecs_exec" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ssmmessages:CreateControlChannel",
+      "ssmmessages:CreateDataChannel",
+      "ssmmessages:OpenControlChannel",
+      "ssmmessages:OpenDataChannel"
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+}

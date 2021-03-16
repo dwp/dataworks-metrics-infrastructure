@@ -122,3 +122,33 @@ data "aws_iam_policy_document" "pdm_exporter_read_metrics" {
     ]
   }
 }
+
+resource "aws_iam_role_policy_attachment" "pdm_exporter_ecs_exec" {
+  count      = local.is_management_env ? 0 : 1
+  role       = aws_iam_role.pdm_exporter[local.primary_role_index].name
+  policy_arn = aws_iam_policy.pdm_exporter_ecs_exec[local.primary_role_index].arn
+}
+
+resource "aws_iam_policy" "pdm_exporter_ecs_exec" {
+  count       = local.is_management_env ? 0 : 1
+  name        = "PDMExporterECSExecPolicy"
+  description = "Allow PDMExporter container to exec from cli"
+  policy      = data.aws_iam_policy_document.pdm_exporter_ecs_exec.json
+}
+
+data "aws_iam_policy_document" "pdm_exporter_ecs_exec" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ssmmessages:CreateControlChannel",
+      "ssmmessages:CreateDataChannel",
+      "ssmmessages:OpenControlChannel",
+      "ssmmessages:OpenDataChannel"
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+}
