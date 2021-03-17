@@ -146,3 +146,55 @@ static:
           - Sum
         period: 60
         length: 300
+
+  - namespace: AWS/Lambda
+    name: adgEMRLauncherInvocations
+    regions:
+      - ${region}
+    dimensions:
+      - name: FunctionName
+        value: adg_emr_launcher
+    metrics:
+      - name: Invocations
+        statistics:
+          - Sum
+        period: 60
+        length: 300
+
+discovery:
+  exportedTagsOnMetrics:
+    lambda:
+      - Application
+  jobs:
+  - type: lambda
+    regions:
+      - ${region}
+    searchTags:
+      - key: Application
+        value: ^(.*)$
+    metrics:
+      - name: Invocations
+        statistics:
+        - Sum
+        period: 60
+        length: 300
+      - name: Throttles
+        statistics:
+        - Sum
+        period: 60
+        length: 300
+      - name: Duration
+        statistics:
+        - Max
+        period: 60
+        length: 300
+      - name: ConcurrentExecutions
+        statistics:
+        - Max
+        period: 60
+        length: 300
+      - name: Errors
+        statistics:
+        - Sum
+        period: 60
+        length: 300
