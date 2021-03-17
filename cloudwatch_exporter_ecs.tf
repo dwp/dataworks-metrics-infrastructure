@@ -38,11 +38,11 @@ data "template_file" "cloudwatch_exporter_definition" {
       },
       {
         "name" : "HTTP_PROXY",
-        "value" : "http://${aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name}:${var.internet_proxy_port}"
+        "value" : "http://${aws_vpc_endpoint.internet_proxy.dns_entry.dns_name}:${var.internet_proxy_port}"
       },
       {
         "name" : "HTTPS_PROXY",
-        "value" : "http://${aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name}:${var.internet_proxy_port}"
+        "value" : "http://${aws_vpc_endpoint.internet_proxy.dns_entry.dns_name}:${var.internet_proxy_port}"
       },
     ])
   }
