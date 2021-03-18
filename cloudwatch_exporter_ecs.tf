@@ -37,12 +37,16 @@ data "template_file" "cloudwatch_exporter_definition" {
         "value" : "${md5(data.template_file.cloudwatch_exporter.rendered)}"
       },
       {
+        "name" : "NO_PROXY",
+        "value" : "localhost,127.0.0.1,s3.${var.region}.amazonaws.com,secretsmanager.${var.region}.amazonaws.com,${local.environment}.services.${var.parent_domain_name}"
+      },
+      {
         "name" : "HTTP_PROXY",
-        "value" : "http://${aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name}:${var.internet_proxy_port}"
+        "value" : "http://${aws_vpc_endpoint.internet_proxy_non_mgmt[0].dns_entry[0].dns_name}:${var.internet_proxy_port}"
       },
       {
         "name" : "HTTPS_PROXY",
-        "value" : "http://${aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name}:${var.internet_proxy_port}"
+        "value" : "http://${aws_vpc_endpoint.internet_proxy_non_mgmt[0].dns_entry[0].dns_name}:${var.internet_proxy_port}"
       },
     ])
   }

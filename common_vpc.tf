@@ -108,3 +108,45 @@ resource "aws_security_group_rule" "alertmanager_ingress_internet_proxy" {
   source_security_group_id = aws_security_group.alertmanager[0].id
   security_group_id        = aws_security_group.internet_proxy_endpoint[0].id
 }
+
+
+resource "aws_security_group" "internet_proxy_endpoint_non_mgmt" {
+  count       = local.is_management_env ? 0 : 1
+  name        = "proxy_vpc_endpoint_non_mgmt"
+  description = "Control access to the Internet Proxy VPC Endpoint"
+  vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
+  tags        = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_vpc_endpoint" "internet_proxy_non_mgmt" {
+  count               = local.is_management_env ? 0 : 1
+  vpc_id              = module.vpc.outputs.vpcs[local.primary_role_index].id
+  service_name        = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
+  vpc_endpoint_type   = "Interface"
+  security_group_ids  = [aws_security_group.internet_proxy_endpoint_non_mgmt[local.primary_role_index].id]
+  subnet_ids          = module.vpc.outputs.private_subnets[local.primary_role_index]
+  private_dns_enabled = false
+  tags                = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_security_group_rule" "cloudwatch_exporter_egress_internet_proxy_non_mgmt" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allow cloudwatch_exporter internet access via the proxy"
+  type                     = "egress"
+  from_port                = var.internet_proxy_port
+  to_port                  = var.internet_proxy_port
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.internet_proxy_endpoint_non_mgmt[0].id
+  security_group_id        = aws_security_group.cloudwatch_exporter.id
+}
+
+resource "aws_security_group_rule" "cloudwatch_exporter_ingress_internet_proxy_non_mgmt" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allow proxy access from cloudwatch_exporter"
+  type                     = "ingress"
+  from_port                = var.internet_proxy_port
+  to_port                  = var.internet_proxy_port
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.cloudwatch_exporter.id
+  security_group_id        = aws_security_group.internet_proxy_endpoint_non_mgmt[0].id
+}

@@ -121,3 +121,31 @@ data "aws_iam_policy_document" "cloudwatch_exporter_ecs_exec" {
     ]
   }
 }
+
+resource "aws_iam_role_policy_attachment" "cloudwatch_exporter_describe_ec2" {
+  role       = aws_iam_role.cloudwatch_exporter.name
+  policy_arn = aws_iam_policy.cloudwatch_exporter_describe_ec2.arn
+}
+
+resource "aws_iam_policy" "cloudwatch_exporter_describe_ec2" {
+  name        = "CloudwatchExporterEC2DescribePolicy"
+  description = "Allow CloudwatchExporter container to describe EC2 instances"
+  policy      = data.aws_iam_policy_document.cloudwatch_exporter_describe_ec2.json
+}
+
+data "aws_iam_policy_document" "cloudwatch_exporter_describe_ec2" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ec2:DescribeTags",
+      "ec2:DescribeInstances",
+      "ec2:DescribeRegions",
+      "ec2:DescribeTransitGateway*"
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+}
