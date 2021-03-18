@@ -91,7 +91,7 @@ resource "aws_security_group_rule" "test_egress_internet_proxy" {
   from_port                = var.internet_proxy_port
   to_port                  = var.internet_proxy_port
   protocol                 = "tcp"
-  source_security_group_id = aws_security_group.internet_proxy_endpoint_test.id
+  source_security_group_id = aws_security_group.internet_proxy_endpoint_test[0].id
   security_group_id        = aws_security_group.cloudwatch_exporter.id
 }
 
@@ -103,7 +103,7 @@ resource "aws_security_group_rule" "test_ingress_internet_proxy" {
   to_port                  = var.internet_proxy_port
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.cloudwatch_exporter.id
-  security_group_id        = aws_security_group.internet_proxy_endpoint_test.id
+  security_group_id        = aws_security_group.internet_proxy_endpoint_test[0].id
 }
 
 resource "aws_security_group_rule" "grafana_egress_internet_proxy" {
