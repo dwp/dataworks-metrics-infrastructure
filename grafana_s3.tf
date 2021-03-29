@@ -69,6 +69,9 @@ data template_file "YARN_Node_Manager" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/YARN-Node_Manager.json")
 }
 
+data template_file "htme_dashboard" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/htme_dashboard.json")
+}
 
 
 resource "aws_s3_bucket_object" "grafana" {
@@ -211,6 +214,15 @@ resource "aws_s3_bucket_object" "YARN_Node_Manager" {
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/grafana/provisioning/dashboards/private/EMR/YARN_Node_Manager.json"
   content    = data.template_file.YARN_Node_Manager.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_s3_bucket_object" "htme_dashboard" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/private/htme_dashboard.json"
+  content    = data.template_file.htme_dashboard.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   tags       = merge(local.tags, { Name = var.name })
 }
