@@ -245,7 +245,7 @@ variable "image_versions" {
     prometheus            = "0.0.15"
     thanos                = "0.0.23"
     alertmanager          = "0.0.5"
-    ecs-service-discovery = "0.0.3"
+    ecs-service-discovery = "0.0.4"
     grafana               = "0.0.12"
     cloudwatch-exporter   = "0.0.5"
     prom-pushgateway      = "0.0.56"
