@@ -73,7 +73,6 @@ data template_file "htme_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/htme_dashboard.json")
 }
 
-
 resource "aws_s3_bucket_object" "grafana" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
