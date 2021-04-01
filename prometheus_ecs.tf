@@ -119,12 +119,12 @@ data "template_file" "cloudwatch_agent_definition" {
   template = file("${path.module}/reserved_container_definition.tpl")
   vars = {
     name               = "cloudwatch-agent"
-    group_name         = "cloudwatch-agent"
+    group_name         = "cloudwatch_agent"
     cpu                = var.fargate_cpu
     image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_ecs_cloudwatch_agent_url, var.image_versions.cloudwatch-agent)
     memory             = var.ec2_memory
     memory_reservation = var.fargate_memory
-    user               = "cwagent"
+    user               = "root"
     ports              = jsonencode([])
     ulimits            = jsonencode([])
     log_group          = aws_cloudwatch_log_group.monitoring_metrics.name
