@@ -18,7 +18,7 @@ data "template_file" "blackbox_nifi_definition" {
     name          = "blackbox-nifi"
     group_name    = "blackbox"
     cpu           = var.fargate_cpu
-    image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_blackbox_url, var.image_versions.blackbox)
+    image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_blackbox_exporter_url, var.image_versions.blackbox)
     memory        = var.fargate_memory
     user          = "root"
     ports         = jsonencode([9115])
