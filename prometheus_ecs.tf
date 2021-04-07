@@ -134,16 +134,12 @@ data "template_file" "cloudwatch_agent_definition" {
 
     mount_points = jsonencode([
       {
-        "container_path" : "/prometheus/ecs",
+        "container_path" : "/prometheus",
         "source_volume" : "prometheus"
       }
     ])
 
     environment_variables = jsonencode([
-      {
-        "name" : "SERVICE_DISCOVERY_DIRECTORY",
-        "value" : "/prometheus/ecs"
-      },
       {
         "name" : "AWS_DEFAULT_REGION",
         "value" : "eu-west-2"
@@ -158,6 +154,7 @@ data "template_file" "cloudwatch_agent_definition" {
       }
     ])
   }
+  
 }
 
 data "template_file" "thanos_receiver_prometheus_definition" {

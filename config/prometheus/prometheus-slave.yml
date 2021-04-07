@@ -48,6 +48,22 @@ scrape_configs:
         replacement: $1
         action: replace
 
+  - job_name: cloudwatch-agent
+    scrape_interval: 1m
+    file_sd_configs:
+      - files:
+          - /prometheus/ecs/cwagent_ecs_auto_sd.yaml
+    # relabel_configs:
+    #   - source_labels: [metrics_path]
+    #     action: replace
+    #     target_label: __metrics_path__
+    #     regex: (.+)
+    #   - source_labels: [job]
+    #     regex: (.*)
+    #     target_label: instance
+    #     replacement: $1
+    #     action: replace
+
   - job_name: global-node-exporter
     honor_timestamps: true
     scrape_interval: 1m
