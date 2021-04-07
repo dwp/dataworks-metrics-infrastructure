@@ -3,8 +3,6 @@ data template_file "blackbox_nifi" {
   vars = {
     parent_domain_name = var.parent_domain_name
     environment        = local.environment
-    nifi_endpoint      = local.nifi_endpoint_url
-    blackbox_origin    = "blackbox-nifi.${local.environment}.sdx.services.${var.parent_domain_name}"
   }
 }
 

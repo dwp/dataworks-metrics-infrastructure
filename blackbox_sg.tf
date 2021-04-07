@@ -31,3 +31,14 @@ resource "aws_security_group_rule" "allow_prometheus_ingress_blackbox_nifi" {
   security_group_id        = aws_security_group.blackbox[0].id
   source_security_group_id = aws_security_group.prometheus.id
 }
+
+resource "aws_security_group_rule" "allow_prometheus_egress_blackbox_nifi" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allows blackbox nifi to access prometheus"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = 9115
+  to_port                  = 9115
+  security_group_id        = aws_security_group.prometheus.id
+  source_security_group_id = aws_security_group.blackbox[0].id
+}
