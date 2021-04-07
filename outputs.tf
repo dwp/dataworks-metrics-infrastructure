@@ -22,6 +22,10 @@ output "sdx_pushgateway_security_group" {
   value = local.is_management_env ? null_resource.dummy.id : aws_security_group.sdx_pushgateway[0].id
 }
 
+output "blackbox_nifi_security_group" {
+  value = local.is_management_env ? null_resource.dummy.id : aws_security_group.blackbox[0].id
+}
+
 output "sdx_pushgateway_hostname" {
   value = local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.sdx_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.sdx_services[0].name}"
 }
