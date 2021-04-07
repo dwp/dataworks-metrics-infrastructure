@@ -551,7 +551,7 @@ locals {
       AmazonECSManaged  = ""
     }
   )
-  nifi_endpoint_url = data.terraform_remote_state.snapshot_sender.outputs.nifi_endpoint_url
+  nifi_endpoint_url = local.is_management_env ? null_resource.dummy.id : data.terraform_remote_state.snapshot_sender.outputs.nifi_endpoint_url
 }
 
 data "aws_iam_user" "breakglass" {
