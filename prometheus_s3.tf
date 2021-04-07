@@ -4,7 +4,7 @@ data template_file "prometheus" {
     parent_domain_name = var.parent_domain_name
     environment        = local.environment
     nifi_endpoint      = local.nifi_endpoint_url
-    blackbox_hostname  = "${aws_service_discovery_service.blackbox[0].name}.${aws_service_discovery_private_dns_namespace.sdx_services[0].name}"
+    blackbox_hostname  = local.blackbox_hostname
   }
 }
 
