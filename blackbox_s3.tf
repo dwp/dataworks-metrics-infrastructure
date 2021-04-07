@@ -1,5 +1,5 @@
 data template_file "blackbox" {
-  template = file("${path.module}/config/blackbox/blackbox-nifi.yml")
+  template = file("${path.module}/config/blackbox/blackbox.yml")
   vars = {
     parent_domain_name = var.parent_domain_name
     environment        = local.environment
