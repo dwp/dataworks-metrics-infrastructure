@@ -7,15 +7,15 @@ resource "aws_ecs_task_definition" "blackbox" {
   memory                   = "1024"
   task_role_arn            = aws_iam_role.blackbox[0].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
-  container_definitions    = "[${data.template_file.blackbox_nifi_definition[0].rendered}]"
+  container_definitions    = "[${data.template_file.blackbox_definition[0].rendered}]"
   tags                     = merge(local.tags, { Name = var.name })
 }
 
-data "template_file" "blackbox_nifi_definition" {
+data "template_file" "blackbox_definition" {
   count    = local.is_management_env ? 0 : 1
   template = file("${path.module}/container_definition.tpl")
   vars = {
-    name          = "blackbox-nifi"
+    name          = "blackbox"
     group_name    = "blackbox"
     cpu           = var.fargate_cpu
     image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_blackbox_exporter_url, var.image_versions.blackbox)
@@ -31,7 +31,7 @@ data "template_file" "blackbox_nifi_definition" {
     environment_variables = jsonencode([
       {
         "name" : "BLACKBOX_CONFIG_CHANGE_DEPENDENCY",
-        "value" : "${md5(data.template_file.blackbox_nifi.rendered)}"
+        "value" : "${md5(data.template_file.blackbox.rendered)}"
       },
       {
         name  = "PROMETHEUS",
