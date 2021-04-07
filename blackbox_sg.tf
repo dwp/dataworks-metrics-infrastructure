@@ -1,7 +1,7 @@
 resource "aws_security_group" "blackbox" {
   count       = local.is_management_env ? 0 : 1
   name        = "blackbox"
-  description = "Rules necesary for pulling container image and accessing other blackbox instances"
+  description = "Rules necesary for pulling container image and accessing blackbox instances"
   vpc_id      = data.terraform_remote_state.aws_sdx.outputs.vpc.vpc.id
   tags        = merge(local.tags, { Name = "blackbox" })
 

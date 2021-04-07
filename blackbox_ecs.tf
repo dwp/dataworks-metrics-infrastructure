@@ -3,11 +3,11 @@ resource "aws_ecs_task_definition" "blackbox" {
   family                   = "blackbox"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "1024"
+  cpu                      = "512"
   memory                   = "1024"
-  task_role_arn            = aws_iam_role.blackbox[local.primary_role_index].arn
+  task_role_arn            = aws_iam_role.blackbox[0].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
-  container_definitions    = "[${data.template_file.blackbox_nifi_definition[local.primary_role_index].rendered}]"
+  container_definitions    = "[${data.template_file.blackbox_nifi_definition[0].rendered}]"
   tags                     = merge(local.tags, { Name = var.name })
 }
 
@@ -47,9 +47,9 @@ data "template_file" "blackbox_nifi_definition" {
 
 resource "aws_ecs_service" "blackbox" {
   count                              = local.is_management_env ? 0 : 1
-  name                               = "blackbox"
+  name                               = "blackbox-nifi"
   cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition                    = aws_ecs_task_definition.blackbox[local.primary_role_index].arn
+  task_definition                    = aws_ecs_task_definition.blackbox[0].arn
   platform_version                   = var.platform_version
   desired_count                      = 1
   launch_type                        = "FARGATE"
@@ -62,8 +62,8 @@ resource "aws_ecs_service" "blackbox" {
   }
 
   service_registries {
-    registry_arn   = aws_service_discovery_service.blackbox[local.primary_role_index].arn
-    container_name = "blackbox"
+    registry_arn   = aws_service_discovery_service.blackbox[0].arn
+    container_name = "blackbox-nifi"
   }
 
   tags = merge(local.tags, { Name = var.name })
