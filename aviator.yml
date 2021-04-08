@@ -37,7 +37,7 @@ spruce:
         regexp: ".*.yml"
       - with_in: ci/jobs/cycle-containers/ingest-pushgateway/
         regexp: ".*.yml"
-      - with_in: ci/jobs/cycle-containers/blackbox-nifi/
+      - with_in: ci/jobs/cycle-containers/blackbox/
         regexp: ".*.yml"
     to: aviator_pipeline.yml
 fly:

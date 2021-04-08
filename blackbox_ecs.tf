@@ -36,10 +36,6 @@ data "template_file" "blackbox_definition" {
       {
         name  = "PROMETHEUS",
         value = "true"
-      },
-      {
-        name  = "BLACKBOX_ROLE",
-        value = "nifi"
       }
     ])
   }
@@ -47,7 +43,7 @@ data "template_file" "blackbox_definition" {
 
 resource "aws_ecs_service" "blackbox" {
   count                              = local.is_management_env ? 0 : 1
-  name                               = "blackbox-nifi"
+  name                               = "blackbox"
   cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
   task_definition                    = aws_ecs_task_definition.blackbox[0].arn
   platform_version                   = var.platform_version
@@ -63,7 +59,7 @@ resource "aws_ecs_service" "blackbox" {
 
   service_registries {
     registry_arn   = aws_service_discovery_service.blackbox[0].arn
-    container_name = "blackbox-nifi"
+    container_name = "blackbox"
   }
 
   tags = merge(local.tags, { Name = var.name })
@@ -71,7 +67,7 @@ resource "aws_ecs_service" "blackbox" {
 
 resource "aws_service_discovery_service" "blackbox" {
   count = local.is_management_env ? 0 : 1
-  name  = "blackbox-nifi"
+  name  = "blackbox"
 
   dns_config {
     namespace_id = aws_service_discovery_private_dns_namespace.sdx_services[0].id
