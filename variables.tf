@@ -197,6 +197,8 @@ variable "cloudwatch_exporter_port" {}
 variable "pushgateway_port" {}
 variable "json_exporter_port" {}
 variable "jmx_port" {}
+variable "dns_zone_ids" {}
+variable "sdx_dns_zone_ids" {}
 
 variable "subnets" {
   description = "define sizes for subnets using Terraform cidrsubnet function. For an empty /24 VPC, the defaults will create /28 public subnets and /26 private subnets, one of each in each AZ."

@@ -12,3 +12,24 @@ cloudwatch_exporter_port = {{ports.cloudwatch_exporter_port}}
 pushgateway_port         = {{ports.pushgateway_port}}
 json_exporter_port       = {{ports.json_exporter_port}}
 jmx_port                 = {{ports.jmx_port}}
+
+dns_zone_ids = {
+    management-dev = {
+        development = {{monitoring_dns_zone_ids.development}}
+        qa          = {{monitoring_dns_zone_ids.qa}}
+        integration = {{monitoring_dns_zone_ids.integration}}
+    }
+    management = {
+        preprod    = {{monitoring_dns_zone_ids.preprod}}
+        production = {{monitoring_dns_zone_ids.production}}
+    }
+}
+
+sdx_dns_zone_ids = {
+    development = {{sdx_dns_zone_ids.development}}
+    qa          = {{sdx_dns_zone_ids.qa}}
+    integration = {{sdx_dns_zone_ids.integration}}
+    preprod     = {{sdx_dns_zone_ids.preprod}}
+    production  = {{sdx_dns_zone_ids.production}}
+}
+
