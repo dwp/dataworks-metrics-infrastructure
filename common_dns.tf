@@ -223,9 +223,16 @@ resource "aws_route53_zone_association" "monitoring" {
   depends_on = [aws_route53_vpc_association_authorization.monitoring]
 }
 
+resource "aws_route53_vpc_association_authorization" "sdx_services" {
+  count   = local.is_management_env ? 0 : 1
+  vpc_id  = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
+  zone_id = aws_service_discovery_private_dns_namespace.sdx_services[0].hosted_zone
+}
+
 resource "aws_route53_zone_association" "sdx_services" {
   for_each   = local.is_management_env ? local.sdx_dns_zone_ids[local.environment] : {}
   provider   = aws.management_zone
   vpc_id     = data.terraform_remote_state.management_dmi.outputs.vpcs[1].id
   zone_id    = each.value
+  depends_on = [aws_route53_vpc_association_authorization.sdx_services]
 }
