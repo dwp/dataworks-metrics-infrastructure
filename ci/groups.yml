@@ -40,7 +40,7 @@ groups:
   - name: admin-development
     jobs:
       - cycle-prometheus-development
-      - cycle-blackbox-nifi-development
+      - cycle-blackbox-development
       - cycle-cloudwatch-exporter-development
       - cycle-hbase-exporter-development
       - cycle-pdm-exporter-development
@@ -52,7 +52,7 @@ groups:
   - name: admin-qa
     jobs:
       - cycle-prometheus-qa
-      - cycle-blackbox-nifi-qa
+      - cycle-blackbox-qa
       - cycle-cloudwatch-exporter-qa
       - cycle-hbase-exporter-qa
       - cycle-pdm-exporter-qa
@@ -64,7 +64,7 @@ groups:
   - name: admin-integration
     jobs:
       - cycle-prometheus-integration
-      - cycle-blackbox-nifi-integration
+      - cycle-blackbox-integration
       - cycle-cloudwatch-exporter-integration
       - cycle-hbase-exporter-integration
       - cycle-pdm-exporter-integration
@@ -76,7 +76,7 @@ groups:
   - name: admin-preprod
     jobs:
       - cycle-prometheus-preprod
-      - cycle-blackbox-nifi-preprod
+      - cycle-blackbox-preprod
       - cycle-cloudwatch-exporter-preprod
       - cycle-hbase-exporter-preprod
       - cycle-pdm-exporter-preprod
@@ -88,7 +88,7 @@ groups:
   - name: admin-production
     jobs:
       - cycle-prometheus-production
-      - cycle-blackbox-nifi-production
+      - cycle-blackbox-production
       - cycle-cloudwatch-exporter-production
       - cycle-hbase-exporter-production
       - cycle-pdm-exporter-production

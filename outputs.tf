@@ -22,7 +22,7 @@ output "sdx_pushgateway_security_group" {
   value = local.is_management_env ? null_resource.dummy.id : aws_security_group.sdx_pushgateway[0].id
 }
 
-output "blackbox_nifi_security_group" {
+output "blackbox_security_group" {
   value = local.is_management_env ? null_resource.dummy.id : aws_security_group.blackbox[0].id
 }
 
