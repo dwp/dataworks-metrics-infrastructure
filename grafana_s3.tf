@@ -73,6 +73,10 @@ data template_file "htme_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/htme_dashboard.json")
 }
 
+data template_file "status_dashboard" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/status_dashboard.json")
+}
+
 resource "aws_s3_bucket_object" "grafana" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
@@ -108,6 +112,16 @@ resource "aws_s3_bucket_object" "grafana_dashboard_config" {
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   tags       = merge(local.tags, { Name = var.name })
 }
+
+resource "aws_s3_bucket_object" "status_dashboard" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/status_dashboard.json"
+  content    = data.template_file.status_dashboard.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
+}
+
 # private dashboards
 resource "aws_s3_bucket_object" "security_dashboard" {
   count      = local.is_management_env ? 1 : 0
