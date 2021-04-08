@@ -222,3 +222,10 @@ resource "aws_route53_zone_association" "monitoring" {
   zone_id    = each.value
   depends_on = [aws_route53_vpc_association_authorization.monitoring]
 }
+
+resource "aws_route53_zone_association" "sdx_services" {
+  for_each   = local.is_management_env ? local.sdx_dns_zone_ids[local.environment] : {}
+  provider   = aws.management_zone
+  vpc_id     = data.terraform_remote_state.management_dmi.outputs.vpcs[1].id
+  zone_id    = each.value
+}
