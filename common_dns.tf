@@ -233,6 +233,6 @@ resource "aws_route53_zone_association" "sdx_services" {
   count   = local.is_management_env ? 0 : 1
   provider   = aws.management_zone
   vpc_id     = data.terraform_remote_state.management_dmi.outputs.vpcs[0].id
-  zone_id    = local.sdx_dns_zone_ids.[local.environment]
+  zone_id    = local.sdx_dns_zone_ids[local.environment]
   depends_on = [aws_route53_vpc_association_authorization.sdx_services]
 }
