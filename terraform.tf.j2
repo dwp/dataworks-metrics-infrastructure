@@ -555,15 +555,11 @@ locals {
 }
 
   sdx_dns_zone_ids = {
-    management-dev = {
       development = "{{sdx_dns_zone_ids.development}}"
       qa          = "{{sdx_dns_zone_ids.qa}}"
       integration = "{{sdx_dns_zone_ids.integration}}"
-    }
-    management = {
       preprod     = "{{sdx_dns_zone_ids.preprod}}"
       production  = "{{sdx_dns_zone_ids.production}}"
-    }
   }
 
 }
