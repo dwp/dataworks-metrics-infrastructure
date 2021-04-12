@@ -36,6 +36,10 @@ data "template_file" "blackbox_definition" {
       {
         name  = "PROMETHEUS",
         value = "true"
+      },
+      {
+        name  = "LOG_LEVEL",
+        value = "debug"
       }
     ])
   }
