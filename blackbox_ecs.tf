@@ -57,7 +57,7 @@ resource "aws_ecs_service" "blackbox" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [aws_security_group.blackbox[0].id]
+    security_groups = [aws_security_group.blackbox[0].id, data.terraform_remote_state.snapshot_sender.outputs.security_group.snapshot_sender]
     subnets         = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.*.id
   }
 
