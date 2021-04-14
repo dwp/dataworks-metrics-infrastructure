@@ -8,8 +8,6 @@ modules:
       headers:
         Content-Type: application/json
       body: '{}'
-      tls_config:
-        ca_file: "${truststore_certs}"
       fail_if_ssl: false
       fail_if_not_ssl: false
       tls_config:
