@@ -252,7 +252,7 @@ variable "image_versions" {
     hive-exporter         = "0.0.4"
     awscli                = "0.0.10"
     blackbox              = "0.0.3"
-    acm-cert-helper       = "0.41.10"
+    acm-cert-helper       = "0.41.12"
   }
 }
 

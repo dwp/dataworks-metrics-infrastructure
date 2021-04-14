@@ -86,7 +86,7 @@ data "template_file" "acm_cert_helper_definition" {
       },
       {
         name  = "LOG_LEVEL",
-        value = "debug"
+        value = "DEBUG"
       },
       {
         name  = "ACM_CERT_ARN",
