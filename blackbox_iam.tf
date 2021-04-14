@@ -98,3 +98,63 @@ data "aws_iam_policy_document" "blackbox_ecs_exec" {
     ]
   }
 }
+
+data "aws_iam_policy_document" "blackbox_exporter_acm_pca" {
+  count      = local.is_management_env ? 0 : 1
+
+  statement {
+    sid    = "EnableIAMPermissionsHostAcmPcaForSnapshotSender"
+    effect = "Allow"
+
+    actions = [
+      "acm:*Certificate",
+    ]
+
+    resources = [
+      data.terraform_remote_state.snapshot_sender.outputs.ss_cert[0].arn,
+    ]
+  }
+}
+
+resource "aws_iam_policy" "blackbox_exporter_acm_pca" {
+  count      = local.is_management_env ? 0 : 1
+  name        = "blackbox_exporter_acm_pca"
+  description = "Policy to allow access to ACM PCA Certificate"
+  policy      = data.aws_iam_policy_document.blackbox_exporter_acm_pca[0].json
+}
+
+resource "aws_iam_role_policy_attachment" "blackbox_exporter_acm_pca" {
+  count      = local.is_management_env ? 0 : 1
+  role       = aws_iam_role.blackbox[local.primary_role_index].name
+  policy_arn = aws_iam_policy.blackbox_read_config[local.primary_role_index].arn
+}
+
+data "aws_iam_policy_document" "blackbox_exporter_acm_pca_s3" {
+  count      = local.is_management_env ? 0 : 1
+
+  statement {
+    sid    = "EnableIAMPermissionsHostS3CertsForSnapshotSender"
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject",
+    ]
+
+    resources = [
+      data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.arn,
+    ]
+  }
+}
+
+resource "aws_iam_policy" "blackbox_exporter_acm_pca_s3" {
+  count      = local.is_management_env ? 0 : 1
+  name        = "blackbox_exporter_acm_pca_s3"
+  description = "Policy to allow access to CA S3 Certs"
+  policy      = data.aws_iam_policy_document.blackbox_exporter_acm_pca_s3[0].json
+}
+
+resource "aws_iam_role_policy_attachment" "blackbox_exporter_acm_pca_s3" {
+  count      = local.is_management_env ? 0 : 1
+  role       = aws_iam_role.blackbox[local.primary_role_index].name
+  policy_arn = aws_iam_policy.blackbox_read_config[local.primary_role_index].arn
+}
