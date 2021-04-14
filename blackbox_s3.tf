@@ -3,6 +3,7 @@ data template_file "blackbox" {
   vars = {
     parent_domain_name = var.parent_domain_name
     environment        = local.environment
+    truststore_certs   = local.ss_host_truststore_certs[local.environment]
   }
 }
 

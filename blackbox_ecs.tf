@@ -8,8 +8,15 @@ resource "aws_ecs_task_definition" "blackbox" {
   task_role_arn            = aws_iam_role.blackbox[0].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.blackbox_definition[0].rendered}, ${data.template_file.acm_cert_helper_definition[0].rendered}]"
-  tags                     = merge(local.tags, { Name = var.name })
+
+  volume {
+    name = "certs"
+  }
+
+  tags = merge(local.tags, { Name = var.name })
 }
+
+
 
 data "template_file" "blackbox_definition" {
   count    = local.is_management_env ? 0 : 1
@@ -23,10 +30,16 @@ data "template_file" "blackbox_definition" {
     user          = "root"
     ports         = jsonencode([9115])
     ulimits       = jsonencode([])
-    mount_points  = jsonencode([])
     log_group     = aws_cloudwatch_log_group.monitoring_metrics.name
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+
+    mount_points = jsonencode([
+      {
+        "container_path" : "/acm-cert-helper",
+        "source_volume" : "certs"
+      }
+    ])
 
     environment_variables = jsonencode([
       {
@@ -57,10 +70,16 @@ data "template_file" "acm_cert_helper_definition" {
     user          = "root"
     ports         = jsonencode([9115])
     ulimits       = jsonencode([])
-    mount_points  = jsonencode([])
     log_group     = aws_cloudwatch_log_group.monitoring_metrics.name
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+
+    mount_points = jsonencode([
+      {
+        "container_path" : "/acm-cert-helper",
+        "source_volume" : "certs"
+      }
+    ])
 
     environment_variables = jsonencode([
       {
