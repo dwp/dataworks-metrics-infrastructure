@@ -81,6 +81,18 @@ data "template_file" "acm_cert_helper_definition" {
 
     environment_variables = jsonencode([
       {
+        "name" : "HTTP_PROXY",
+        "value" : "http://${aws_vpc_endpoint.non_mgmt_internet_proxy[0].dns_entry[0].dns_name}:${var.internet_proxy_port}"
+      },
+      {
+        "name" : "HTTPS_PROXY",
+        "value" : "http://${aws_vpc_endpoint.non_mgmt_internet_proxy[0].dns_entry[0].dns_name}:${var.internet_proxy_port}"
+      },
+      {
+        "name" : "NO_PROXY",
+        "value" : "127.0.0.1,s3.${var.region}.amazonaws.com,secretsmanager.${var.region}.amazonaws.com,${local.environment}.services.${var.parent_domain_name}"
+      },
+      {
         name  = "PROMETHEUS",
         value = "true"
       },
