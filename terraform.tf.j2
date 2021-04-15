@@ -610,6 +610,8 @@ locals {
     management = null_resource.dummy.id
   }
 
+  sdx_non_proxied_endpoints = join(",", data.terraform_remote_state.aws_sdx.outputs.vpc.no_proxy_list)
+
 }
 
 data "aws_iam_user" "breakglass" {

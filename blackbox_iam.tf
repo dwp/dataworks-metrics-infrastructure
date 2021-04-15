@@ -141,7 +141,7 @@ data "aws_iam_policy_document" "blackbox_exporter_acm_pca_s3" {
     ]
 
     resources = [
-      data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.arn,
+      "${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.arn}/*",
     ]
   }
 }
