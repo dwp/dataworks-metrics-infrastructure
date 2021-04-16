@@ -32,6 +32,8 @@ def main():
             Name='terraform_bootstrap_config', WithDecryption=False)
         monitoring_secret = secrets_manager.get_secret_value(
             SecretId="/concourse/dataworks/monitoring")
+        secrets = secrets_manager.get_secret_value(
+            SecretId="/concourse/dataworks/dataworks")
         dataworks_secret = secrets_manager.get_secret_value(
             SecretId="/concourse/dataworks/dataworks-secrets")
     except botocore.exceptions.ClientError as e:
@@ -53,6 +55,8 @@ def main():
         monitoring_secret['SecretBinary'])["monitoring_dns_zone_ids"]
     config_data['sdx_dns_zone_ids'] = json.loads(
         monitoring_secret['SecretBinary'])["sdx_dns_zone_ids"]
+    config_data['enterprise_github_url'] = json.loads(
+        secrets['SecretBinary'])["enterprise_github_url"]
 
     with open('modules/vpc/vpc.tf.j2') as in_template:
         template = jinja2.Template(in_template.read())
@@ -95,4 +99,3 @@ def assumed_role_session(role_arn: str, base_session: botocore.session.Session =
 
 if __name__ == "__main__":
     main()
-
