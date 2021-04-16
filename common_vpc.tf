@@ -136,7 +136,7 @@ resource "aws_security_group_rule" "blackbox_egress_non_mgmt_internet_proxy" {
   to_port                  = var.internet_proxy_port
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.non_mgmt_internet_proxy_endpoint[0].id
-  security_group_id        = aws_security_group.blackbox[0].id
+  security_group_id        = aws_security_group.blackbox_sdx[0].id
 }
 
 resource "aws_security_group_rule" "blackbox_ingress_non_mgmt_internet_proxy" {
@@ -146,6 +146,6 @@ resource "aws_security_group_rule" "blackbox_ingress_non_mgmt_internet_proxy" {
   from_port                = var.internet_proxy_port
   to_port                  = var.internet_proxy_port
   protocol                 = "tcp"
-  source_security_group_id = aws_security_group.blackbox[0].id
+  source_security_group_id = aws_security_group.blackbox_sdx[0].id
   security_group_id        = aws_security_group.non_mgmt_internet_proxy_endpoint[0].id
 }

@@ -23,7 +23,7 @@ output "sdx_pushgateway_security_group" {
 }
 
 output "blackbox_security_group" {
-  value = local.is_management_env ? null_resource.dummy.id : aws_security_group.blackbox[0].id
+  value = local.is_management_env ? null_resource.dummy.id : aws_security_group.blackbox_sdx[0].id
 }
 
 output "sdx_pushgateway_hostname" {

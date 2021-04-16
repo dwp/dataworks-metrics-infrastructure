@@ -1,13 +1,13 @@
-resource "aws_ecs_task_definition" "blackbox" {
+resource "aws_ecs_task_definition" "blackbox_sdx" {
   count                    = local.is_management_env ? 0 : 1
   family                   = "blackbox"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "1024"
   memory                   = "2048"
-  task_role_arn            = aws_iam_role.blackbox[0].arn
+  task_role_arn            = aws_iam_role.blackbox_sdx[0].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
-  container_definitions    = "[${data.template_file.blackbox_definition[0].rendered}, ${data.template_file.acm_cert_helper_definition[0].rendered}]"
+  container_definitions    = "[${data.template_file.blackbox_sdx_definition[0].rendered}, ${data.template_file.acm_cert_helper_definition[0].rendered}]"
 
   volume {
     name = "certs"
@@ -16,11 +16,11 @@ resource "aws_ecs_task_definition" "blackbox" {
   tags = merge(local.tags, { Name = var.name })
 }
 
-data "template_file" "blackbox_definition" {
+data "template_file" "blackbox_sdx_definition" {
   count    = local.is_management_env ? 0 : 1
   template = file("${path.module}/container_definition.tpl")
   vars = {
-    name          = "blackbox"
+    name          = "blackbox-sdx"
     group_name    = "blackbox"
     cpu           = var.fargate_cpu
     image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_blackbox_exporter_url, var.image_versions.blackbox)
@@ -122,11 +122,11 @@ data "template_file" "acm_cert_helper_definition" {
   }
 }
 
-resource "aws_ecs_service" "blackbox" {
+resource "aws_ecs_service" "blackbox_sdx" {
   count                              = local.is_management_env ? 0 : 1
-  name                               = "blackbox"
+  name                               = "blackbox-sdx"
   cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition                    = aws_ecs_task_definition.blackbox[0].arn
+  task_definition                    = aws_ecs_task_definition.blackbox_sdx[0].arn
   platform_version                   = var.platform_version
   desired_count                      = 1
   launch_type                        = "FARGATE"
@@ -134,21 +134,21 @@ resource "aws_ecs_service" "blackbox" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [aws_security_group.blackbox[0].id, data.terraform_remote_state.snapshot_sender.outputs.security_group.snapshot_sender]
+    security_groups = [aws_security_group.blackbox_sdx[0].id, data.terraform_remote_state.snapshot_sender.outputs.security_group.snapshot_sender]
     subnets         = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.*.id
   }
 
   service_registries {
-    registry_arn   = aws_service_discovery_service.blackbox[0].arn
-    container_name = "blackbox"
+    registry_arn   = aws_service_discovery_service.blackbox_sdx[0].arn
+    container_name = "blackbox-sdx"
   }
 
   tags = merge(local.tags, { Name = var.name })
 }
 
-resource "aws_service_discovery_service" "blackbox" {
+resource "aws_service_discovery_service" "blackbox_sdx" {
   count = local.is_management_env ? 0 : 1
-  name  = "blackbox"
+  name  = "blackbox-sdx"
 
   dns_config {
     namespace_id = aws_service_discovery_private_dns_namespace.sdx_services[0].id
