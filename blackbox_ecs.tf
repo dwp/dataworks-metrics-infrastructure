@@ -58,19 +58,21 @@ data "template_file" "blackbox_definition" {
 
 data "template_file" "acm_cert_helper_definition" {
   count    = local.is_management_env ? 0 : 1
-  template = file("${path.module}/container_definition.tpl")
+  template = file("${path.module}/reserved_container_definition.tpl")
   vars = {
-    name          = "acm_cert_helper"
-    group_name    = "acm_cert_helper"
-    cpu           = var.fargate_cpu
-    image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_acm_cert_helper_url, var.image_versions.acm-cert-helper)
-    memory        = var.fargate_memory
-    user          = "root"
-    ports         = jsonencode([])
-    ulimits       = jsonencode([])
-    log_group     = aws_cloudwatch_log_group.monitoring_metrics.name
-    region        = data.aws_region.current.name
-    config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+    name               = "acm_cert_helper"
+    group_name         = "acm_cert_helper"
+    cpu                = var.fargate_cpu
+    image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_acm_cert_helper_url, var.image_versions.acm-cert-helper)
+    memory             = var.fargate_memory
+    memory_reservation = var.fargate_memory
+    user               = "root"
+    ports              = jsonencode([])
+    ulimits            = jsonencode([])
+    log_group          = aws_cloudwatch_log_group.monitoring_metrics.name
+    essential          = false
+    region             = data.aws_region.current.name
+    config_bucket      = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
     mount_points = jsonencode([
       {
