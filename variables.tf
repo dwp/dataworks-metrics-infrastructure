@@ -252,7 +252,7 @@ variable "image_versions" {
     prom-pushgateway      = "0.0.56"
     hive-exporter         = "0.0.4"
     awscli                = "0.0.10"
-    blackbox              = "0.0.3"
+    blackbox              = "0.0.4"
     acm-cert-helper       = "0.41.13"
   }
 }

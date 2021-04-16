@@ -50,7 +50,7 @@ data "template_file" "blackbox_definition" {
       },
       {
         name  = "LOG_LEVEL",
-        value = "DEBUG"
+        value = "debug"
       }
     ])
   }
