@@ -7,7 +7,7 @@ data template_file "blackbox" {
 }
 
 resource "aws_s3_bucket_object" "blackbox" {
-  count      = local.is_management_env ? 0 : 1
+  count      = local.is_management_env ? 1 : 1
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/blackbox/blackbox.yml"
   content    = data.template_file.blackbox.rendered
