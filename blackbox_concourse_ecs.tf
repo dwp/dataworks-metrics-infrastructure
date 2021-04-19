@@ -8,11 +8,6 @@ resource "aws_ecs_task_definition" "blackbox_concourse" {
   task_role_arn            = aws_iam_role.blackbox_concourse[0].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.blackbox_concourse_definition[0].rendered}]"
-
-  volume {
-    name = "certs"
-  }
-
   tags = merge(local.tags, { Name = var.name })
 }
 
@@ -32,12 +27,7 @@ data "template_file" "blackbox_concourse_definition" {
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
-    mount_points = jsonencode([
-      {
-        "container_path" : "/acm-cert-helper",
-        "source_volume" : "certs"
-      }
-    ])
+    mount_points = jsonencode([])
 
     environment_variables = jsonencode([
       {
