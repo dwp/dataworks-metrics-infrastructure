@@ -1,4 +1,5 @@
 resource "aws_ecs_task_definition" "ucfs_claimant_pushgateway" {
+  provider                 = aws.ireland
   count                    = local.is_management_env ? 0 : 1
   family                   = "ucfs-claimant-pushgateway"
   network_mode             = "awsvpc"
@@ -12,6 +13,7 @@ resource "aws_ecs_task_definition" "ucfs_claimant_pushgateway" {
 }
 
 data "template_file" "ucfs_claimant_pushgateway_definition" {
+  provider                 = aws.ireland
   count    = local.is_management_env ? 0 : 1
   template = file("${path.module}/container_definition.tpl")
   vars = {
@@ -39,6 +41,7 @@ data "template_file" "ucfs_claimant_pushgateway_definition" {
 }
 
 resource "aws_ecs_service" "ucfs_claimant_pushgateway" {
+  provider                 = aws.ireland
   count                              = local.is_management_env ? 0 : 1
   name                               = "ucfs-claimant-pushgateway"
   cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
@@ -51,7 +54,7 @@ resource "aws_ecs_service" "ucfs_claimant_pushgateway" {
 
   network_configuration {
     security_groups = [aws_security_group.ucfs_claimant_pushgateway[0].id]
-    subnets         = data.terraform_remote_state.ucfs-claimant.outputs.subnet_ucfs_claimant_connectivity.*.id
+    subnets         = data.terraform_remote_state.ucfs-claimant.outputs.ucfs_claimant_vpc.subnet_ids.*
   }
 
   service_registries {
@@ -63,13 +66,15 @@ resource "aws_ecs_service" "ucfs_claimant_pushgateway" {
 }
 
 resource "aws_service_discovery_private_dns_namespace" "ucfs_claimant_services" {
+  provider                 = aws.ireland
   count = local.is_management_env ? 0 : 1
   name  = "${local.environment}.ucfs-claimant.services.${var.parent_domain_name}"
-  vpc   = data.terraform_remote_state.ucfs-claimant.outputs.vpc.vpc.id
+  vpc   = data.terraform_remote_state.ucfs-claimant.outputs.ucfs_claimant_vpc.id
   tags  = merge(local.tags, { Name = var.name })
 }
 
 resource "aws_service_discovery_service" "ucfs_claimant_pushgateway" {
+  provider                 = aws.ireland
   count = local.is_management_env ? 0 : 1
   name  = "ucfs-claimant-pushgateway"
 
