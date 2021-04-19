@@ -8,7 +8,7 @@ resource "aws_ecs_task_definition" "blackbox_concourse" {
   task_role_arn            = aws_iam_role.blackbox_concourse[0].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.blackbox_concourse_definition[0].rendered}]"
-  tags = merge(local.tags, { Name = var.name })
+  tags                     = merge(local.tags, { Name = var.name })
 }
 
 data "template_file" "blackbox_concourse_definition" {

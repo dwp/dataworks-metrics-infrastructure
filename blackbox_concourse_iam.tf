@@ -52,7 +52,7 @@ data "aws_iam_policy_document" "blackbox_concourse_read_config" {
     ]
 
     resources = [
-      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/blackbox_concourse/*",
+      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/${var.name}/blackbox/*",
     ]
   }
 
