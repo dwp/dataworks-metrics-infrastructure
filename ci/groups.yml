@@ -15,6 +15,7 @@ groups:
 
   - name: admin-management
     jobs:
+      - cycle-blackbox-management
       - cycle-grafana-management
       - cycle-outofband-management
       - redeploy-outofband-management
@@ -27,6 +28,7 @@ groups:
 
   - name: admin-management-dev
     jobs:
+      - cycle-blackbox-management-dev
       - cycle-grafana-management-dev
       - cycle-outofband-management-dev
       - redeploy-outofband-management-dev

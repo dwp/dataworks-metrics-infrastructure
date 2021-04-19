@@ -1,9 +1,9 @@
 jobs:
-  - name: cycle-blackbox-preprod
+  - name: cycle-blackbox-management
     plan:
       - .: (( inject meta.plan.admin-enable ))
       - .: (( inject meta.plan.cycle-containers ))
         params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
           CLUSTER: metrics
-          SERVICE: blackbox-sdx
+          SERVICE: blackbox-concourse
