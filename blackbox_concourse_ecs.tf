@@ -68,7 +68,7 @@ resource "aws_ecs_service" "blackbox_concourse" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [aws_security_group.blackbox_concourse[0].id, data.terraform_remote_state.aws_concourse.outputs.concourse_web_sg]
+    security_groups = [aws_security_group.blackbox_concourse[0].id, data.terraform_remote_state.aws_concourse.outputs.concourse_web_sg, aws_security_group.monitoring_common[local.primary_role_index].id]
     subnets         = data.terraform_remote_state.aws_concourse.outputs.subnets_private.*.id
   }
 
