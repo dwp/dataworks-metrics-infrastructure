@@ -11,7 +11,7 @@ resource "aws_security_group" "blackbox_concourse" {
 }
 
 resource "aws_security_group_rule" "allow_blackbox_concourse_egress_https" {
-  count             = local.is_management_env ? 1 : 0
+  count             = local.is_management_env ? 1 : 1
   description       = "Allows ECS to pull container from S3"
   type              = "egress"
   protocol          = "tcp"
