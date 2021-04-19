@@ -591,11 +591,6 @@ locals {
       production  = "{{sdx_dns_zone_ids.production}}"
   }
 
-  concourse_dns_zone_ids = {
-      management-dev = "{{concourse_dns_zone_ids.management_dev}}"
-      management = "{{concourse_dns_zone_ids.management}}"
-  }
-
   ss_host_truststore_aliases = {
     development = "dataworks_root_ca,dataworks_mgt_root_ca"
     qa          = "dataworks_root_ca,dataworks_mgt_root_ca,sdx1,sdx2"
