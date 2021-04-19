@@ -55,6 +55,8 @@ def main():
         monitoring_secret['SecretBinary'])["monitoring_dns_zone_ids"]
     config_data['sdx_dns_zone_ids'] = json.loads(
         monitoring_secret['SecretBinary'])["sdx_dns_zone_ids"]
+    config_data['concourse_dns_zone_ids'] = json.loads(
+        monitoring_secret['SecretBinary'])["concourse_dns_zone_ids"]
     config_data['enterprise_github_url'] = json.loads(
         secrets['SecretBinary'])["enterprise_github_url"]
 
