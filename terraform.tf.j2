@@ -562,6 +562,14 @@ locals {
       production  = "{{sdx_dns_zone_ids.production}}"
   }
 
+  pdm_dns_zone_ids = {
+      development = "{{pdm_dns_zone_ids.development}}"
+      qa          = "{{pdm_dns_zone_ids.qa}}"
+      integration = "{{pdm_dns_zone_ids.integration}}"
+      preprod     = "{{pdm_dns_zone_ids.preprod}}"
+      production  = "{{pdm_dns_zone_ids.production}}"
+  }
+
 }
 
 data "aws_iam_user" "breakglass" {
