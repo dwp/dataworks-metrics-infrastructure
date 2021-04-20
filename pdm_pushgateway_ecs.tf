@@ -1,6 +1,6 @@
 resource "aws_ecs_task_definition" "pdm_pushgateway" {
   count                    = local.is_management_env ? 0 : 1
-  family                   = "adg-pushgateway"
+  family                   = "pdm-pushgateway"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "512"
@@ -15,7 +15,7 @@ data "template_file" "pdm_pushgateway_definition" {
   count    = local.is_management_env ? 0 : 1
   template = file("${path.module}/container_definition.tpl")
   vars = {
-    name          = "adg-pushgateway"
+    name          = "pdm-pushgateway"
     group_name    = "pushgateway"
     cpu           = var.fargate_cpu
     image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_pushgateway_url, var.image_versions.prom-pushgateway)
