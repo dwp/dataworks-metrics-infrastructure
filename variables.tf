@@ -248,7 +248,7 @@ variable "image_versions" {
     ecs-service-discovery = "0.0.4"
     grafana               = "0.0.12"
     cloudwatch-exporter   = "0.0.5"
-    prom-pushgateway      = "0.0.56"
+    prom-pushgateway      = "0.0.65"
     hive-exporter         = "0.0.4"
     awscli                = "0.0.10"
     blackbox              = "0.0.3"
