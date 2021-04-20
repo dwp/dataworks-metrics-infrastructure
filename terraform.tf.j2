@@ -360,16 +360,6 @@ provider "aws" {
   }
 }
 
-provider "aws" {
-  version = "~> 3.25.0"
-  alias   = "ireland"
-  region  = "eu-west-1"
-
-  assume_role {
-    role_arn = "arn:aws:iam::${lookup(local.account, local.environment)}:role/${var.assume_role}"
-  }
-}
-
 // Get AWS Account ID for credentials in use
 data "aws_caller_identity" "current" {}
 
