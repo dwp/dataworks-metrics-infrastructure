@@ -18,6 +18,14 @@ output "adg_pushgateway_hostname" {
   value = local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.adg_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.adg_services[0].name}"
 }
 
+output "pdm_pushgateway_hostname" {
+  value = local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.pdm_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.pdm_services[0].name}"
+}
+
+output "pdm_pushgateway_security_group" {
+  value = local.is_management_env ? null_resource.dummy.id : aws_security_group.pdm_pushgateway[0].id
+}
+
 output "sdx_pushgateway_security_group" {
   value = local.is_management_env ? null_resource.dummy.id : aws_security_group.sdx_pushgateway[0].id
 }
