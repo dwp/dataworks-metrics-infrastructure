@@ -82,7 +82,7 @@ data template_file "azkaban_dashboard" {
 }
 
 data template_file "snapshot_sender_dashboard" {
-  template = file("${path.module}/config/grafana/provisioning/dashboards/snapshot_sender_dashboard.json")
+  template = file("${path.module}/config/grafana/provisioning/dashboards/snapshot_sender.json")
 }
 
 resource "aws_s3_bucket_object" "grafana" {
@@ -260,7 +260,7 @@ resource "aws_s3_bucket_object" "azkaban_dashboard" {
 resource "aws_s3_bucket_object" "snapshot_sender_dashboard" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
-  key        = "${var.name}/grafana/provisioning/dashboards/private/snapshot_sender_dashboard.json"
+  key        = "${var.name}/grafana/provisioning/dashboards/private/snapshot_sender.json"
   content    = data.template_file.snapshot_sender_dashboard.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   tags       = merge(local.tags, { Name = var.name })
