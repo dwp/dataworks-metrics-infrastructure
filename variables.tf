@@ -106,14 +106,14 @@ variable "query_memory" {
 
 variable "query_task_cpu" {
   default = {
-    management     = "8192"
+    management     = "4096"
     management-dev = "4096"
   }
 }
 
 variable "query_task_memory" {
   default = {
-    management     = "16384"
+    management     = "8192"
     management-dev = "8192"
   }
 }
