@@ -99,7 +99,7 @@ variable "query_cpu" {
 
 variable "query_memory" {
   default = {
-    management     = "16384"
+    management     = "8192"
     management-dev = "8192"
   }
 }
