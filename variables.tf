@@ -44,7 +44,7 @@ variable "prometheus_task_cpu" {
     qa             = "4096"
     integration    = "4096"
     preprod        = "4096"
-    production     = "4096"
+    production     = "8192"
     management     = "4096"
     management-dev = "4096"
   }
@@ -136,7 +136,7 @@ variable "prometheus_cpu" {
     qa             = "1024"
     integration    = "1024"
     preprod        = "1024"
-    production     = "1024"
+    production     = "2048"
     management     = "1024"
     management-dev = "1024"
   }
@@ -242,7 +242,7 @@ variable "desired_capacity" {
 variable "image_versions" {
   description = "pinned image versions to use"
   default = {
-    prometheus            = "0.0.15"
+    prometheus            = "0.0.17"
     thanos                = "0.0.24"
     alertmanager          = "0.0.5"
     ecs-service-discovery = "0.0.4"
@@ -263,7 +263,7 @@ variable "metrics_ecs_cluster_ec2_size" {
     qa             = "t3.2xlarge"
     integration    = "t3.2xlarge"
     preprod        = "t3.2xlarge"
-    production     = "t3.2xlarge"
+    production     = "c5.4xlarge"
     management     = "t3.2xlarge"
     management-dev = "t3.2xlarge"
   }
