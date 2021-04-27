@@ -92,7 +92,7 @@ variable "store_task_memory" {
 
 variable "query_cpu" {
   default = {
-    management     = "8192"
+    management     = "4096"
     management-dev = "4096"
   }
 }
