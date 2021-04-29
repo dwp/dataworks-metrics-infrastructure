@@ -7,7 +7,6 @@ whitelist_cidr_blocks    = [
   {% endfor %}
   "{{ucfs["team_cidr_block"]}}"
 ]
-whitelist_cidr_blocks    = ["{{ucfs["team_cidr_block"]}}"]
 internet_proxy_port      = {{ports.internet_proxy_port}}
 grafana_port             = {{ports.grafana_port}}
 prometheus_port          = {{ports.prometheus_port}}
