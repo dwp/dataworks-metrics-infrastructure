@@ -1,11 +1,8 @@
 assume_role              = "administrator"
 parent_domain_name       = "{{dataworks_domain_name}}"
-whitelist_cidr_blocks    = [
-  {% set doiranges = doi["cidr_blocks"].split(',') %}
-  {% for cidr in doiranges %}
-  "{{ cidr }}",
-  {% endfor %}
-  "{{ucfs["team_cidr_block"]}}"
+whitelist_cidr_blocks    = [{% set doiranges = doi["cidr_blocks"].split(',') %}
+  {% for cidr in doiranges %}"{{ cidr }}",
+  {% endfor %}"{{ucfs["team_cidr_block"]}}"
 ]
 internet_proxy_port      = {{ports.internet_proxy_port}}
 grafana_port             = {{ports.grafana_port}}
