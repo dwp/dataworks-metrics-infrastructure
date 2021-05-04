@@ -51,7 +51,7 @@ resource "aws_ecs_service" "clive_pushgateway" {
 
   network_configuration {
     security_groups = [aws_security_group.clive_pushgateway[local.primary_role_index].id]
-    subnets         = data.terraform_remote_state.aws_internal_compute.outputs.clive_subnet_new.ids
+    subnets         = data.terraform_remote_state.aws_internal_compute.outputs.clive_subnet.ids
   }
 
   service_registries {

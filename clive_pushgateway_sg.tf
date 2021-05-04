@@ -32,17 +32,6 @@ resource "aws_security_group_rule" "allow_prometheus_ingress_clive_pushgateway" 
   source_security_group_id = aws_security_group.prometheus.id
 }
 
-//resource "aws_security_group_rule" "allow_adg_ingress_clive_pushgateway" {
-//  count                    = local.is_management_env ? 0 : 1
-//  description              = "Allows adg to access clive pushgateway"
-//  type                     = "ingress"
-//  protocol                 = "tcp"
-//  from_port                = var.pushgateway_port
-//  to_port                  = var.pushgateway_port
-//  security_group_id        = aws_security_group.clive_pushgateway[0].id
-//  source_security_group_id = data.terraform_remote_state.aws_clive_dataset_generation.outputs.clive_common_sg.id
-//}
-
 resource "aws_security_group_rule" "allow_clive_egress_clive_pushgateway" {
   count                    = local.is_management_env ? 0 : 1
   description              = "Allows clive to access clive pushgateway"
