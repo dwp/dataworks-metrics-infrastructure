@@ -191,7 +191,7 @@ resource "aws_iam_role_policy_attachment" "metrics_cluster_ecs_cwasp" {
 
 resource "aws_iam_role_policy_attachment" "metrics_cluster_ecs_ssm" {
   role       = aws_iam_role.metrics_cluster.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonSSMManagedInstanceCore"
 }
 
 resource "aws_iam_role_policy_attachment" "metrics_cluster_ecs" {
