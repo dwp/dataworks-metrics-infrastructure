@@ -39,7 +39,7 @@ resource "aws_security_group_rule" "allow_clive_ingress_clive_pushgateway" {
   protocol                 = "tcp"
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
-  security_group_id        = aws_security_group.adg_pushgateway[0].id
+  security_group_id        = aws_security_group.clive_pushgateway[0].id
   source_security_group_id = data.terraform_remote_state.aws_clive.outputs.aws_clive_common_sg.id
 }
 
