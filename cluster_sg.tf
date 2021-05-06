@@ -118,3 +118,14 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_cloudwatch_expo
   security_group_id        = aws_security_group.mgmt_metrics_cluster[0].id
   source_security_group_id = aws_security_group.cloudwatch_exporter.id
 }
+
+resource "aws_security_group_rule" "allow_metrics_cluster_egress_azkaban_pushgateway" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allows metrics cluster to access ADG pushgateway"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = var.pushgateway_port
+  to_port                  = var.pushgateway_port
+  security_group_id        = aws_security_group.metrics_cluster.id
+  source_security_group_id = aws_security_group.azkaban_pushgateway[0].id
+}
