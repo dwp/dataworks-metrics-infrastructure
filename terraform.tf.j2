@@ -584,6 +584,14 @@ locals {
       production  = "{{pdm_dns_zone_ids.production}}"
   }
 
+  clive_dns_zone_ids = {
+      development = "{{clive_dns_zone_ids.development}}"
+      qa          = "{{clive_dns_zone_ids.qa}}"
+      integration = "{{clive_dns_zone_ids.integration}}"
+      preprod     = "{{clive_dns_zone_ids.preprod}}"
+      production  = "{{clive_dns_zone_ids.production}}"
+  }
+
 }
 
 data "aws_iam_user" "breakglass" {
