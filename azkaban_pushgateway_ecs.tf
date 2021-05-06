@@ -51,7 +51,7 @@ resource "aws_ecs_service" "azkaban_pushgateway" {
 
   network_configuration {
     security_groups = [aws_security_group.azkaban_pushgateway[local.primary_role_index].id]
-    subnets = data.terraform_remote_state.aws_analytical_env_infra.outputs.vpc.aws_subnets_private[*].id
+    subnets         = data.terraform_remote_state.aws_analytical_env_infra.outputs.vpc.aws_subnets_private[*].id
   }
 
   service_registries {
