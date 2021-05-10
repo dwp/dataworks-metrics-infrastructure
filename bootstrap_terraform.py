@@ -57,6 +57,8 @@ def main():
         monitoring_secret['SecretBinary'])["pdm_dns_zone_ids"]
     config_data['clive_dns_zone_ids'] = json.loads(
         monitoring_secret['SecretBinary'])["clive_dns_zone_ids"]
+    config_data['adg_dns_zone_ids'] = json.loads(
+        monitoring_secret['SecretBinary'])["adg_dns_zone_ids"]
 
     with open('modules/vpc/vpc.tf.j2') as in_template:
         template = jinja2.Template(in_template.read())
