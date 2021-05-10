@@ -584,6 +584,14 @@ locals {
       production  = "{{pdm_dns_zone_ids.production}}"
   }
 
+  adg_dns_zone_ids = {
+      development = "{{adg_dns_zone_ids.development}}"
+      qa          = "{{adg_dns_zone_ids.qa}}"
+      integration = "{{adg_dns_zone_ids.integration}}"
+      preprod     = "{{adg_dns_zone_ids.preprod}}"
+      production  = "{{adg_dns_zone_ids.production}}"
+  }
+
   clive_dns_zone_ids = {
       development = "{{clive_dns_zone_ids.development}}"
       qa          = "{{clive_dns_zone_ids.qa}}"
