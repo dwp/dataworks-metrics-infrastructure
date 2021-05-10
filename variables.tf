@@ -50,6 +50,16 @@ variable "prometheus_task_cpu" {
   }
 }
 
+variable "ingest_pushgateway_task_cpu" {
+  default = {
+    development = "512"
+    qa          = "512"
+    integration = "512"
+    preprod     = "512"
+    production  = "1024"
+  }
+}
+
 variable "prometheus_task_memory" {
   default = {
     development    = "16384"

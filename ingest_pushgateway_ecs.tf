@@ -3,7 +3,7 @@ resource "aws_ecs_task_definition" "ingest_pushgateway" {
   family                   = "ingest-pushgateway"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "512"
+  cpu                      = var.ingest_pushgateway_task_cpu[local.environment]
   memory                   = "4096"
   task_role_arn            = aws_iam_role.ingest_pushgateway[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
@@ -17,7 +17,7 @@ data "template_file" "ingest_pushgateway_definition" {
   vars = {
     name          = "ingest-pushgateway"
     group_name    = "pushgateway"
-    cpu           = var.fargate_cpu
+    cpu           = var.ingest_pushgateway_task_cpu[local.environment]
     image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_pushgateway_url, var.image_versions.prom-pushgateway)
     memory        = var.fargate_memory
     user          = "nobody"
