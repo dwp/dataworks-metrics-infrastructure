@@ -21,3 +21,4 @@ aviator_pipeline.yml
 modules/vpc/outputs.tf
 modules/vpc/vpc.tf
 config/grafana/provisioning/dashboards
+venv/

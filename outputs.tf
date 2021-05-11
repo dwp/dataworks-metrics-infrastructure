@@ -18,6 +18,14 @@ output "adg_pushgateway_hostname" {
   value = local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.adg_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.adg_services[0].name}"
 }
 
+output "azkaban_pushgateway_security_group" {
+  value = local.is_management_env ? null_resource.dummy.id : aws_security_group.azkaban_pushgateway[0].id
+}
+
+output "azkaban_pushgateway_hostname" {
+  value = local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.azkaban_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.azkaban_services[0].name}"
+}
+
 output "pdm_pushgateway_hostname" {
   value = local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.pdm_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.pdm_services[0].name}"
 }
@@ -27,7 +35,7 @@ output "pdm_pushgateway_security_group" {
 }
 
 output "clive_pushgateway_hostname" {
-  value = local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.clive_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.pdm_services[0].name}"
+  value = local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.clive_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.clive_services[0].name}"
 }
 
 output "clive_pushgateway_security_group" {

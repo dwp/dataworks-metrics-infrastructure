@@ -30,17 +30,6 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_adg_pushgateway
   source_security_group_id = aws_security_group.adg_pushgateway[0].id
 }
 
-resource "aws_security_group_rule" "allow_metrics_cluster_egress_clive_pushgateway" {
-  count                    = local.is_management_env ? 0 : 1
-  description              = "Allows metrics cluster to access Clive pushgateway"
-  type                     = "egress"
-  protocol                 = "tcp"
-  from_port                = var.pushgateway_port
-  to_port                  = var.pushgateway_port
-  security_group_id        = aws_security_group.metrics_cluster.id
-  source_security_group_id = aws_security_group.clive_pushgateway[0].id
-}
-
 resource "aws_security_group_rule" "allow_metrics_cluster_egress_sdx_pushgateway" {
   count                    = local.is_management_env ? 0 : 1
   description              = "Allows metrics cluster to access SDX pushgateway"
@@ -96,6 +85,17 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_ingest_pushgate
   source_security_group_id = aws_security_group.ingest_pushgateway[0].id
 }
 
+resource "aws_security_group_rule" "allow_metrics_cluster_egress_clive_pushgateway" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allows metrics cluster to access Clive pushgateway"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = var.pushgateway_port
+  to_port                  = var.pushgateway_port
+  security_group_id        = aws_security_group.metrics_cluster.id
+  source_security_group_id = aws_security_group.clive_pushgateway[0].id
+}
+
 resource "aws_security_group" "mgmt_metrics_cluster" {
   count       = local.is_management_env ? 1 : 0
   name        = "metrics_cluster"
@@ -117,4 +117,15 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_cloudwatch_expo
   to_port                  = var.cloudwatch_exporter_port
   security_group_id        = aws_security_group.mgmt_metrics_cluster[0].id
   source_security_group_id = aws_security_group.cloudwatch_exporter.id
+}
+
+resource "aws_security_group_rule" "allow_metrics_cluster_egress_azkaban_pushgateway" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allows metrics cluster to access ADG pushgateway"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = var.pushgateway_port
+  to_port                  = var.pushgateway_port
+  security_group_id        = aws_security_group.metrics_cluster.id
+  source_security_group_id = aws_security_group.azkaban_pushgateway[0].id
 }
