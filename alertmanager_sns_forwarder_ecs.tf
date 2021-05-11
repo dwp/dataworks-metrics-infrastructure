@@ -20,7 +20,7 @@ data "template_file" "alertmanager_sns_forwarder_definition" {
     cpu           = var.fargate_cpu
     image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.alertmanager_sns_forwarder_url, var.image_versions.alertmanager_sns_forwarder)
     memory        = var.fargate_memory
-    user          = "nobody"
+    user          = "root"
     ports         = jsonencode([9087])
     ulimits       = jsonencode([])
     log_group     = aws_cloudwatch_log_group.monitoring_metrics.name
