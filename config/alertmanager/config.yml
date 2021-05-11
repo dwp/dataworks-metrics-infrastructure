@@ -45,3 +45,8 @@ receivers:
         {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
         {{ end }}
       {{ end }}
+
+- name: 'sns-forwarder'
+  webhook_configs:
+    - send_resolved: True
+      url: http://${forwarder_url}/alert/${sns_topic_name}
