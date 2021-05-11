@@ -51,7 +51,7 @@ resource "aws_ecs_service" "alertmanager_sns_forwarder" {
 
   network_configuration {
     security_groups = [aws_security_group.alertmanager_sns_forwarder[local.primary_role_index].id]
-    subnets         = data.terraform_remote_state.aws_internal_compute.outputs.adg_subnet_new.ids
+    subnets         = module.vpc.outputs.private_subnets[local.primary_role_index]
   }
 
   service_registries {
