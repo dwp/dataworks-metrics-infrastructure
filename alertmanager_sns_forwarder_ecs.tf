@@ -62,19 +62,13 @@ resource "aws_ecs_service" "alertmanager_sns_forwarder" {
   tags = merge(local.tags, { Name = var.name })
 }
 
-resource "aws_service_discovery_private_dns_namespace" "alertmanager_sns_forwarder_services" {
-  count = local.is_management_env ? 1 : 0
-  name  = "${local.environment}.adg.services.${var.parent_domain_name}"
-  vpc   = data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.vpc.id
-  tags  = merge(local.tags, { Name = var.name })
-}
 
 resource "aws_service_discovery_service" "alertmanager_sns_forwarder" {
   count = local.is_management_env ? 1 : 0
   name  = "alertmanager-sns-forwarder"
 
   dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.alertmanager_sns_forwarder_services[0].id
+    namespace_id = aws_service_discovery_private_dns_namespace.monitoring.id
 
     dns_records {
       ttl  = 10
