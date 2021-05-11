@@ -1,5 +1,3 @@
-
-
 resource "aws_security_group" "alertmanager_sns_forwarder" {
   count       = local.is_management_env ? 1 : 0
   name        = "alertmanager_sns_forwarder"
@@ -12,17 +10,6 @@ resource "aws_security_group" "alertmanager_sns_forwarder" {
   }
 }
 
-resource "aws_security_group_rule" "allow_loadbalancer_ingress_alertmanager_sns_forwarder_port" {
-  count                    = local.is_management_env ? 1 : 0
-  description              = "Allows loadbalancer to access alertmanager_sns_forwarder user interface"
-  type                     = "ingress"
-  protocol                 = "tcp"
-  from_port                = 9087
-  to_port                  = 9087
-  security_group_id        = aws_security_group.alertmanager_sns_forwarder[0].id
-  source_security_group_id = aws_security_group.monitoring[0].id
-}
-
 resource "aws_security_group_rule" "allow_thanos_ruler_ingress_alertmanager_sns_forwarder_port" {
   count                    = local.is_management_env ? 1 : 0
   description              = "Allows thanos ruler to access alertmanager_sns_forwarder"
@@ -31,16 +18,5 @@ resource "aws_security_group_rule" "allow_thanos_ruler_ingress_alertmanager_sns_
   from_port                = 9087
   to_port                  = 9087
   security_group_id        = aws_security_group.alertmanager_sns_forwarder[0].id
-  source_security_group_id = aws_security_group.thanos_ruler[0].id
-}
-
-resource "aws_security_group_rule" "allow_outofband_ingress_alertmanager_sns_forwarder_port" {
-  count                    = local.is_management_env ? 1 : 0
-  description              = "Allows outofband to access alertmanager_sns_forwarder"
-  type                     = "ingress"
-  protocol                 = "tcp"
-  from_port                = 9087
-  to_port                  = 9087
-  security_group_id        = aws_security_group.alertmanager_sns_forwarder[0].id
-  source_security_group_id = aws_security_group.outofband[0].id
+  source_security_group_id = aws_security_group.alertmanager[0].id
 }
