@@ -50,7 +50,7 @@ resource "aws_ecs_service" "alertmanager_sns_forwarder" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [aws_security_group.alertmanager_sns_forwarder[local.primary_role_index].id]
+    security_groups = [aws_security_group.alertmanager_sns_forwarder[local.primary_role_index].id, aws_security_group.monitoring_common[local.primary_role_index].id]
     subnets         = module.vpc.outputs.private_subnets[local.primary_role_index]
   }
 
