@@ -96,6 +96,17 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_clive_pushgatew
   source_security_group_id = aws_security_group.clive_pushgateway[0].id
 }
 
+resource "aws_security_group_rule" "allow_metrics_cluster_egress_mongo_latest_pushgateway" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allows metrics cluster to access mongo latest pushgateway"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = var.pushgateway_port
+  to_port                  = var.pushgateway_port
+  security_group_id        = aws_security_group.metrics_cluster.id
+  source_security_group_id = aws_security_group.mongo_latest_pushgateway[0].id
+}
+
 resource "aws_security_group" "mgmt_metrics_cluster" {
   count       = local.is_management_env ? 1 : 0
   name        = "metrics_cluster"
