@@ -347,6 +347,20 @@ data "terraform_remote_state" "aws_clive" {
   }
 }
 
+data "terraform_remote_state" "dataworks_aws_mongo_latest" {
+  backend   = "s3"
+  workspace = lookup(local.common_workspace, terraform.workspace)
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/dataworks-aws-mongo-latest.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
 variable "assume_role" {
   default = "ci"
 }
@@ -600,6 +614,13 @@ locals {
       production  = "{{clive_dns_zone_ids.production}}"
   }
 
+  mongo_latest_dns_zone_ids = {
+      development = "{{mongo_latest_dns_zone_ids.development}}"
+      qa          = "{{mongo_latest_dns_zone_ids.qa}}"
+      integration = "{{mongo_latest_dns_zone_ids.integration}}"
+      preprod     = "{{mongo_latest_dns_zone_ids.preprod}}"
+      production  = "{{mongo_latest_dns_zone_ids.production}}"
+  }
 }
 
 data "aws_iam_user" "breakglass" {
