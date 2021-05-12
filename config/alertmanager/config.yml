@@ -16,6 +16,10 @@ route:
       alertname: MetadataNoToken
     receiver: "null"
 
+  - match:
+      alertname: InstanceDown
+    receiver: "sns-forwarder"
+
 receivers:
 - name: 'null'
 - name: 'slack-notifications'
