@@ -15,3 +15,15 @@ resource "aws_s3_bucket_object" "prometheus" {
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   tags       = merge(local.tags, { Name = var.name })
 }
+
+data template_file "prometheus_rules" {
+  template = file("${path.module}/config/prometheus/test-rules.yml")
+}
+
+resource "aws_s3_bucket_object" "prometheus_rules" {
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/prometheus/test-rules.yml"
+  content    = data.template_file.prometheus_rules.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
+}
