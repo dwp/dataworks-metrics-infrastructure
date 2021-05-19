@@ -95,3 +95,5 @@ output "grafana_fqdn" {
 }
 
 resource "null_resource" "dummy" {}
+
+resource "null_resource" "dummy_2" {}
