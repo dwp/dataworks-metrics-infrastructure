@@ -90,4 +90,8 @@ output "monitoring_bucket" {
   }
 }
 
+output "grafana_fqdn" {
+  value = local.is_management_env ? aws_route53_record.grafana_loadbalancer[0].fqdn : null_resource.dummy.id
+}
+
 resource "null_resource" "dummy" {}
