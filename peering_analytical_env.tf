@@ -49,7 +49,7 @@ resource "aws_security_group_rule" "analytical_env_node_allow_ingress_prometheus
   protocol                 = "tcp"
   from_port                = 9100
   to_port                  = 9100
-  security_group_id        = data.terraform_remote_state.aws_analytical_env_app.outputs.push_gateway_sg
+  security_group_id        = data.terraform_remote_state.aws_analytical_env_app.outputs.emr_common_sg_id
   source_security_group_id = aws_security_group.prometheus.id
 }
 
@@ -61,5 +61,5 @@ resource "aws_security_group_rule" "prometheus_allow_egress_analytical_env_node"
   from_port                = 9100
   to_port                  = 9100
   security_group_id        = aws_security_group.prometheus.id
-  source_security_group_id = data.terraform_remote_state.aws_analytical_env_app.outputs.push_gateway_sg
+  source_security_group_id = data.terraform_remote_state.aws_analytical_env_app.outputs.emr_common_sg_id
 }
