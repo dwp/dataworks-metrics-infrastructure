@@ -50,6 +50,18 @@ variable "prometheus_task_cpu" {
   }
 }
 
+variable "cert_retriever_task_cpu" {
+  default = {
+    development    = "4096"
+    qa             = "4096"
+    integration    = "4096"
+    preprod        = "4096"
+    production     = "8192"
+    management     = "4096"
+    management-dev = "4096"
+  }
+}
+
 variable "ingest_pushgateway_task_cpu" {
   default = {
     development = "512"
@@ -61,6 +73,18 @@ variable "ingest_pushgateway_task_cpu" {
 }
 
 variable "prometheus_task_memory" {
+  default = {
+    development    = "16384"
+    qa             = "16384"
+    integration    = "16384"
+    preprod        = "16384"
+    production     = "16384"
+    management     = "16384"
+    management-dev = "16384"
+  }
+}
+
+variable "cert_retriever_task_memory" {
   default = {
     development    = "16384"
     qa             = "16384"
@@ -152,6 +176,18 @@ variable "prometheus_cpu" {
   }
 }
 
+variable "cert_retriever_cpu" {
+  default = {
+    development    = "1024"
+    qa             = "1024"
+    integration    = "1024"
+    preprod        = "1024"
+    production     = "2048"
+    management     = "1024"
+    management-dev = "1024"
+  }
+}
+
 variable "receiver_cpu" {
   default = {
     development    = "1024"
@@ -177,6 +213,18 @@ variable "receiver_memory" {
 }
 
 variable "prometheus_memory" {
+  default = {
+    development    = "8192"
+    qa             = "8192"
+    integration    = "8192"
+    preprod        = "8192"
+    production     = "8192"
+    management     = "8192"
+    management-dev = "8192"
+  }
+}
+
+variable "cert_retriever_memory" {
   default = {
     development    = "8192"
     qa             = "8192"
@@ -262,6 +310,7 @@ variable "image_versions" {
     hive-exporter         = "0.0.4"
     awscli                = "0.0.10"
     blackbox              = "0.0.3"
+    cert_retriever        = "0.41.16"
 
   }
 }
