@@ -72,6 +72,55 @@ data "aws_iam_policy_document" "cert_retriever_read_config" {
   }
 }
 
+resource "aws_iam_role_policy_attachment" "cert_retriever_read_certs" {
+  role       = aws_iam_role.cert_retriever.name
+  policy_arn = aws_iam_policy.cert_retriever_read_certs.arn
+}
+
+resource "aws_iam_policy" "cert_retriever_read_certs" {
+  name        = "Cert_retrieverReadCertsPolicy"
+  description = "Allow Cert_retriever to read from ACM"
+  policy      = data.aws_iam_policy_document.cert_retriever_read_certs.json
+}
+
+data "aws_iam_policy_document" "cert_retriever_read_certs" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:ListBucket",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "acm-pca:GetCertficate",
+    ]
+
+    resources = [
+      "arn:aws:acm:${var.region}:${local.account[local.environment]}:certificate/*"
+    ]
+  }
+}
+
 resource "aws_iam_role_policy_attachment" "cert_retriever_service_discovery_attachment" {
   role       = aws_iam_role.cert_retriever.name
   policy_arn = aws_iam_policy.cert_retriever_service_discovery.arn

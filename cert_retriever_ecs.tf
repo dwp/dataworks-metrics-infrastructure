@@ -61,7 +61,7 @@ resource "aws_ecs_service" "cert_retriever" {
   name                               = "cert_retriever"
   cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
   task_definition                    = aws_ecs_task_definition.cert_retriever.arn
-  desired_count                      = 3
+  desired_count                      = 1
   launch_type                        = "EC2"
   force_new_deployment               = true
   deployment_minimum_healthy_percent = 66
@@ -80,12 +80,18 @@ resource "aws_ecs_service" "cert_retriever" {
   tags = merge(local.tags, { Name = var.name })
 }
 
+resource "aws_service_discovery_private_dns_namespace" "cert_retriever" {
+  name = "${local.environment}.cert_retriever.services.${var.parent_domain_name}"
+  vpc  = module.vpc.outputs.vpcs[0].id
+  tags = merge(local.tags, { Name = var.name })
+}
+
 
 resource "aws_service_discovery_service" "cert_retriever" {
-  name = "${var.name}-${local.roles[local.secondary_role_index]}"
+  name = "cert-retriever"
 
   dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.monitoring.id
+    namespace_id = aws_service_discovery_private_dns_namespace.cert_retriever.id
 
     dns_records {
       ttl  = 10
