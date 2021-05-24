@@ -54,6 +54,14 @@ resource "aws_security_group" "internet_proxy_endpoint" {
   tags        = merge(local.tags, { Name = var.name })
 }
 
+resource "aws_security_group" "lower_internet_proxy_endpoint" {
+  count       = local.is_management_env ? 0 : 1
+  name        = "proxy_vpc_endpoint"
+  description = "Control access to the Internet Proxy VPC Endpoint"
+  vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
+  tags        = merge(local.tags, { Name = var.name })
+}
+
 resource "aws_vpc_endpoint" "internet_proxy" {
   count               = local.is_management_env ? 1 : 0
   vpc_id              = module.vpc.outputs.vpcs[local.primary_role_index].id
@@ -61,6 +69,17 @@ resource "aws_vpc_endpoint" "internet_proxy" {
   vpc_endpoint_type   = "Interface"
   security_group_ids  = [aws_security_group.internet_proxy_endpoint[local.primary_role_index].id]
   subnet_ids          = module.vpc.outputs.private_subnets[local.primary_role_index]
+  private_dns_enabled = false
+  tags                = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_vpc_endpoint" "lower_internet_proxy" {
+  count               = local.is_management_env ? 0 : 1
+  vpc_id              = module.vpc.outputs.vpcs[local.secondary_role_index].id
+  service_name        = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
+  vpc_endpoint_type   = "Interface"
+  security_group_ids  = [aws_security_group.lower_internet_proxy_endpoint[local.secondary_role_index].id]
+  subnet_ids          = module.vpc.outputs.private_subnets[local.secondary_role_index]
   private_dns_enabled = false
   tags                = merge(local.tags, { Name = var.name })
 }

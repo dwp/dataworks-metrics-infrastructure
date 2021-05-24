@@ -415,6 +415,12 @@ locals {
 }
 
 locals {
+  internet_proxy = {
+    url  = local.is_management_env ? format("http://%s:3128", aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name) : format("http://%s:3128", aws_vpc_endpoint.lower_internet_proxy[0].dns_entry[0].dns_name)
+    sg   = local.is_management_env ? aws_security_group.internet_proxy_endpoint[0].id : aws_security_group.lower_internet_proxy_endpoint[0].id
+    host = local.is_management_env ? aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name : aws_vpc_endpoint.lower_internet_proxy[0].dns_entry[0].dns_name
+    port = 3128
+  }
 
   cidr_block_cicd_vpc = local.environment == "management" || local.environment == "management-dev" ? local.cidr_block[local.environment].ci-cd-vpc : "0.0.0.0/0"
   cidr_block_internal_compute_vpc = local.environment != "management" && local.environment != "management-dev" ? local.cidr_block[local.environment].internal-compute-vpc : "0.0.0.0/0"

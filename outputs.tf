@@ -90,15 +90,6 @@ output "monitoring_bucket" {
   }
 }
 
-output "internet_proxy" {
-  value = {
-    url  = format("http://%s:3128", aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name)
-    sg   = aws_security_group.internet_proxy_endpoint[0].id
-    host = aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name
-    port = 3128
-  }
-}
-
 output "grafana_fqdn" {
   value = local.is_management_env ? aws_route53_record.grafana_loadbalancer[0].fqdn : null_resource.dummy.id
 }

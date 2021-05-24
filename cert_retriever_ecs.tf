@@ -52,6 +52,14 @@ data "template_file" "cert_retriever_definition" {
       {
         "name" : "LOG_LEVEL",
         "value" : "debug"
+      },
+      {
+        "name" : "FULL_PROXY",
+        "value" : "${local.internet_proxy.url}"
+      },
+      {
+        "name" : "NO_PROXY",
+        "value" : ""
       }
     ])
   }
