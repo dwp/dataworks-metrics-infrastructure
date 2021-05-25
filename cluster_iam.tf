@@ -55,7 +55,20 @@ data "aws_iam_policy_document" "metrics_cluster_read_config" {
     ]
 
     resources = [
-      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}/*",
+      "*",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "acm:*",
+      "acm-pca:*",
+    ]
+
+    resources = [
+      "*"
     ]
   }
 

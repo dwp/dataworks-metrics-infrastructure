@@ -94,6 +94,16 @@ output "grafana_fqdn" {
   value = local.is_management_env ? aws_route53_record.grafana_loadbalancer[0].fqdn : null_resource.dummy.id
 }
 
+output "internet_proxy" {
+  value = {
+    url  = local.is_management_env ? format("http://%s:3128", aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name) : format("http://%s:3128", aws_vpc_endpoint.lower_internet_proxy[0].dns_entry[0].dns_name)
+    sg   = local.is_management_env ? aws_security_group.internet_proxy_endpoint[0].id : aws_security_group.lower_internet_proxy_endpoint[0].id
+    host = local.is_management_env ? aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name : aws_vpc_endpoint.lower_internet_proxy[0].dns_entry[0].dns_name
+    port = 3128
+  }
+}
+
+
 resource "null_resource" "dummy" {}
 
 resource "null_resource" "dummy_2" {}
