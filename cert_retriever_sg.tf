@@ -40,3 +40,13 @@ resource "aws_security_group_rule" "allow_cert_retriever_egress_hbase_exporter" 
   security_group_id        = aws_security_group.cert_retriever.id
   source_security_group_id = aws_security_group.hbase_exporter[0].id
 }
+
+resource "aws_security_group_rule" "allow_cert_retriever_egress_internet_proxy" {
+  description              = "Allow Internet access via the proxy (for ACM-PCA)"
+  type                     = "egress"
+  from_port                = var.cert_retriever_port
+  to_port                  = var.cert_retriever_port
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.cert_retriever.id
+  source_security_group_id = local.internet_proxy.sg
+}
