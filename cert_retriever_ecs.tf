@@ -60,6 +60,10 @@ data "template_file" "cert_retriever_definition" {
       {
         "name" : "NO_PROXY",
         "value" : ""
+      },
+      {
+        "name" : "AWS_DEFAULT_REGION",
+        "value" : "${var.region}"
       }
     ])
   }

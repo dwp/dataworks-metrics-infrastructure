@@ -52,13 +52,13 @@ variable "prometheus_task_cpu" {
 
 variable "cert_retriever_task_cpu" {
   default = {
-    development    = "4096"
-    qa             = "4096"
-    integration    = "4096"
-    preprod        = "4096"
-    production     = "8192"
-    management     = "4096"
-    management-dev = "4096"
+    development    = "1024"
+    qa             = "1024"
+    integration    = "1024"
+    preprod        = "1024"
+    production     = "1024"
+    management     = "1024"
+    management-dev = "1024"
   }
 }
 
@@ -86,13 +86,13 @@ variable "prometheus_task_memory" {
 
 variable "cert_retriever_task_memory" {
   default = {
-    development    = "16384"
-    qa             = "16384"
-    integration    = "16384"
-    preprod        = "16384"
-    production     = "16384"
-    management     = "16384"
-    management-dev = "16384"
+    development    = "1024"
+    qa             = "1024"
+    integration    = "1024"
+    preprod        = "1024"
+    production     = "1024"
+    management     = "1024"
+    management-dev = "1024"
   }
 }
 
@@ -226,13 +226,13 @@ variable "prometheus_memory" {
 
 variable "cert_retriever_memory" {
   default = {
-    development    = "8192"
-    qa             = "8192"
-    integration    = "8192"
-    preprod        = "8192"
-    production     = "8192"
-    management     = "8192"
-    management-dev = "8192"
+    development    = "1024"
+    qa             = "1024"
+    integration    = "1024"
+    preprod        = "1024"
+    production     = "1024"
+    management     = "1024"
+    management-dev = "1024"
   }
 }
 
