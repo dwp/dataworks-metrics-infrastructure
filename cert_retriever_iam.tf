@@ -113,6 +113,10 @@ data "aws_iam_policy_document" "cert_retriever_read_certs" {
 
     actions = [
       "acm-pca:GetCertficate",
+      "acm-pca:ListCertficates",
+      "acm:ListCertficates",
+      "acm:GetCertficate",
+
     ]
 
     resources = [
