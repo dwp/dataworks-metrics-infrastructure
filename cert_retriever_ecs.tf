@@ -54,12 +54,16 @@ data "template_file" "cert_retriever_definition" {
         "value" : "debug"
       },
       {
-        "name" : "FULL_PROXY",
+        "name" : "HTTP_PROXY",
+        "value" : "${local.internet_proxy.url}"
+      },
+      {
+        "name" : "HTTPS_PROXY",
         "value" : "${local.internet_proxy.url}"
       },
       {
         "name" : "NO_PROXY",
-        "value" : ""
+        "value" : "${local.no_proxy}"
       },
       {
         "name" : "AWS_DEFAULT_REGION",

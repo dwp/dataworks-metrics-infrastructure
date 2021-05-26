@@ -422,6 +422,13 @@ locals {
     port = 3128
   }
 
+  amazon_region_domain = "${data.aws_region.current.name}.amazonaws.com"
+  endpoint_services    = ["dynamodb", "ec2", "ec2messages", "glue", "kms", "logs", "monitoring", ".s3", "s3", "secretsmanager", "ssm", "ssmmessages"]
+  no_proxy             = "127.0.0.1,s3.${var.region}.amazonaws.com,secretsmanager.${var.region}.amazonaws.com,${local.environment}.services.${var.parent_domain_name}"
+
+
+
+
   cidr_block_cicd_vpc = local.environment == "management" || local.environment == "management-dev" ? local.cidr_block[local.environment].ci-cd-vpc : "0.0.0.0/0"
   cidr_block_internal_compute_vpc = local.environment != "management" && local.environment != "management-dev" ? local.cidr_block[local.environment].internal-compute-vpc : "0.0.0.0/0"
   cidr_block_ingest_vpc           = local.environment != "management" && local.environment != "management-dev" ? local.cidr_block[local.environment].ingest-vpc : "0.0.0.0/0"
