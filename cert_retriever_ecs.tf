@@ -64,6 +64,18 @@ data "template_file" "cert_retriever_definition" {
       {
         "name" : "AWS_DEFAULT_REGION",
         "value" : "${var.region}"
+      },
+      {
+        "name" : "APPLICATION",
+        "value" : "${var.name}"
+      },
+      {
+        "name" : "ENVIRONMENT",
+        "value" : "${local.environment}"
+      },
+      {
+        "name" : "CERTS_DESTINATION_FOLDER",
+        "value" : "certificates"
       }
     ])
   }

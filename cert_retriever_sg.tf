@@ -9,38 +9,6 @@ resource "aws_security_group" "cert_retriever" {
   }
 }
 
-resource "aws_security_group_rule" "allow_cert_retriever_egress_cloudwatch_exporter" {
-  description              = "Allows cert_retriever to access exporter metrics"
-  type                     = "egress"
-  protocol                 = "tcp"
-  from_port                = var.cloudwatch_exporter_port
-  to_port                  = var.cloudwatch_exporter_port
-  security_group_id        = aws_security_group.cert_retriever.id
-  source_security_group_id = aws_security_group.cloudwatch_exporter.id
-}
-
-resource "aws_security_group_rule" "allow_cert_retriever_egress_pdm_exporter" {
-  count                    = local.is_management_env ? 0 : 1
-  description              = "Allows cert_retriever to access PDM exporter"
-  type                     = "egress"
-  protocol                 = "tcp"
-  from_port                = var.json_exporter_port
-  to_port                  = var.json_exporter_port
-  security_group_id        = aws_security_group.cert_retriever.id
-  source_security_group_id = aws_security_group.pdm_exporter[0].id
-}
-
-resource "aws_security_group_rule" "allow_cert_retriever_egress_hbase_exporter" {
-  count                    = local.is_management_env ? 0 : 1
-  description              = "Allows cert_retriever to access Hbase exporter"
-  type                     = "egress"
-  protocol                 = "tcp"
-  from_port                = var.json_exporter_port
-  to_port                  = var.json_exporter_port
-  security_group_id        = aws_security_group.cert_retriever.id
-  source_security_group_id = aws_security_group.hbase_exporter[0].id
-}
-
 resource "aws_security_group_rule" "allow_cert_retriever_egress_internet_proxy" {
   description              = "Allow Internet access via the proxy (for ACM-PCA)"
   type                     = "egress"
