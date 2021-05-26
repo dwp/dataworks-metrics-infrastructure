@@ -26,7 +26,7 @@ data "template_file" "cert_retriever_definition" {
     name               = "cert_retriever"
     group_name         = "cert_retriever"
     cpu                = var.cert_retriever_cpu[local.environment]
-    image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_acm_cert_helper_url, var.image_versions.cert_retriever)
+    image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_cert_retriever_url, var.image_versions.cert_retriever)
     memory             = var.cert_retriever_memory[local.environment]
     memory_reservation = var.ec2_memory
     user               = "nobody"
