@@ -9,7 +9,7 @@ resource "aws_ecs_task_definition" "cert_retriever" {
   container_definitions    = "[${data.template_file.cert_retriever_definition.rendered}]"
 
   volume {
-    name = "cert_retriever"
+    name = "certificates"
 
     docker_volume_configuration {
       scope         = "shared"
@@ -39,8 +39,8 @@ data "template_file" "cert_retriever_definition" {
 
     mount_points = jsonencode([
       {
-        "container_path" : "/cert_retriever",
-        "source_volume" : "cert_retriever"
+        "container_path" : "/certificates",
+        "source_volume" : "certificates"
       }
     ])
 
