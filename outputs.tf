@@ -63,7 +63,7 @@ output "sdx_pushgateway_hostname" {
 }
 
 output "ingest_pushgateway_security_group" {
-  value = local.is_management_env ? null_resource.dummy.id : aws_security_group.ingest_pushgateway[0].id
+  value = local.is_management_env ? null_resource.dummy.id : data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.vpce_security_groups.ingest_pushgateway_security_group.id
 }
 
 output "ingest_pushgateway_hostname" {
