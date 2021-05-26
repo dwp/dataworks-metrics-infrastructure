@@ -84,11 +84,13 @@ resource "aws_iam_policy" "cert_retriever_read_certs" {
 }
 
 data "aws_iam_policy_document" "cert_retriever_read_certs" {
+
   statement {
     effect = "Allow"
 
     actions = [
-      "s3:ListBucket",
+      "acm-pca:ListCertificate*",
+      "acm:ListCertificates",
     ]
 
     resources = [
@@ -100,27 +102,13 @@ data "aws_iam_policy_document" "cert_retriever_read_certs" {
     effect = "Allow"
 
     actions = [
-      "s3:GetObject",
+      "acm-pca:GetCertificate",
+      "acm:GetCertificate",
     ]
 
     resources = [
-      "*",
-    ]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "acm-pca:GetCertficate",
-      "acm-pca:ListCertficates",
-      "acm:ListCertficates",
-      "acm:GetCertficate",
-
-    ]
-
-    resources = [
-      "arn:aws:acm:${var.region}:${local.account[local.environment]}:certificate/*"
+      "arn:aws:acm:${var.region}:${local.account[local.environment]}:certificate/*",
+      "arn:aws:acm-pca:${var.region}:${local.account[local.environment]}:certificate-authority/*",
     ]
   }
 }

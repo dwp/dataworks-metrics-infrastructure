@@ -106,6 +106,17 @@ resource "aws_security_group_rule" "grafana_ingress_internet_proxy" {
   security_group_id        = aws_security_group.internet_proxy_endpoint[0].id
 }
 
+resource "aws_security_group_rule" "cert_retriever_ingress_internet_proxy" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allow proxy access from cert retriever"
+  type                     = "ingress"
+  from_port                = var.internet_proxy_port
+  to_port                  = var.internet_proxy_port
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.cert_retriever.id
+  security_group_id        = aws_security_group.lower_internet_proxy_endpoint[0].id
+}
+
 resource "aws_security_group_rule" "alertmanager_egress_internet_proxy" {
   count                    = local.is_management_env ? 1 : 0
   description              = "Allow Alertmanager internet access via the proxy"
