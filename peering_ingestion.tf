@@ -27,7 +27,7 @@ resource "aws_security_group_rule" "k2hb_allow_ingress_prometheus" {
   protocol                 = "tcp"
   from_port                = 9100
   to_port                  = 9100
-  security_group_id        = data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.vpce_security_groups.ingest_pushgateway_security_groupk2hb_common
+  security_group_id        = data.terraform_remote_state.aws_ingest-consumers.outputs.security_group.k2hb_common
   source_security_group_id = aws_security_group.prometheus.id
 }
 
@@ -39,5 +39,5 @@ resource "aws_security_group_rule" "prometheus_allow_egress_k2hb" {
   from_port                = 9100
   to_port                  = 9100
   security_group_id        = aws_security_group.prometheus.id
-  source_security_group_id = data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.vpce_security_groups.ingest_pushgateway_security_groupk2hb_common
+  source_security_group_id = data.terraform_remote_state.aws_ingest-consumers.outputs.security_group.k2hb_common
 }
