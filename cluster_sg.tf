@@ -82,7 +82,7 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_ingest_pushgate
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = aws_security_group.metrics_cluster.id
-  source_security_group_id = aws_security_group.ingest_pushgateway[0].id
+  source_security_group_id = data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.vpce_security_groups.ingest_pushgateway_security_group.id
 }
 
 resource "aws_security_group_rule" "allow_metrics_cluster_egress_clive_pushgateway" {
