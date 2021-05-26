@@ -3,8 +3,8 @@ data template_file "grafana" {
   template = file("${path.module}/config/grafana/grafana.ini")
   vars = {
     grafana_domain = aws_route53_record.grafana_loadbalancer[0].fqdn
-    client_id      = data.terraform_remote_state.dataworks_cognito.outputs.cognito.grafana_client.id
-    client_secret  = data.terraform_remote_state.dataworks_cognito.outputs.cognito.grafana_client.client_secret
+    client_id      = aws_cognito_user_pool_client.grafana.id
+    client_secret  = aws_cognito_user_pool_client.grafana.client_secret
     cognito_domain = data.terraform_remote_state.dataworks_cognito.outputs.cognito.user_pool_domain
     region         = var.region
   }
