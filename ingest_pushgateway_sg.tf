@@ -74,16 +74,3 @@ resource "aws_security_group_rule" "allow_prometheus_egress_ingest_pushgateway" 
   security_group_id        = aws_security_group.prometheus.id
   source_security_group_id = data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.vpce_security_groups.ingest_pushgateway_security_group.id
 }
-
-# TO BE REMOVED IN NEXT PR
-resource "aws_security_group" "ingest_pushgateway" {
-  count       = local.is_management_env ? 0 : 1
-  name        = "ingest-pushgateway"
-  description = "Rules necesary for pulling container image"
-  vpc_id      = data.terraform_remote_state.aws_ingestion.outputs.vpc.vpc.vpc.id
-  tags        = merge(local.tags, { Name = "ingest-pushgateway" })
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
