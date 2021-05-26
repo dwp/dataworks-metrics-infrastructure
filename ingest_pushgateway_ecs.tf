@@ -50,7 +50,7 @@ resource "aws_ecs_service" "ingest_pushgateway" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [aws_security_group.ingest_pushgateway[local.primary_role_index].id]
+    security_groups = [data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.vpce_security_groups.ingest_pushgateway_security_group.id]
     subnets         = data.terraform_remote_state.aws_ingestion.outputs.ingestion_subnets.id
   }
 

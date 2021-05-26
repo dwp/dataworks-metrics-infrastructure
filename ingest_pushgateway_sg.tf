@@ -5,7 +5,7 @@ resource "aws_security_group_rule" "allow_ingest_pushgateway_egress_https" {
   protocol          = "tcp"
   from_port         = var.https_port
   to_port           = var.https_port
-  security_group_id = aws_security_group.ingest_pushgateway[local.primary_role_index].id
+  security_group_id = data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.vpce_security_groups.ingest_pushgateway_security_group.id
   prefix_list_ids   = [data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.prefix_list_ids.s3]
 }
 
