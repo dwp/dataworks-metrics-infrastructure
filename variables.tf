@@ -297,6 +297,32 @@ variable "desired_capacity" {
   }
 }
 
+variable "additional_metrics_ecs_cluster_asg_max" {
+  description = "Max metrics asg size"
+  default = {
+    development    = 1
+    qa             = 1
+    integration    = 1
+    preprod        = 1
+    production     = 1
+    management     = 1
+    management-dev = 1
+  }
+}
+
+variable "additional_cluster_desired_capacity" {
+  description = "Desired asg size"
+  default = {
+    development    = 1
+    qa             = 1
+    integration    = 1
+    preprod        = 1
+    production     = 1
+    management     = 1
+    management-dev = 1
+  }
+}
+
 variable "image_versions" {
   description = "pinned image versions to use"
   default = {

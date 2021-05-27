@@ -1,6 +1,7 @@
 #!/bin/bash
 echo ECS_CLUSTER=metrics >> /etc/ecs/ecs.config
 echo ECS_AWSVPC_BLOCK_IMDS=true >> /etc/ecs/ecs.config
+echo ECS_INSTANCE_ATTRIBUTES='${ecs_attributes}' >> /etc/ecs/ecs.config
 
 # rename ec2 instance to be unique
 export AWS_DEFAULT_REGION=${region}

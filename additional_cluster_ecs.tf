@@ -1,31 +1,8 @@
-resource "aws_ecs_cluster" "metrics_ecs_cluster" {
-  name               = local.cluster_name
-  capacity_providers = local.is_management_env ? [aws_ecs_capacity_provider.metrics_cluster.name, aws_ecs_capacity_provider.mgmt_metrics_cluster[local.primary_role_index].name] : [aws_ecs_capacity_provider.metrics_cluster.name]
-
-  tags = merge(
-    local.tags,
-    {
-      Name = local.metrics_ecs_friendly_name
-    }
-  )
-
-  setting {
-    name  = "containerInsights"
-    value = "enabled"
-  }
-}
-
-resource "aws_cloudwatch_log_group" "metrics_ecs_cluster" {
-  name              = local.cw_agent_log_group_name_metrics_ecs
-  retention_in_days = 180
-  tags              = local.tags
-}
-
-resource "aws_ecs_capacity_provider" "metrics_cluster" {
-  name = local.metrics_friendly_name
+resource "aws_ecs_capacity_provider" "additional_metrics_cluster" {
+  name = local.additional_metrics_friendly_name
 
   auto_scaling_group_provider {
-    auto_scaling_group_arn         = aws_autoscaling_group.metrics_cluster.arn
+    auto_scaling_group_arn         = aws_autoscaling_group.additional_metrics_cluster.arn
     managed_termination_protection = "DISABLED"
 
     managed_scaling {
@@ -43,16 +20,16 @@ resource "aws_ecs_capacity_provider" "metrics_cluster" {
   tags = merge(
     local.tags,
     {
-      Name = local.metrics_friendly_name
+      Name = local.additional_metrics_friendly_name
     }
   )
 }
 
-resource "aws_autoscaling_group" "metrics_cluster" {
-  name                      = local.metrics_friendly_name
-  min_size                  = var.desired_capacity[local.environment]
-  desired_capacity          = var.desired_capacity[local.environment]
-  max_size                  = var.metrics_ecs_cluster_asg_max[local.environment]
+resource "aws_autoscaling_group" "additional_metrics_cluster" {
+  name                      = local.additional_metrics_friendly_name
+  min_size                  = var.additional_cluster_desired_capacity[local.environment]
+  desired_capacity          = var.additional_cluster_desired_capacity[local.environment]
+  max_size                  = var.additional_metrics_ecs_cluster_asg_max[local.environment]
   protect_from_scale_in     = false
   health_check_grace_period = 600
   health_check_type         = "EC2"
@@ -60,8 +37,8 @@ resource "aws_autoscaling_group" "metrics_cluster" {
   vpc_zone_identifier       = module.vpc.outputs.private_subnets[local.secondary_role_index]
 
   launch_template {
-    id      = aws_launch_template.metrics_cluster.id
-    version = aws_launch_template.metrics_cluster.latest_version
+    id      = aws_launch_template.additional_metrics_cluster.id
+    version = aws_launch_template.additional_metrics_cluster.latest_version
   }
 
   lifecycle {
@@ -86,8 +63,8 @@ resource "aws_autoscaling_group" "metrics_cluster" {
   }
 }
 
-resource "aws_launch_template" "metrics_cluster" {
-  name          = local.metrics_friendly_name
+resource "aws_launch_template" "additional_metrics_cluster" {
+  name          = local.additional_metrics_friendly_name
   image_id      = var.ecs_hardened_ami_id
   instance_type = var.metrics_ecs_cluster_ec2_size[local.environment]
 
@@ -106,9 +83,9 @@ resource "aws_launch_template" "metrics_cluster" {
       region        = data.aws_region.current.name
       folder        = "/mnt/config"
       mnt_bucket    = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
-      name          = local.metrics_ecs_friendly_name
+      name          = local.additional_metrics_ecs_friendly_name
       ecs_attributes = jsonencode({
-        "instance-type" = "prometheus"
+        "instance-type" = "additional"
       })
     }
   ))
@@ -137,7 +114,7 @@ resource "aws_launch_template" "metrics_cluster" {
   tags = merge(
     local.tags,
     {
-      Name = local.metrics_friendly_name
+      Name = local.additional_metrics_friendly_name
     }
   )
 
@@ -147,7 +124,7 @@ resource "aws_launch_template" "metrics_cluster" {
     tags = merge(
       local.tags,
       {
-        Name                = local.metrics_friendly_name,
+        Name                = local.additional_metrics_friendly_name,
         AutoShutdown        = local.metrics_ecs_cluster_asg_autoshutdown[local.environment],
         SSMEnabled          = local.metrics_ecs_cluster_asg_ssmenabled[local.environment],
         Persistence         = "Ignore",
@@ -163,18 +140,18 @@ resource "aws_launch_template" "metrics_cluster" {
     tags = merge(
       local.tags,
       {
-        Name = local.metrics_friendly_name,
+        Name = local.additional_metrics_friendly_name,
       }
     )
   }
 }
 
-resource "aws_ecs_capacity_provider" "mgmt_metrics_cluster" {
+resource "aws_ecs_capacity_provider" "additional_mgmt_metrics_cluster" {
   count = local.is_management_env ? 1 : 0
-  name  = "mgmt-${local.metrics_friendly_name}"
+  name  = "mgmt-${local.additional_metrics_friendly_name}"
 
   auto_scaling_group_provider {
-    auto_scaling_group_arn         = aws_autoscaling_group.mgmt_metrics_cluster[local.primary_role_index].arn
+    auto_scaling_group_arn         = aws_autoscaling_group.additional_mgmt_metrics_cluster[local.primary_role_index].arn
     managed_termination_protection = "DISABLED"
 
     managed_scaling {
@@ -192,17 +169,17 @@ resource "aws_ecs_capacity_provider" "mgmt_metrics_cluster" {
   tags = merge(
     local.tags,
     {
-      Name = "mgmt-${local.metrics_friendly_name}"
+      Name = "mgmt-${local.additional_metrics_friendly_name}"
     }
   )
 }
 
-resource "aws_autoscaling_group" "mgmt_metrics_cluster" {
+resource "aws_autoscaling_group" "additional_mgmt_metrics_cluster" {
   count                     = local.is_management_env ? 1 : 0
-  name                      = "mgmt-${local.metrics_friendly_name}"
-  min_size                  = var.desired_capacity[local.environment]
-  desired_capacity          = var.desired_capacity[local.environment]
-  max_size                  = var.metrics_ecs_cluster_asg_max[local.environment]
+  name                      = "mgmt-${local.additional_metrics_friendly_name}"
+  min_size                  = var.additional_cluster_desired_capacity[local.environment]
+  desired_capacity          = var.additional_cluster_desired_capacity[local.environment]
+  max_size                  = var.additional_metrics_ecs_cluster_asg_max[local.environment]
   protect_from_scale_in     = false
   health_check_grace_period = 600
   health_check_type         = "EC2"
@@ -210,8 +187,8 @@ resource "aws_autoscaling_group" "mgmt_metrics_cluster" {
   vpc_zone_identifier       = module.vpc.outputs.private_subnets[local.primary_role_index]
 
   launch_template {
-    id      = aws_launch_template.mgmt_metrics_cluster[local.primary_role_index].id
-    version = aws_launch_template.mgmt_metrics_cluster[local.primary_role_index].latest_version
+    id      = aws_launch_template.additional_mgmt_metrics_cluster[local.primary_role_index].id
+    version = aws_launch_template.additional_mgmt_metrics_cluster[local.primary_role_index].latest_version
   }
 
   lifecycle {
@@ -236,9 +213,9 @@ resource "aws_autoscaling_group" "mgmt_metrics_cluster" {
   }
 }
 
-resource "aws_launch_template" "mgmt_metrics_cluster" {
+resource "aws_launch_template" "additional_mgmt_metrics_cluster" {
   count         = local.is_management_env ? 1 : 0
-  name          = "mgmt-${local.metrics_friendly_name}"
+  name          = "mgmt-${local.additional_metrics_friendly_name}"
   image_id      = var.ecs_hardened_ami_id
   instance_type = var.metrics_ecs_cluster_ec2_size[local.environment]
 
@@ -256,9 +233,9 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
       region        = data.aws_region.current.name
       folder        = "/mnt/config"
       mnt_bucket    = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
-      name          = local.metrics_ecs_friendly_name
+      name          = local.additional_metrics_ecs_friendly_name
       ecs_attributes = jsonencode({
-        "instance-type" = "prometheus"
+        "instance-type" = "additional"
       })
     }
   ))
@@ -287,7 +264,7 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
   tags = merge(
     local.tags,
     {
-      Name = "mgmt-${local.metrics_friendly_name}"
+      Name = "mgmt-${local.additional_metrics_friendly_name}"
     }
   )
 
@@ -297,7 +274,7 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
     tags = merge(
       local.tags,
       {
-        Name                = "mgmt-${local.metrics_friendly_name}",
+        Name                = "mgmt-${local.additional_metrics_friendly_name}",
         AutoShutdown        = local.metrics_ecs_cluster_asg_autoshutdown[local.environment],
         SSMEnabled          = local.metrics_ecs_cluster_asg_ssmenabled[local.environment],
         Persistence         = "Ignore",
@@ -313,7 +290,7 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
     tags = merge(
       local.tags,
       {
-        Name = "mgmt-${local.metrics_friendly_name}",
+        Name = "mgmt-${local.additional_metrics_friendly_name}",
       }
     )
   }

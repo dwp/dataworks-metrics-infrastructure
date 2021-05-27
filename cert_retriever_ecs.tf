@@ -17,6 +17,12 @@ resource "aws_ecs_task_definition" "cert_retriever" {
       driver        = "local"
     }
   }
+
+  placement_constraints {
+    type       = "memberOf"
+    expression = "attribute:instance-type == additional"
+  }
+
   tags = merge(local.tags, { Name = var.name })
 }
 
@@ -33,7 +39,7 @@ data "template_file" "cert_retriever_definition" {
     ports              = jsonencode([])
     ulimits            = jsonencode([])
     log_group          = aws_cloudwatch_log_group.monitoring_metrics.name
-    essential          = false
+    essential          = true
     region             = data.aws_region.current.name
     config_bucket      = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
