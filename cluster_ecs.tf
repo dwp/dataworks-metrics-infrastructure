@@ -1,6 +1,6 @@
 resource "aws_ecs_cluster" "metrics_ecs_cluster" {
   name               = local.cluster_name
-  capacity_providers = local.is_management_env ? [aws_ecs_capacity_provider.metrics_cluster.name, aws_ecs_capacity_provider.mgmt_metrics_cluster[local.primary_role_index].name] : [aws_ecs_capacity_provider.metrics_cluster.name]
+  capacity_providers = local.is_management_env ? [aws_ecs_capacity_provider.metrics_cluster.name, aws_ecs_capacity_provider.mgmt_metrics_cluster[local.primary_role_index].name, aws_ecs_capacity_provider.additional_mgmt_metrics_cluster[0].name] : [aws_ecs_capacity_provider.metrics_cluster.name, aws_ecs_capacity_provider.additional_metrics_cluster.name]
 
   tags = merge(
     local.tags,

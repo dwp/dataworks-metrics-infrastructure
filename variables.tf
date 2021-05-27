@@ -52,13 +52,13 @@ variable "prometheus_task_cpu" {
 
 variable "cert_retriever_task_cpu" {
   default = {
-    development    = "1024"
-    qa             = "1024"
-    integration    = "1024"
-    preprod        = "1024"
-    production     = "1024"
-    management     = "1024"
-    management-dev = "1024"
+    development    = "512"
+    qa             = "512"
+    integration    = "512"
+    preprod        = "512"
+    production     = "512"
+    management     = "512"
+    management-dev = "512"
   }
 }
 
@@ -178,13 +178,13 @@ variable "prometheus_cpu" {
 
 variable "cert_retriever_cpu" {
   default = {
-    development    = "1024"
-    qa             = "1024"
-    integration    = "1024"
-    preprod        = "1024"
-    production     = "2048"
-    management     = "1024"
-    management-dev = "1024"
+    development    = "512"
+    qa             = "512"
+    integration    = "512"
+    preprod        = "512"
+    production     = "512"
+    management     = "512"
+    management-dev = "512"
   }
 }
 
@@ -351,6 +351,18 @@ variable "metrics_ecs_cluster_ec2_size" {
     production     = "c5.4xlarge"
     management     = "t3.2xlarge"
     management-dev = "t3.2xlarge"
+  }
+}
+
+variable "additional_metrics_ecs_cluster_ec2_size" {
+  default = {
+    development    = "t3.medium"
+    qa             = "t3.medium"
+    integration    = "t3.medium"
+    preprod        = "t3.medium"
+    production     = "t3.medium"
+    management     = "t3.medium"
+    management-dev = "t3.medium"
   }
 }
 
