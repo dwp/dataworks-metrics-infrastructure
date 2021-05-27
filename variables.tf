@@ -310,7 +310,7 @@ variable "image_versions" {
     hive-exporter         = "0.0.4"
     awscli                = "0.0.10"
     blackbox              = "0.0.3"
-    cert_retriever        = "0.0.2"
+    cert_retriever        = "0.0.8"
 
   }
 }

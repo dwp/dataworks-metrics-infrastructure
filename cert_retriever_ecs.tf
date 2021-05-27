@@ -29,7 +29,7 @@ data "template_file" "cert_retriever_definition" {
     image_url          = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_cert_retriever_url, var.image_versions.cert_retriever)
     memory             = var.cert_retriever_memory[local.environment]
     memory_reservation = var.ec2_memory
-    user               = "nobody"
+    user               = "root"
     ports              = jsonencode([])
     ulimits            = jsonencode([])
     log_group          = aws_cloudwatch_log_group.monitoring_metrics.name
@@ -51,7 +51,7 @@ data "template_file" "cert_retriever_definition" {
       },
       {
         "name" : "LOG_LEVEL",
-        "value" : "debug"
+        "value" : "INFO"
       },
       {
         "name" : "HTTP_PROXY",
@@ -79,7 +79,7 @@ data "template_file" "cert_retriever_definition" {
       },
       {
         "name" : "CERTS_DESTINATION_FOLDER",
-        "value" : "certificates"
+        "value" : "/certificates"
       }
     ])
   }
