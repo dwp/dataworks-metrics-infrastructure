@@ -51,7 +51,7 @@ output "ingest_pushgateway_hostname" {
 }
 
 output "htme_pushgateway_hostname" {
-  value = local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.htme_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.htme_services[0].name}"
+  value = null_resource.dummy.id #local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.htme_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.htme_services[0].name}"
 }
 
 output "ucfs_pushgateway_security_group" {
