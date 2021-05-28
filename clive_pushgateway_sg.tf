@@ -1,15 +1,3 @@
-resource "aws_security_group" "clive_pushgateway" {
-  count       = local.is_management_env ? 0 : 1
-  name        = "clive-pushgateway"
-  description = "Rules necesary for pulling container image"
-  vpc_id      = data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.vpc.id
-  tags        = merge(local.tags, { Name = "clive-pushgateway" })
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 resource "aws_security_group_rule" "allow_clive_pushgateway_egress_https" {
   count             = local.is_management_env ? 0 : 1
   description       = "Allows ECS to pull container from S3"
@@ -17,7 +5,7 @@ resource "aws_security_group_rule" "allow_clive_pushgateway_egress_https" {
   protocol          = "tcp"
   from_port         = var.https_port
   to_port           = var.https_port
-  security_group_id = aws_security_group.clive_pushgateway[local.primary_role_index].id
+  security_group_id = data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.clive_pushgateway_vpce_security_group.id
   prefix_list_ids   = [data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.prefix_list_ids.s3]
 }
 
@@ -28,7 +16,7 @@ resource "aws_security_group_rule" "allow_prometheus_ingress_clive_pushgateway" 
   protocol                 = "tcp"
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
-  security_group_id        = aws_security_group.clive_pushgateway[0].id
+  security_group_id        = data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.clive_pushgateway_vpce_security_group.id
   source_security_group_id = aws_security_group.prometheus.id
 }
 
@@ -39,7 +27,7 @@ resource "aws_security_group_rule" "allow_clive_ingress_clive_pushgateway" {
   protocol                 = "tcp"
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
-  security_group_id        = aws_security_group.clive_pushgateway[0].id
+  security_group_id        = data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.clive_pushgateway_vpce_security_group.id
   source_security_group_id = data.terraform_remote_state.aws_clive.outputs.aws_clive_common_sg.id
 }
 
@@ -51,7 +39,7 @@ resource "aws_security_group_rule" "allow_clive_egress_clive_pushgateway" {
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = data.terraform_remote_state.aws_clive.outputs.aws_clive_common_sg.id
-  source_security_group_id = aws_security_group.clive_pushgateway[0].id
+  source_security_group_id = data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.clive_pushgateway_vpce_security_group.id
 }
 
 resource "aws_security_group_rule" "allow_prometheus_egress_clive_pushgateway" {
@@ -62,5 +50,5 @@ resource "aws_security_group_rule" "allow_prometheus_egress_clive_pushgateway" {
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = aws_security_group.prometheus.id
-  source_security_group_id = aws_security_group.clive_pushgateway[0].id
+  source_security_group_id = data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.clive_pushgateway_vpce_security_group.id
 }
