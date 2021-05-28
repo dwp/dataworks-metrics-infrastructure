@@ -50,7 +50,7 @@ resource "aws_ecs_service" "clive_pushgateway" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [aws_security_group.clive_pushgateway[local.primary_role_index].id]
+    security_groups = [data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.clive_pushgateway_vpce_security_group.id]
     subnets         = data.terraform_remote_state.aws_internal_compute.outputs.clive_subnet.ids
   }
 

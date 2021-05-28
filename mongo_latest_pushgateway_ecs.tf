@@ -50,7 +50,7 @@ resource "aws_ecs_service" "mongo_latest_pushgateway" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [aws_security_group.mongo_latest_pushgateway[local.primary_role_index].id]
+    security_groups = [data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.mongo_latest_vpce_pushgateway_security_group.id]
     subnets         = data.terraform_remote_state.aws_internal_compute.outputs.mongo_latest_subnet.ids
   }
 
