@@ -39,7 +39,7 @@ data "template_file" "htme_pushgateway_definition" {
 }
 
 resource "aws_ecs_service" "htme_pushgateway" {
-  count                              = local.is_management_env ? 0 : 1
+  count                              = 0
   name                               = "htme-pushgateway"
   cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
   task_definition                    = aws_ecs_task_definition.htme_pushgateway[local.primary_role_index].arn
@@ -62,15 +62,8 @@ resource "aws_ecs_service" "htme_pushgateway" {
   tags = merge(local.tags, { Name = var.name })
 }
 
-resource "aws_service_discovery_private_dns_namespace" "htme_services" {
-  count = local.is_management_env ? 0 : 1
-  name  = "${local.environment}.htme.services.${var.parent_domain_name}"
-  vpc   = data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.vpc.id
-  tags  = merge(local.tags, { Name = var.name })
-}
-
 resource "aws_service_discovery_service" "htme_pushgateway" {
-  count = local.is_management_env ? 0 : 1
+  count = 0
   name  = "htme-pushgateway"
 
   dns_config {
