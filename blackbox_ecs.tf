@@ -68,19 +68,3 @@ resource "aws_ecs_service" "blackbox" {
 
   tags = merge(local.tags, { Name = var.name })
 }
-
-resource "aws_service_discovery_service" "blackbox" {
-  count = local.is_management_env ? 0 : 1
-  name  = "blackbox"
-
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.sdx_services[0].id
-
-    dns_records {
-      ttl  = 10
-      type = "A"
-    }
-  }
-
-  tags = merge(local.tags, { Name = var.name })
-}
