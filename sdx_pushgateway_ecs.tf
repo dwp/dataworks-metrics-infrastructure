@@ -55,7 +55,7 @@ resource "aws_ecs_service" "sdx_pushgateway" {
   }
 
   service_registries {
-    registry_arn   = data.terraform_remote_state.aws_pdm_dataset_generation.outputs.private_dns.sdx_service_discovery.arn
+    registry_arn   = data.terraform_remote_state.aws_sdx.outputs.private_dns.sdx_service_discovery.arn
     container_name = "sdx-pushgateway"
   }
 

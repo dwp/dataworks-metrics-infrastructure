@@ -582,7 +582,7 @@ locals {
     }
   )
   nifi_endpoint_url = local.is_management_env ? null_resource.dummy.id : data.terraform_remote_state.snapshot_sender.outputs.nifi_endpoint_url
-  blackbox_hostname  = local.is_management_env ? null_resource.dummy.id : "${data.terraform_remote_state.aws_pdm_dataset_generation.outputs.private_dns.blackbox_service_discovery.name}.${data.terraform_remote_state.aws_pdm_dataset_generation.outputs.private_dns.sdx_service_discovery_dns.name}"
+  blackbox_hostname  = local.is_management_env ? null_resource.dummy.id : "${data.terraform_remote_state.aws_sdx.outputs.private_dns.blackbox_service_discovery.name}.${data.terraform_remote_state.aws_sdx.outputs.private_dns.sdx_service_discovery_dns.name}"
 
   dns_zone_ids = {
     management-dev = {
