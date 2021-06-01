@@ -38,49 +38,26 @@ data "template_file" "pdm_pushgateway_definition" {
   }
 }
 
-resource "aws_ecs_service" "pdm_pushgateway" {
-  count                              = local.is_management_env ? 0 : 1
-  name                               = "pdm-pushgateway"
-  cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition                    = aws_ecs_task_definition.pdm_pushgateway[local.primary_role_index].arn
-  platform_version                   = var.platform_version
-  desired_count                      = 1
-  launch_type                        = "FARGATE"
-  deployment_minimum_healthy_percent = 100
-  deployment_maximum_percent         = 200
+# resource "aws_ecs_service" "pdm_pushgateway" {
+#   count                              = local.is_management_env ? 0 : 1
+#   name                               = "pdm-pushgateway"
+#   cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
+#   task_definition                    = aws_ecs_task_definition.pdm_pushgateway[local.primary_role_index].arn
+#   platform_version                   = var.platform_version
+#   desired_count                      = 1
+#   launch_type                        = "FARGATE"
+#   deployment_minimum_healthy_percent = 100
+#   deployment_maximum_percent         = 200
 
-  network_configuration {
-    security_groups = [data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.pdm_pushgateway_vpce_security_group.id]
-    subnets         = data.terraform_remote_state.aws_internal_compute.outputs.pdm_subnet_new.ids
-  }
+#   network_configuration {
+#     security_groups = [data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.pdm_pushgateway_vpce_security_group.id]
+#     subnets         = data.terraform_remote_state.aws_internal_compute.outputs.pdm_subnet_new.ids
+#   }
 
-  service_registries {
-    registry_arn   = aws_service_discovery_service.pdm_pushgateway[local.primary_role_index].arn
-    container_name = "pdm-pushgateway"
-  }
+#   service_registries {
+#     registry_arn   = aws_service_discovery_service.pdm_pushgateway[local.primary_role_index].arn
+#     container_name = "pdm-pushgateway"
+#   }
 
-  tags = merge(local.tags, { Name = var.name })
-}
-
-resource "aws_service_discovery_private_dns_namespace" "pdm_services" {
-  count = local.is_management_env ? 0 : 1
-  name  = "${local.environment}.pdm.services.${var.parent_domain_name}"
-  vpc   = data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.vpc.id
-  tags  = merge(local.tags, { Name = var.name })
-}
-
-resource "aws_service_discovery_service" "pdm_pushgateway" {
-  count = local.is_management_env ? 0 : 1
-  name  = "pdm-pushgateway"
-
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.pdm_services[0].id
-
-    dns_records {
-      ttl  = 10
-      type = "A"
-    }
-  }
-
-  tags = merge(local.tags, { Name = var.name })
-}
+#   tags = merge(local.tags, { Name = var.name })
+# }
