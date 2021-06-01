@@ -225,13 +225,13 @@ resource "aws_route53_vpc_association_authorization" "monitoring" {
   zone_id = aws_service_discovery_private_dns_namespace.monitoring.hosted_zone
 }
 
-# resource "aws_route53_zone_association" "monitoring" {
-#   for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : {}
-#   provider   = aws.management_zone
-#   vpc_id     = module.vpc.outputs.vpcs[0].id
-#   zone_id    = each.value
-#   depends_on = [aws_route53_vpc_association_authorization.monitoring]
-# }
+resource "aws_route53_zone_association" "monitoring" {
+  for_each   = local.is_management_env ? local.dns_zone_ids[local.environment] : {}
+  provider   = aws.management_zone
+  vpc_id     = module.vpc.outputs.vpcs[0].id
+  zone_id    = each.value
+  depends_on = [aws_route53_vpc_association_authorization.monitoring]
+}
 
 # resource "aws_route53_vpc_association_authorization" "sdx_services" {
 #   count   = local.is_management_env ? 0 : 1
@@ -239,13 +239,13 @@ resource "aws_route53_vpc_association_authorization" "monitoring" {
 #   zone_id = aws_service_discovery_private_dns_namespace.sdx_services[0].hosted_zone
 # }
 
-resource "aws_route53_zone_association" "sdx_services" {
-  count      = local.is_management_env ? 0 : 1
-  provider   = aws.non_management_zone
-  vpc_id     = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
-  zone_id    = local.is_management_env ? null_resource.dummy.id : local.sdx_dns_zone_ids[local.environment]
-  depends_on = [aws_route53_vpc_association_authorization.sdx_services]
-}
+# resource "aws_route53_zone_association" "sdx_services" {
+#   count      = local.is_management_env ? 0 : 1
+#   provider   = aws.non_management_zone
+#   vpc_id     = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
+#   zone_id    = local.is_management_env ? null_resource.dummy.id : local.sdx_dns_zone_ids[local.environment]
+#   depends_on = [aws_route53_vpc_association_authorization.sdx_services]
+# }
 
 resource "aws_route53_vpc_association_authorization" "pdm_services" {
   count   = local.is_management_env ? 0 : 1
