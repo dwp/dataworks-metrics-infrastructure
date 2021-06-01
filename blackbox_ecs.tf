@@ -45,42 +45,26 @@ data "template_file" "blackbox_definition" {
   }
 }
 
-resource "aws_ecs_service" "blackbox" {
-  count                              = local.is_management_env ? 0 : 1
-  name                               = "blackbox"
-  cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition                    = aws_ecs_task_definition.blackbox[0].arn
-  platform_version                   = var.platform_version
-  desired_count                      = 1
-  launch_type                        = "FARGATE"
-  deployment_minimum_healthy_percent = 100
-  deployment_maximum_percent         = 200
+# resource "aws_ecs_service" "blackbox" {
+#   count                              = local.is_management_env ? 0 : 1
+#   name                               = "blackbox"
+#   cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
+#   task_definition                    = aws_ecs_task_definition.blackbox[0].arn
+#   platform_version                   = var.platform_version
+#   desired_count                      = 1
+#   launch_type                        = "FARGATE"
+#   deployment_minimum_healthy_percent = 100
+#   deployment_maximum_percent         = 200
 
-  network_configuration {
-    security_groups = [aws_security_group.blackbox[0].id, data.terraform_remote_state.snapshot_sender.outputs.security_group.snapshot_sender]
-    subnets         = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.*.id
-  }
+#   network_configuration {
+#     security_groups = [aws_security_group.blackbox[0].id, data.terraform_remote_state.snapshot_sender.outputs.security_group.snapshot_sender]
+#     subnets         = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.*.id
+#   }
 
-  service_registries {
-    registry_arn   = aws_service_discovery_service.blackbox[0].arn
-    container_name = "blackbox"
-  }
+#   service_registries {
+#     registry_arn   = aws_service_discovery_service.blackbox[0].arn
+#     container_name = "blackbox"
+#   }
 
-  tags = merge(local.tags, { Name = var.name })
-}
-
-resource "aws_service_discovery_service" "blackbox" {
-  count = local.is_management_env ? 0 : 1
-  name  = "blackbox"
-
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.sdx_services[0].id
-
-    dns_records {
-      ttl  = 10
-      type = "A"
-    }
-  }
-
-  tags = merge(local.tags, { Name = var.name })
-}
+#   tags = merge(local.tags, { Name = var.name })
+# }

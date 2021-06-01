@@ -597,7 +597,7 @@ locals {
     }
   )
   nifi_endpoint_url = local.is_management_env ? null_resource.dummy.id : data.terraform_remote_state.snapshot_sender.outputs.nifi_endpoint_url
-  blackbox_hostname  = local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.blackbox[0].name}.${aws_service_discovery_private_dns_namespace.sdx_services[0].name}"
+  blackbox_hostname  = null_resource.dummy.id #local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.blackbox[0].name}.${aws_service_discovery_private_dns_namespace.sdx_services[0].name}"
 
   dns_zone_ids = {
     management-dev = {
