@@ -50,15 +50,15 @@ variable "prometheus_task_cpu" {
   }
 }
 
-variable "cert_retriever_task_cpu" {
+variable "cert_metrics_task_cpu" {
   default = {
-    development    = "512"
-    qa             = "512"
-    integration    = "512"
-    preprod        = "512"
-    production     = "512"
-    management     = "512"
-    management-dev = "512"
+    development    = "2048"
+    qa             = "2048"
+    integration    = "2048"
+    preprod        = "2048"
+    production     = "2048"
+    management     = "2048"
+    management-dev = "2048"
   }
 }
 
@@ -84,15 +84,15 @@ variable "prometheus_task_memory" {
   }
 }
 
-variable "cert_retriever_task_memory" {
+variable "cert_metrics_task_memory" {
   default = {
-    development    = "1024"
-    qa             = "1024"
-    integration    = "1024"
-    preprod        = "1024"
-    production     = "1024"
-    management     = "1024"
-    management-dev = "1024"
+    development    = "2048"
+    qa             = "2048"
+    integration    = "2048"
+    preprod        = "2048"
+    production     = "2048"
+    management     = "2048"
+    management-dev = "2048"
   }
 }
 
@@ -188,6 +188,18 @@ variable "cert_retriever_cpu" {
   }
 }
 
+variable "cert_exporter_cpu" {
+  default = {
+    development    = "1024"
+    qa             = "1024"
+    integration    = "1024"
+    preprod        = "1024"
+    production     = "2048"
+    management     = "1024"
+    management-dev = "1024"
+  }
+}
+
 variable "receiver_cpu" {
   default = {
     development    = "1024"
@@ -236,6 +248,18 @@ variable "cert_retriever_memory" {
   }
 }
 
+variable "cert_exporter_memory" {
+  default = {
+    development    = "1024"
+    qa             = "1024"
+    integration    = "1024"
+    preprod        = "1024"
+    production     = "1024"
+    management     = "1024"
+    management-dev = "1024"
+  }
+}
+
 variable "https_port" {
   default = 443
 }
@@ -255,6 +279,9 @@ variable "cloudwatch_exporter_port" {}
 variable "pushgateway_port" {}
 variable "json_exporter_port" {}
 variable "jmx_port" {}
+variable "cert_metrics_port" {
+  default = 8080
+}
 
 variable "subnets" {
   description = "define sizes for subnets using Terraform cidrsubnet function. For an empty /24 VPC, the defaults will create /28 public subnets and /26 private subnets, one of each in each AZ."
@@ -337,7 +364,7 @@ variable "image_versions" {
     awscli                = "0.0.10"
     blackbox              = "0.0.3"
     cert_retriever        = "0.0.8"
-
+    cert_exporter         = "0.0.1"
   }
 }
 
