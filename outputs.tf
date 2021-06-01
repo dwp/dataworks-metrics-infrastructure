@@ -19,7 +19,7 @@ output "azkaban_pushgateway_hostname" {
 }
 
 output "blackbox_security_group" {
-  value = local.is_management_env ? null_resource.dummy.id : aws_security_group.blackbox[0].id
+  value = local.is_management_env ? null_resource.dummy.id : data.terraform_remote_state.aws_sdx.outputs.vpce_security_groups.blackbox_vpce_security_group.id
 }
 
 output "ingest_pushgateway_hostname" {
