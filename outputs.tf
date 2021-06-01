@@ -22,10 +22,6 @@ output "blackbox_security_group" {
   value = local.is_management_env ? null_resource.dummy.id : aws_security_group.blackbox[0].id
 }
 
-output "sdx_pushgateway_hostname" {
-  value = local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.sdx_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.sdx_services[0].name}"
-}
-
 output "ingest_pushgateway_hostname" {
   value = local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.ingest_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.ingest_services[0].name}"
 }
