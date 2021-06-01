@@ -1,15 +1,3 @@
-resource "aws_security_group" "sdx_pushgateway" {
-  count       = local.is_management_env ? 0 : 1
-  name        = "sdx-pushgateway"
-  description = "Rules necesary for pulling container image"
-  vpc_id      = data.terraform_remote_state.aws_sdx.outputs.vpc.vpc.id
-  tags        = merge(local.tags, { Name = "sdx-pushgateway" })
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 resource "aws_security_group_rule" "allow_sdx_pushgateway_egress_https" {
   count             = local.is_management_env ? 0 : 1
   description       = "Allows ECS to pull container from S3"
@@ -17,7 +5,7 @@ resource "aws_security_group_rule" "allow_sdx_pushgateway_egress_https" {
   protocol          = "tcp"
   from_port         = var.https_port
   to_port           = var.https_port
-  security_group_id = aws_security_group.sdx_pushgateway[0].id
+  security_group_id = data.terraform_remote_state.aws_sdx.outputs.vpce_security_groups.sdx_pushgateway_vpce_security_group.id
   prefix_list_ids   = [data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.prefix_list_ids.s3]
 }
 
@@ -28,7 +16,7 @@ resource "aws_security_group_rule" "allow_prometheus_ingress_sdx_pushgateway" {
   protocol                 = "tcp"
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
-  security_group_id        = aws_security_group.sdx_pushgateway[0].id
+  security_group_id        = data.terraform_remote_state.aws_sdx.outputs.vpce_security_groups.sdx_pushgateway_vpce_security_group.id
   source_security_group_id = aws_security_group.prometheus.id
 }
 
@@ -39,7 +27,7 @@ resource "aws_security_group_rule" "allow_snapshot_sender_ingress_sdx_pushgatewa
   protocol                 = "tcp"
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
-  security_group_id        = aws_security_group.sdx_pushgateway[0].id
+  security_group_id        = data.terraform_remote_state.aws_sdx.outputs.vpce_security_groups.sdx_pushgateway_vpce_security_group.id
   source_security_group_id = data.terraform_remote_state.snapshot_sender.outputs.security_group.snapshot_sender
 }
 
@@ -51,7 +39,7 @@ resource "aws_security_group_rule" "allow_snapshot_sender_egress_sdx_pushgateway
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = data.terraform_remote_state.snapshot_sender.outputs.security_group.snapshot_sender
-  source_security_group_id = aws_security_group.sdx_pushgateway[0].id
+  source_security_group_id = data.terraform_remote_state.aws_sdx.outputs.vpce_security_groups.sdx_pushgateway_vpce_security_group.id
 }
 
 resource "aws_security_group_rule" "allow_snapshot_sender_status_checker_ingress_sdx_pushgateway" {
@@ -61,7 +49,7 @@ resource "aws_security_group_rule" "allow_snapshot_sender_status_checker_ingress
   protocol                 = "tcp"
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
-  security_group_id        = aws_security_group.sdx_pushgateway[0].id
+  security_group_id        = data.terraform_remote_state.aws_sdx.outputs.vpce_security_groups.sdx_pushgateway_vpce_security_group.id
   source_security_group_id = data.terraform_remote_state.snapshot_sender.outputs.security_group.snapshot_sender_status_checker
 }
 
@@ -73,7 +61,7 @@ resource "aws_security_group_rule" "allow_snapshot_sender_status_checker_egress_
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = data.terraform_remote_state.snapshot_sender.outputs.security_group.snapshot_sender_status_checker
-  source_security_group_id = aws_security_group.sdx_pushgateway[0].id
+  source_security_group_id = data.terraform_remote_state.aws_sdx.outputs.vpce_security_groups.sdx_pushgateway_vpce_security_group.id
 }
 
 resource "aws_security_group_rule" "allow_prometheus_egress_sdx_pushgateway" {
@@ -84,5 +72,5 @@ resource "aws_security_group_rule" "allow_prometheus_egress_sdx_pushgateway" {
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = aws_security_group.prometheus.id
-  source_security_group_id = aws_security_group.sdx_pushgateway[0].id
+  source_security_group_id = data.terraform_remote_state.aws_sdx.outputs.vpce_security_groups.sdx_pushgateway_vpce_security_group.id
 }
