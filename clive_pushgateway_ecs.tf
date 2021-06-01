@@ -61,26 +61,3 @@ resource "aws_ecs_service" "clive_pushgateway" {
 
   tags = merge(local.tags, { Name = var.name })
 }
-
-resource "aws_service_discovery_private_dns_namespace" "clive_services" {
-  count = local.is_management_env ? 0 : 1
-  name  = "${local.environment}.clive.services.${var.parent_domain_name}"
-  vpc   = data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.vpc.id
-  tags  = merge(local.tags, { Name = var.name })
-}
-
-resource "aws_service_discovery_service" "clive_pushgateway" {
-  count = local.is_management_env ? 0 : 1
-  name  = "clive-pushgateway"
-
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.clive_services[0].id
-
-    dns_records {
-      ttl  = 10
-      type = "A"
-    }
-  }
-
-  tags = merge(local.tags, { Name = var.name })
-}
