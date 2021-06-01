@@ -254,10 +254,10 @@ resource "aws_route53_vpc_association_authorization" "pdm_services" {
 }
 
 resource "aws_route53_zone_association" "pdm_services" {
-  count    = local.is_management_env ? 0 : 1
-  provider = aws.non_management_zone
-  vpc_id   = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
-  zone_id  = local.is_management_env ? null_resource.dummy.id : local.pdm_dns_zone_ids[local.environment]
+  count      = local.is_management_env ? 0 : 1
+  provider   = aws.non_management_zone
+  vpc_id     = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
+  zone_id    = local.is_management_env ? null_resource.dummy.id : local.pdm_dns_zone_ids[local.environment]
   depends_on = [aws_route53_vpc_association_authorization.pdm_services]
 }
 
@@ -268,10 +268,10 @@ resource "aws_route53_vpc_association_authorization" "adg_services" {
 }
 
 resource "aws_route53_zone_association" "adg_services" {
-  count    = local.is_management_env ? 0 : 1
-  provider = aws.non_management_zone
-  vpc_id   = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
-  zone_id  = local.is_management_env ? null_resource.dummy.id : local.adg_dns_zone_ids[local.environment]
+  count      = local.is_management_env ? 0 : 1
+  provider   = aws.non_management_zone
+  vpc_id     = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
+  zone_id    = local.is_management_env ? null_resource.dummy.id : local.adg_dns_zone_ids[local.environment]
   depends_on = [aws_route53_vpc_association_authorization.adg_services]
 }
 
@@ -282,10 +282,10 @@ resource "aws_route53_vpc_association_authorization" "clive_services" {
 }
 
 resource "aws_route53_zone_association" "clive_services" {
-  count    = local.is_management_env ? 0 : 1
-  provider = aws.non_management_zone
-  vpc_id   = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
-  zone_id  = local.is_management_env ? null_resource.dummy.id : local.clive_dns_zone_ids[local.environment]
+  count      = local.is_management_env ? 0 : 1
+  provider   = aws.non_management_zone
+  vpc_id     = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
+  zone_id    = local.is_management_env ? null_resource.dummy.id : local.clive_dns_zone_ids[local.environment]
   depends_on = [aws_route53_vpc_association_authorization.clive_services]
 }
 
@@ -296,9 +296,9 @@ resource "aws_route53_vpc_association_authorization" "mongo_latest_services" {
 }
 
 resource "aws_route53_zone_association" "mongo_latestservices" {
-  count    = local.is_management_env ? 0 : 1
-  provider = aws.non_management_zone
-  vpc_id   = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
-  zone_id  = local.is_management_env ? null_resource.dummy.id : local.mongo_latest_dns_zone_ids[local.environment]
+  count      = local.is_management_env ? 0 : 1
+  provider   = aws.non_management_zone
+  vpc_id     = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
+  zone_id    = local.is_management_env ? null_resource.dummy.id : local.mongo_latest_dns_zone_ids[local.environment]
   depends_on = [aws_route53_vpc_association_authorization.mongo_latest_services]
 }
