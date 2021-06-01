@@ -247,11 +247,11 @@ resource "aws_route53_zone_association" "sdx_services" {
   depends_on = [aws_route53_vpc_association_authorization.sdx_services]
 }
 
-resource "aws_route53_vpc_association_authorization" "pdm_services" {
-  count   = local.is_management_env ? 0 : 1
-  vpc_id  = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
-  zone_id = aws_service_discovery_private_dns_namespace.pdm_services[0].hosted_zone
-}
+# resource "aws_route53_vpc_association_authorization" "pdm_services" {
+#   count   = local.is_management_env ? 0 : 1
+#   vpc_id  = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
+#   zone_id = aws_service_discovery_private_dns_namespace.pdm_services[0].hosted_zone
+# }
 
 resource "aws_route53_zone_association" "pdm_services" {
   count      = local.is_management_env ? 0 : 1
@@ -261,11 +261,11 @@ resource "aws_route53_zone_association" "pdm_services" {
   depends_on = [aws_route53_vpc_association_authorization.pdm_services]
 }
 
-resource "aws_route53_vpc_association_authorization" "adg_services" {
-  count   = local.is_management_env ? 0 : 1
-  vpc_id  = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
-  zone_id = aws_service_discovery_private_dns_namespace.adg_services[0].hosted_zone
-}
+# resource "aws_route53_vpc_association_authorization" "adg_services" {
+#   count   = local.is_management_env ? 0 : 1
+#   vpc_id  = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
+#   zone_id = aws_service_discovery_private_dns_namespace.adg_services[0].hosted_zone
+# }
 
 resource "aws_route53_zone_association" "adg_services" {
   count      = local.is_management_env ? 0 : 1
@@ -275,11 +275,11 @@ resource "aws_route53_zone_association" "adg_services" {
   depends_on = [aws_route53_vpc_association_authorization.adg_services]
 }
 
-resource "aws_route53_vpc_association_authorization" "clive_services" {
-  count   = local.is_management_env ? 0 : 1
-  vpc_id  = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
-  zone_id = aws_service_discovery_private_dns_namespace.clive_services[0].hosted_zone
-}
+# resource "aws_route53_vpc_association_authorization" "clive_services" {
+#   count   = local.is_management_env ? 0 : 1
+#   vpc_id  = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
+#   zone_id = aws_service_discovery_private_dns_namespace.clive_services[0].hosted_zone
+# }
 
 resource "aws_route53_zone_association" "clive_services" {
   count      = local.is_management_env ? 0 : 1
@@ -289,11 +289,11 @@ resource "aws_route53_zone_association" "clive_services" {
   depends_on = [aws_route53_vpc_association_authorization.clive_services]
 }
 
-resource "aws_route53_vpc_association_authorization" "mongo_latest_services" {
-  count   = local.is_management_env ? 0 : 1
-  vpc_id  = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
-  zone_id = aws_service_discovery_private_dns_namespace.mongo_latest_services[0].hosted_zone
-}
+# resource "aws_route53_vpc_association_authorization" "mongo_latest_services" {
+#   count   = local.is_management_env ? 0 : 1
+#   vpc_id  = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
+#   zone_id = aws_service_discovery_private_dns_namespace.mongo_latest_services[0].hosted_zone
+# }
 
 resource "aws_route53_zone_association" "mongo_latestservices" {
   count      = local.is_management_env ? 0 : 1
