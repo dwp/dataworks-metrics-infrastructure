@@ -38,49 +38,26 @@ data "template_file" "ingest_pushgateway_definition" {
   }
 }
 
-resource "aws_ecs_service" "ingest_pushgateway" {
-  count                              = local.is_management_env ? 0 : 1
-  name                               = "ingest-pushgateway"
-  cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition                    = aws_ecs_task_definition.ingest_pushgateway[local.primary_role_index].arn
-  platform_version                   = var.platform_version
-  desired_count                      = 1
-  launch_type                        = "FARGATE"
-  deployment_minimum_healthy_percent = 100
-  deployment_maximum_percent         = 200
+# resource "aws_ecs_service" "ingest_pushgateway" {
+#   count                              = local.is_management_env ? 0 : 1
+#   name                               = "ingest-pushgateway"
+#   cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
+#   task_definition                    = aws_ecs_task_definition.ingest_pushgateway[local.primary_role_index].arn
+#   platform_version                   = var.platform_version
+#   desired_count                      = 1
+#   launch_type                        = "FARGATE"
+#   deployment_minimum_healthy_percent = 100
+#   deployment_maximum_percent         = 200
 
-  network_configuration {
-    security_groups = [data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.vpce_security_groups.ingest_pushgateway_security_group.id]
-    subnets         = data.terraform_remote_state.aws_ingestion.outputs.ingestion_subnets.id
-  }
+#   network_configuration {
+#     security_groups = [data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.vpce_security_groups.ingest_pushgateway_security_group.id]
+#     subnets         = data.terraform_remote_state.aws_ingestion.outputs.ingestion_subnets.id
+#   }
 
-  service_registries {
-    registry_arn   = aws_service_discovery_service.ingest_pushgateway[local.primary_role_index].arn
-    container_name = "ingest-pushgateway"
-  }
+#   service_registries {
+#     registry_arn   = aws_service_discovery_service.ingest_pushgateway[local.primary_role_index].arn
+#     container_name = "ingest-pushgateway"
+#   }
 
-  tags = merge(local.tags, { Name = var.name })
-}
-
-resource "aws_service_discovery_private_dns_namespace" "ingest_services" {
-  count = local.is_management_env ? 0 : 1
-  name  = "${local.environment}.ingest.services.${var.parent_domain_name}"
-  vpc   = data.terraform_remote_state.aws_ingestion.outputs.vpc.vpc.vpc.id
-  tags  = merge(local.tags, { Name = var.name })
-}
-
-resource "aws_service_discovery_service" "ingest_pushgateway" {
-  count = local.is_management_env ? 0 : 1
-  name  = "ingest-pushgateway"
-
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.ingest_services[0].id
-
-    dns_records {
-      ttl  = 10
-      type = "A"
-    }
-  }
-
-  tags = merge(local.tags, { Name = var.name })
-}
+#   tags = merge(local.tags, { Name = var.name })
+# }

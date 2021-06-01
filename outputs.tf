@@ -18,18 +18,6 @@ output "azkaban_pushgateway_hostname" {
   value = local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.azkaban_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.azkaban_services[0].name}"
 }
 
-output "sdx_pushgateway_security_group" {
-  value = local.is_management_env ? null_resource.dummy.id : aws_security_group.sdx_pushgateway[0].id
-}
-
-output "blackbox_security_group" {
-  value = local.is_management_env ? null_resource.dummy.id : aws_security_group.blackbox[0].id
-}
-
-output "ingest_pushgateway_hostname" {
-  value = local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.ingest_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.ingest_services[0].name}"
-}
-
 output "ucfs_pushgateway_security_group" {
   value = local.is_management_env ? null_resource.dummy.id : aws_security_group.ucfs_claimant_api_pushgateway[0].id
 }
