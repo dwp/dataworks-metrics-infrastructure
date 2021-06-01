@@ -61,3 +61,27 @@ resource "aws_security_group" "pdm_pushgateway" {
     create_before_destroy = true
   }
 }
+
+resource "aws_security_group" "blackbox" {
+  count       = local.is_management_env ? 0 : 1
+  name        = "blackbox"
+  description = "Rules necesary for pulling container image and accessing blackbox instances"
+  vpc_id      = data.terraform_remote_state.aws_sdx.outputs.vpc.vpc.id
+  tags        = merge(local.tags, { Name = "blackbox" })
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_security_group" "sdx_pushgateway" {
+  count       = local.is_management_env ? 0 : 1
+  name        = "sdx-pushgateway"
+  description = "Rules necesary for pulling container image"
+  vpc_id      = data.terraform_remote_state.aws_sdx.outputs.vpc.vpc.id
+  tags        = merge(local.tags, { Name = "sdx-pushgateway" })
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
