@@ -186,3 +186,36 @@ data "aws_iam_policy_document" "cert_metrics_ecs_exec" {
     ]
   }
 }
+
+resource "aws_iam_role" "execute_ecs_task" {
+  name               = "cert_metrics_scheduler"
+  assume_role_policy = data.aws_iam_policy_document.cert_metrics_assume_role.json
+  tags               = merge(local.tags, { Name = "cert_metrics" })
+}
+
+
+resource "aws_iam_role_policy_attachment" "execute_ecs_task" {
+  role       = aws_iam_role.execute_ecs_task.name
+  policy_arn = aws_iam_policy.execute_ecs_task.arn
+}
+
+resource "aws_iam_policy" "execute_ecs_task" {
+  name        = "ExecuteEcsTasks"
+  description = "Allow cloudwatch event to execute ecs tasks"
+  policy      = data.aws_iam_policy_document.execute_ecs_task.json
+}
+
+data "aws_iam_policy_document" "execute_ecs_task" {
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ecs:RunTask",
+    ]
+
+    resources = [
+      aws_ecs_task_definition.cert_metrics.container_definitions[0].arn,
+    ]
+  }
+}

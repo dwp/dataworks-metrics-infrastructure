@@ -200,3 +200,26 @@ resource "aws_service_discovery_service" "cert_metrics" {
   tags = merge(local.tags, { Name = var.name })
 }
 
+resource "aws_cloudwatch_event_rule" "scheduled_cert_retriever" {
+  name                = "scheduled-ecs-cert-retriever"
+  schedule_expression = "rate(2 minutes)"
+}
+
+
+resource "aws_cloudwatch_event_target" "scheduled_task" {
+  target_id = "$scheduled-ecs-target"
+  rule      = aws_cloudwatch_event_rule.scheduled_cert_retriever.name
+  arn       = aws_ecs_cluster.metrics_ecs_cluster.arn
+  role_arn  = aws_iam_role.execute_ecs_task,arn
+
+  ecs_target {
+    task_count          = 1
+    task_definition_arn = aws_ecs_task_definition.cert_metrics.container_definitions[0].arn
+    launch_type         = "FARGATE"
+    network_configuration {
+      subnets          = data.aws_subnet_ids.subnets.ids
+      assign_public_ip = true
+      security_groups  = [aws_security_group.cert_metrics.id]
+    }
+  }
+}
