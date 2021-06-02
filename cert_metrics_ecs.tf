@@ -168,7 +168,7 @@ resource "aws_ecs_service" "cert_metrics" {
   launch_type                        = "EC2"
   force_new_deployment               = true
   deployment_minimum_healthy_percent = 50
-  deployment_maximum_percent         = 100
+  deployment_maximum_percent         = 200
 
   network_configuration {
     security_groups = [aws_security_group.cert_metrics.id, aws_security_group.monitoring_common[local.secondary_role_index].id]
@@ -217,7 +217,7 @@ resource "aws_cloudwatch_event_target" "scheduled_task" {
   role_arn  = aws_iam_role.execute_ecs_task.arn
 
   ecs_target {
-    task_count          = 1
+    task_count          = 2
     task_definition_arn = aws_ecs_task_definition.cert_metrics.arn
     launch_type         = "EC2"
     network_configuration {
