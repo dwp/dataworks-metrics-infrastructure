@@ -10,7 +10,7 @@ output "thanos_security_group" {
   value = local.is_management_env ? aws_security_group.thanos_query[0].id : null_resource.dummy.id
 }
 
-output "azkaban_security_group" {
+output "azkaban_pushgateway_security_group" {
   value = local.is_management_env ? null_resource.dummy.id : aws_security_group.azkaban_pushgateway[0].id
 }
 
