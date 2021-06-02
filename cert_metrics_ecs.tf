@@ -88,8 +88,8 @@ data "template_file" "cert_retriever_definition" {
         "value" : "/certificates"
       },
       {
-        "name"  = "PROMETHEUS",
-        "value" = "true"
+        name  = "PROMETHEUS",
+        value = "true"
       }
     ])
   }
@@ -153,8 +153,8 @@ data "template_file" "cert_exporter_definition" {
         "value" : "${local.environment}"
       },
       {
-        "name"  = "PROMETHEUS",
-        "value" = "true"
+        name  = "PROMETHEUS",
+        value = "true"
       }
     ])
   }
