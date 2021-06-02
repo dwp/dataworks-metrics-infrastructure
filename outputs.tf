@@ -10,12 +10,12 @@ output "thanos_security_group" {
   value = local.is_management_env ? aws_security_group.thanos_query[0].id : null_resource.dummy.id
 }
 
-output "azkaban_pushgateway_security_group" {
+output "azkaban_security_group" {
   value = local.is_management_env ? null_resource.dummy.id : aws_security_group.azkaban_pushgateway[0].id
 }
 
 output "azkaban_pushgateway_hostname" {
-  value = local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.azkaban_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.azkaban_services[0].name}"
+  value = null_resource.dummy.id#local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.azkaban_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.azkaban_services[0].name}"
 }
 
 output "monitoring_bucket" {
