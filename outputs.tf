@@ -18,10 +18,6 @@ output "azkaban_pushgateway_hostname" {
   value = local.is_management_env ? null_resource.dummy.id : "${aws_service_discovery_service.azkaban_pushgateway[0].name}.${aws_service_discovery_private_dns_namespace.azkaban_services[0].name}"
 }
 
-output "ucfs_pushgateway_security_group" {
-  value = local.is_management_env ? null_resource.dummy.id : aws_security_group.ucfs_claimant_api_pushgateway[0].id
-}
-
 output "monitoring_bucket" {
   value = {
     id  = local.is_management_env ? aws_s3_bucket.monitoring[local.primary_role_index].id : null_resource.dummy.id
