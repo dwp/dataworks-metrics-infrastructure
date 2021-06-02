@@ -181,7 +181,7 @@ resource "aws_ecs_service" "cert_metrics" {
   }
 
   tags = merge(local.tags, {
-    Name       = var.name
+    Name = var.name
   })
 }
 
