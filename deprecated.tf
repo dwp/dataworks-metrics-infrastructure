@@ -85,3 +85,15 @@ resource "aws_security_group" "sdx_pushgateway" {
     create_before_destroy = true
   }
 }
+
+resource "aws_security_group" "ucfs_claimant_api_pushgateway" {
+  count       = local.is_management_env ? 0 : 1
+  name        = "ucfs-pushgateway"
+  description = "Rules necesary for pulling container image"
+  vpc_id      = data.terraform_remote_state.ucfs-claimant.outputs.ucfs_claimant_api_vpc.vpc.id
+  tags        = merge(local.tags, { Name = "ucfs-pushgateway" })
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
