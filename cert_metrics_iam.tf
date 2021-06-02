@@ -211,11 +211,26 @@ data "aws_iam_policy_document" "execute_ecs_task" {
     effect = "Allow"
 
     actions = [
-      "ecs:RunTask",
+//      "ecs:RunTask",
+      "*"
     ]
 
     resources = [
-      aws_ecs_task_definition.cert_metrics.container_definitions[0].arn,
+//      aws_ecs_task_definition.cert_metrics.arn,
+      "*"
+    ]
+  }
+
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "iam:PassRole",
+    ]
+
+    resources = [
+      "*",
     ]
   }
 }

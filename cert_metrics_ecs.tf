@@ -211,18 +211,18 @@ resource "aws_cloudwatch_event_rule" "scheduled_cert_retriever" {
 
 
 resource "aws_cloudwatch_event_target" "scheduled_task" {
-  target_id = "$scheduled-ecs-target"
+  target_id = "schedule-cert-retriever"
   rule      = aws_cloudwatch_event_rule.scheduled_cert_retriever.name
   arn       = aws_ecs_cluster.metrics_ecs_cluster.arn
   role_arn  = aws_iam_role.execute_ecs_task.arn
 
   ecs_target {
     task_count          = 1
-    task_definition_arn = data.aws_ecs_task_definition.cert_retriever.arn
-    launch_type         = "FARGATE"
+    task_definition_arn = aws_ecs_task_definition.cert_metrics.arn
+    launch_type         = "EC2"
     network_configuration {
       subnets          = local.is_management_env ? module.vpc.outputs.private_subnets[local.secondary_role_index] : module.vpc.outputs.private_subnets[local.primary_role_index]
-      assign_public_ip = true
+      assign_public_ip = false
       security_groups  = [aws_security_group.cert_metrics.id]
     }
   }
