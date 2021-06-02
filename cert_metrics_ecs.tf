@@ -189,7 +189,7 @@ resource "aws_service_discovery_service" "cert_metrics" {
   name = "cert-metrics"
 
   dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.cert_metrics.id
+    namespace_id = aws_service_discovery_private_dns_namespace.monitoring.id
 
     dns_records {
       ttl  = 10
