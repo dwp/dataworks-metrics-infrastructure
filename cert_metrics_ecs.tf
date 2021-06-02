@@ -178,13 +178,6 @@ resource "aws_ecs_service" "cert_metrics" {
   })
 }
 
-resource "aws_service_discovery_private_dns_namespace" "cert_metrics" {
-  name = "${local.environment}.cert_metrics.services.${var.parent_domain_name}"
-  vpc  = module.vpc.outputs.vpcs[0].id
-  tags = merge(local.tags, { Name = var.name })
-}
-
-
 resource "aws_service_discovery_service" "cert_metrics" {
   name = "cert-metrics"
 
