@@ -38,49 +38,26 @@ data "template_file" "azkaban_pushgateway_definition" {
   }
 }
 
-resource "aws_ecs_service" "azkaban_pushgateway" {
-  count                              = local.is_management_env ? 0 : 1
-  name                               = "azkaban-pushgateway"
-  cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
-  task_definition                    = aws_ecs_task_definition.azkaban_pushgateway[local.primary_role_index].arn
-  platform_version                   = var.platform_version
-  desired_count                      = 1
-  launch_type                        = "FARGATE"
-  deployment_minimum_healthy_percent = 100
-  deployment_maximum_percent         = 200
+# resource "aws_ecs_service" "azkaban_pushgateway" {
+#   count                              = local.is_management_env ? 0 : 1
+#   name                               = "azkaban-pushgateway"
+#   cluster                            = aws_ecs_cluster.metrics_ecs_cluster.id
+#   task_definition                    = aws_ecs_task_definition.azkaban_pushgateway[local.primary_role_index].arn
+#   platform_version                   = var.platform_version
+#   desired_count                      = 1
+#   launch_type                        = "FARGATE"
+#   deployment_minimum_healthy_percent = 100
+#   deployment_maximum_percent         = 200
 
-  network_configuration {
-    security_groups = [aws_security_group.azkaban_pushgateway[local.primary_role_index].id]
-    subnets         = data.terraform_remote_state.aws_analytical_env_infra.outputs.vpc.aws_subnets_private[*].id
-  }
+#   network_configuration {
+#     security_groups = [aws_security_group.azkaban_pushgateway[local.primary_role_index].id]
+#     subnets         = data.terraform_remote_state.aws_analytical_env_infra.outputs.vpc.aws_subnets_private[*].id
+#   }
 
-  service_registries {
-    registry_arn   = aws_service_discovery_service.azkaban_pushgateway[local.primary_role_index].arn
-    container_name = "azkaban-pushgateway"
-  }
+#   service_registries {
+#     registry_arn   = aws_service_discovery_service.azkaban_pushgateway[local.primary_role_index].arn
+#     container_name = "azkaban-pushgateway"
+#   }
 
-  tags = merge(local.tags, { Name = var.name })
-}
-
-resource "aws_service_discovery_private_dns_namespace" "azkaban_services" {
-  count = local.is_management_env ? 0 : 1
-  name  = "${local.environment}.azkaban.services.${var.parent_domain_name}"
-  vpc   = data.terraform_remote_state.aws_analytical_env_infra.outputs.vpc.aws_vpc.id
-  tags  = merge(local.tags, { Name = var.name })
-}
-
-resource "aws_service_discovery_service" "azkaban_pushgateway" {
-  count = local.is_management_env ? 0 : 1
-  name  = "azkaban-pushgateway"
-
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.azkaban_services[0].id
-
-    dns_records {
-      ttl  = 10
-      type = "A"
-    }
-  }
-
-  tags = merge(local.tags, { Name = var.name })
-}
+#   tags = merge(local.tags, { Name = var.name })
+# }

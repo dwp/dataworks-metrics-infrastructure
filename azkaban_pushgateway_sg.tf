@@ -1,15 +1,3 @@
-resource "aws_security_group" "azkaban_pushgateway" {
-  count       = local.is_management_env ? 0 : 1
-  name        = "azkaban-pushgateway"
-  description = "Rules necessary for pulling container image"
-  vpc_id      = data.terraform_remote_state.aws_analytical_env_infra.outputs.vpc.aws_vpc.id
-  tags        = merge(local.tags, { Name = "azkaban-pushgateway" })
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 resource "aws_security_group_rule" "allow_azkaban_pushgateway_egress_https" {
   count             = local.is_management_env ? 0 : 1
   description       = "Allows ECS to pull container from S3"
