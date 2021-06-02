@@ -149,5 +149,5 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_azkaban_pushgat
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = aws_security_group.metrics_cluster.id
-  source_security_group_id = aws_security_group.azkaban_pushgateway[0].id
+  source_security_group_id = data.terraform_remote_state.aws_analytical_env_infra.outputs.vpce_security_groups.azkaban_pushgateway_vpce_security_group.id
 }
