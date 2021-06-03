@@ -211,12 +211,12 @@ data "aws_iam_policy_document" "execute_ecs_task" {
     effect = "Allow"
 
     actions = [
-//      "ecs:RunTask",
+      //      "ecs:RunTask",
       "*"
     ]
 
     resources = [
-//      aws_ecs_task_definition.cert_metrics.arn,
+      //      aws_ecs_task_definition.cert_metrics.arn,
       "*"
     ]
   }

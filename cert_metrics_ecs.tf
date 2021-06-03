@@ -200,10 +200,6 @@ resource "aws_service_discovery_service" "cert_metrics" {
   tags = merge(local.tags, { Name = var.name })
 }
 
-data "aws_ecs_task_definition" "cert_retriever" {
-  task_definition = aws_ecs_task_definition.cert_metrics.family
-}
-
 resource "aws_cloudwatch_event_rule" "scheduled_cert_retriever" {
   name                = "scheduled-ecs-cert-retriever"
   schedule_expression = "rate(2 minutes)"
