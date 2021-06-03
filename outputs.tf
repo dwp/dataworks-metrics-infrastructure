@@ -26,3 +26,6 @@ output "monitoring_bucket" {
   }
 }
 
+resource "null_resource" "dummy" {}
+
+resource "null_resource" "dummy_2" {}
