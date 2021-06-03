@@ -50,36 +50,13 @@ resource "aws_ecs_service" "azkaban_pushgateway" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [aws_security_group.azkaban_pushgateway[local.primary_role_index].id]
+    security_groups = [data.terraform_remote_state.aws_analytical_env_infra.outputs.vpce_security_groups.azkaban_pushgateway_vpce_security_group.id]
     subnets         = data.terraform_remote_state.aws_analytical_env_infra.outputs.vpc.aws_subnets_private[*].id
   }
 
   service_registries {
-    registry_arn   = aws_service_discovery_service.azkaban_pushgateway[local.primary_role_index].arn
+    registry_arn   = data.terraform_remote_state.aws_analytical_env_infra.outputs.private_dns.azkaban_service_discovery.arn
     container_name = "azkaban-pushgateway"
-  }
-
-  tags = merge(local.tags, { Name = var.name })
-}
-
-resource "aws_service_discovery_private_dns_namespace" "azkaban_services" {
-  count = local.is_management_env ? 0 : 1
-  name  = "${local.environment}.azkaban.services.${var.parent_domain_name}"
-  vpc   = data.terraform_remote_state.aws_analytical_env_infra.outputs.vpc.aws_vpc.id
-  tags  = merge(local.tags, { Name = var.name })
-}
-
-resource "aws_service_discovery_service" "azkaban_pushgateway" {
-  count = local.is_management_env ? 0 : 1
-  name  = "azkaban-pushgateway"
-
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.azkaban_services[0].id
-
-    dns_records {
-      ttl  = 10
-      type = "A"
-    }
   }
 
   tags = merge(local.tags, { Name = var.name })
