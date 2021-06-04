@@ -18,10 +18,10 @@ resource "aws_ecs_task_definition" "cert_metrics" {
     }
   }
 
-  placement_constraints {
-    type       = "memberOf"
-    expression = "attribute:instance-type == additional"
-  }
+  //  placement_constraints {
+  //    type       = "memberOf"
+  //    expression = "attribute:instance-type == additional"
+  //  }
 
   tags = merge(local.tags, { Name = var.name })
 }
@@ -39,7 +39,7 @@ data "template_file" "cert_retriever_definition" {
     ports              = jsonencode([])
     ulimits            = jsonencode([])
     log_group          = aws_cloudwatch_log_group.monitoring_metrics.name
-    essential          = false
+    essential          = true
     region             = data.aws_region.current.name
     config_bucket      = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
@@ -88,6 +88,10 @@ data "template_file" "cert_retriever_definition" {
         "value" : "/certificates"
       },
       {
+        "name" : "ECS_CONTAINER_STOP_TIMEOUT",
+        "value" : "10m"
+      },
+      {
         name  = "PROMETHEUS",
         value = "true"
       }
@@ -108,7 +112,7 @@ data "template_file" "cert_exporter_definition" {
     ports              = jsonencode([8080])
     ulimits            = jsonencode([])
     log_group          = aws_cloudwatch_log_group.monitoring_metrics.name
-    essential          = true
+    essential          = false
     region             = data.aws_region.current.name
     config_bucket      = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
@@ -166,7 +170,7 @@ resource "aws_ecs_service" "cert_metrics" {
   task_definition                    = aws_ecs_task_definition.cert_metrics.arn
   desired_count                      = 1
   launch_type                        = "EC2"
-  force_new_deployment               = true
+  force_new_deployment               = false
   deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 200
 
@@ -202,7 +206,7 @@ resource "aws_service_discovery_service" "cert_metrics" {
 
 resource "aws_cloudwatch_event_rule" "scheduled_cert_retriever" {
   name                = "scheduled-ecs-cert-retriever"
-  schedule_expression = "rate(2 minutes)"
+  schedule_expression = "rate(10 minutes)"
 }
 
 
@@ -213,7 +217,7 @@ resource "aws_cloudwatch_event_target" "scheduled_task" {
   role_arn  = aws_iam_role.execute_ecs_task.arn
 
   ecs_target {
-    task_count          = 2
+    task_count          = 1
     task_definition_arn = aws_ecs_task_definition.cert_metrics.arn
     launch_type         = "EC2"
     network_configuration {

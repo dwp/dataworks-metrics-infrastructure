@@ -210,27 +210,33 @@ data "aws_iam_policy_document" "execute_ecs_task" {
   statement {
     effect = "Allow"
 
-    actions = [
-      //      "ecs:RunTask",
-      "*"
-    ]
+    actions = ["ecs:RunTask"]
 
-    resources = [
-      //      aws_ecs_task_definition.cert_metrics.arn,
-      "*"
-    ]
+    resources = [aws_ecs_task_definition.cert_metrics.arn]
+
+    condition {
+      test     = "ArnLike"
+      variable = "ecs:cluster"
+      values   = ["arn:aws:ecs:${var.region}:${local.account[local.environment]}:cluster/metrics"]
+    }
   }
 
+    statement {
+      effect = "Allow"
 
-  statement {
-    effect = "Allow"
+      actions = [
+        "iam:PassRole",
+      ]
 
-    actions = [
-      "iam:PassRole",
-    ]
+      resources = [
+        "*",
+      ]
 
-    resources = [
-      "*",
-    ]
-  }
+      condition {
+        test     = "StringLike"
+        variable = "iam:PassedToService"
+        values   = ["ecs-tasks.amazonaws.com"]
+      }
+    }
 }
+
