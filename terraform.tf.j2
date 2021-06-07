@@ -415,6 +415,19 @@ locals {
 }
 
 locals {
+  internet_proxy = {
+    url  = local.is_management_env ? format("http://%s:3128", aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name) : format("http://%s:3128", aws_vpc_endpoint.lower_internet_proxy[0].dns_entry[0].dns_name)
+    sg   = local.is_management_env ? aws_security_group.internet_proxy_endpoint[0].id : aws_security_group.lower_internet_proxy_endpoint[0].id
+    host = local.is_management_env ? aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name : aws_vpc_endpoint.lower_internet_proxy[0].dns_entry[0].dns_name
+    port = 3128
+  }
+
+  amazon_region_domain = "${data.aws_region.current.name}.amazonaws.com"
+  endpoint_services    = ["dynamodb", "ec2", "ec2messages", "glue", "kms", "logs", "monitoring", ".s3", "s3", "secretsmanager", "ssm", "ssmmessages"]
+  no_proxy             = "127.0.0.1,s3.${var.region}.amazonaws.com,secretsmanager.${var.region}.amazonaws.com,${local.environment}.services.${var.parent_domain_name}"
+
+
+
 
   cidr_block_cicd_vpc = local.environment == "management" || local.environment == "management-dev" ? local.cidr_block[local.environment].ci-cd-vpc : "0.0.0.0/0"
   cidr_block_internal_compute_vpc = local.environment != "management" && local.environment != "management-dev" ? local.cidr_block[local.environment].internal-compute-vpc : "0.0.0.0/0"
@@ -503,7 +516,9 @@ locals {
   zone_names = data.aws_availability_zones.current.names
 
   metrics_ecs_friendly_name = "metrics-ecs-cluster"
+  additional_metrics_ecs_friendly_name = "additional-metrics-ecs-cluster"
   metrics_friendly_name = "metrics-cluster"
+  additional_metrics_friendly_name = "additional-metrics-cluster"
   cluster_name              = replace(local.metrics_ecs_friendly_name, "-ecs-cluster", "")
 
   iam_role_max_session_timeout_seconds = 43200

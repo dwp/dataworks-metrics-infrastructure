@@ -30,6 +30,11 @@ resource "aws_ecs_task_definition" "prometheus" {
 
   }
 
+  placement_constraints {
+    type       = "memberOf"
+    expression = "attribute:instance-type == prometheus"
+  }
+
   tags = merge(local.tags, { Name = var.name })
 }
 
