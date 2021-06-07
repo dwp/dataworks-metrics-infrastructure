@@ -4,7 +4,6 @@ jobs:
     plan:
       - get: dw-al2-ecs-ami
       - get: dataworks-metrics-infrastructure
-        resource: dataworks-metrics-infrastructure-test
         trigger: true
       - get: dataworks-dashboards
 
