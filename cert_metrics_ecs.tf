@@ -18,10 +18,10 @@ resource "aws_ecs_task_definition" "cert_metrics" {
     }
   }
 
-    placement_constraints {
-      type       = "memberOf"
-      expression = "attribute:instance-type == additional"
-    }
+  placement_constraints {
+    type       = "memberOf"
+    expression = "attribute:instance-type == additional"
+  }
 
   tags = merge(local.tags, { Name = var.name })
 }
