@@ -20,14 +20,13 @@ resource "aws_security_group_rule" "allow_cert_metrics_egress_internet_proxy" {
 }
 
 resource "aws_security_group_rule" "allow_cert_metrics_egress_https" {
-  count             = length(local.roles)
   description       = "Allows ECS to pull container from S3"
   type              = "egress"
   protocol          = "tcp"
   from_port         = var.https_port
   to_port           = var.https_port
   security_group_id = aws_security_group.cert_metrics.id
-  prefix_list_ids   = [module.vpc.outputs.s3_prefix_list_ids[count.index]]
+  prefix_list_ids   = [module.vpc.outputs.s3_prefix_list_ids[0]]
 }
 
 resource "aws_security_group_rule" "allow_prometheus_ingress_cert_metrics" {
