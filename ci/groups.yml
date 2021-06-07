@@ -23,6 +23,7 @@ groups:
       - cycle-thanos-store-management
       - cycle-alertmanager-management
       - cycle-prometheus-management
+      - cycle-cert-metrics-management
       - cycle-cloudwatch-exporter-management
 
   - name: admin-management-dev
@@ -35,11 +36,13 @@ groups:
       - cycle-thanos-store-management-dev
       - cycle-alertmanager-management-dev
       - cycle-prometheus-management-dev
+      - cycle-cert-metrics-management-dev
       - cycle-cloudwatch-exporter-management-dev
 
   - name: admin-development
     jobs:
       - cycle-prometheus-development
+      - cycle-cert-metrics-development
       - cycle-blackbox-development
       - cycle-cloudwatch-exporter-development
       - cycle-hbase-exporter-development
@@ -52,6 +55,7 @@ groups:
   - name: admin-qa
     jobs:
       - cycle-prometheus-qa
+      - cycle-cert-metrics-qa
       - cycle-blackbox-qa
       - cycle-cloudwatch-exporter-qa
       - cycle-hbase-exporter-qa
@@ -64,6 +68,7 @@ groups:
   - name: admin-integration
     jobs:
       - cycle-prometheus-integration
+      - cycle-cert-metrics-integration
       - cycle-blackbox-integration
       - cycle-cloudwatch-exporter-integration
       - cycle-hbase-exporter-integration
@@ -76,6 +81,7 @@ groups:
   - name: admin-preprod
     jobs:
       - cycle-prometheus-preprod
+      - cycle-cert-metrics-preprod
       - cycle-blackbox-preprod
       - cycle-cloudwatch-exporter-preprod
       - cycle-hbase-exporter-preprod
@@ -88,6 +94,7 @@ groups:
   - name: admin-production
     jobs:
       - cycle-prometheus-production
+      - cycle-cert-metrics-production
       - cycle-blackbox-production
       - cycle-cloudwatch-exporter-production
       - cycle-hbase-exporter-production

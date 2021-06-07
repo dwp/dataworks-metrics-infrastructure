@@ -55,3 +55,9 @@ resources:
         is-public: false
         state: available
         name: dw-al2-ecs-ami-*
+
+  - name: every-60m
+    type: time
+    icon: clock-outline
+    source:
+      interval: 60m

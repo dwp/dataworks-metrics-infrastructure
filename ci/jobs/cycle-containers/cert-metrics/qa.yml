@@ -1,0 +1,11 @@
+jobs:
+  - name: cycle-cert-metrics-qa
+    plan:
+      - get: every-60m
+        trigger: true
+      - .: (( inject meta.plan.admin-enable ))
+      - .: (( inject meta.plan.cycle-containers ))
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
+          CLUSTER: metrics
+          SERVICE: cert_metrics
