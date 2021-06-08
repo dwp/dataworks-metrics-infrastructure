@@ -172,7 +172,7 @@ resource "aws_ecs_service" "cert_metrics" {
 
   network_configuration {
     security_groups = [aws_security_group.cert_metrics.id, aws_security_group.monitoring_common[local.secondary_role_index].id]
-    subnets         = module.vpc.outputs.private_subnets[local.primary_role_index]
+    subnets         = module.vpc.outputs.private_subnets[local.secondary_role_index]
   }
 
   service_registries {
