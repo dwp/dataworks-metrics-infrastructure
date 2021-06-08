@@ -24,7 +24,7 @@ jobs:
       TF_WORKSPACE: management
       AWS_SECRETS_ROLE: arn:aws:iam::((aws_account.management)):role/ci
 
-  - .: (( inject meta.plan.terraform-plan ))
+  - .: (( inject meta.plan.terraform-apply ))
     task: terraform-plan-management
     input_mapping:
       dataworks-metrics-infrastructure: dataworks-metrics-infrastructure-pr
