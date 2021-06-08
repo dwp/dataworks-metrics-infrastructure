@@ -187,8 +187,8 @@ resource "aws_autoscaling_group" "additional_mgmt_metrics_cluster" {
   vpc_zone_identifier       = module.vpc.outputs.private_subnets[local.secondary_role_index]
 
   launch_template {
-    id      = aws_launch_template.additional_mgmt_metrics_cluster[local.secondary_role_index].id
-    version = aws_launch_template.additional_mgmt_metrics_cluster[local.secondary_role_index].latest_version
+    id      = aws_launch_template.additional_mgmt_metrics_cluster[0].id
+    version = aws_launch_template.additional_mgmt_metrics_cluster[0].latest_version
   }
 
   lifecycle {
