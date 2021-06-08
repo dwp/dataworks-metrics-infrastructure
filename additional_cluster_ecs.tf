@@ -223,7 +223,7 @@ resource "aws_launch_template" "additional_mgmt_metrics_cluster" {
     associate_public_ip_address = false
     delete_on_termination       = true
 
-    security_groups = [aws_security_group.mgmt_metrics_cluster[local.secondary_role_index].id, aws_security_group.monitoring_common[local.secondary_role_index].id]
+    security_groups = [aws_security_group.mgmt_metrics_cluster[local.primary_role_index].id, aws_security_group.monitoring_common[local.secondary_role_index].id]
   }
 
   user_data = base64encode(templatefile("userdata.tpl",
