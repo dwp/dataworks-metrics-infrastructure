@@ -416,9 +416,9 @@ locals {
 
 locals {
   internet_proxy = {
-    url  = local.is_management_env ? format("http://%s:3128", aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name) : format("http://%s:3128", aws_vpc_endpoint.lower_internet_proxy[0].dns_entry[0].dns_name)
-    sg   = local.is_management_env ? aws_security_group.internet_proxy_endpoint[0].id : aws_security_group.lower_internet_proxy_endpoint[0].id
-    host = local.is_management_env ? aws_vpc_endpoint.internet_proxy[0].dns_entry[0].dns_name : aws_vpc_endpoint.lower_internet_proxy[0].dns_entry[0].dns_name
+    url  = format("http://%s:3128", aws_vpc_endpoint.secondary_internet_proxy.dns_entry[0].dns_name)
+    sg   = aws_security_group.secondary_internet_proxy_endpoint.id
+    host = aws_vpc_endpoint.secondary_internet_proxy.dns_entry[0].dns_name
     port = 3128
   }
 
