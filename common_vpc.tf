@@ -55,7 +55,7 @@ resource "aws_security_group" "internet_proxy_endpoint" {
 }
 
 resource "aws_security_group" "secondary_internet_proxy_endpoint" {
-  name        = "proxy_vpc_endpoint"
+  name        = "secondary_proxy_vpc_endpoint"
   description = "Control access to the Internet Proxy VPC Endpoint"
   vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
   tags        = merge(local.tags, { Name = var.name })
