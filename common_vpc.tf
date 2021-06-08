@@ -73,7 +73,6 @@ resource "aws_vpc_endpoint" "internet_proxy" {
 }
 
 resource "aws_vpc_endpoint" "secondary_internet_proxy" {
-  count               = local.is_management_env ? 0 : 1
   vpc_id              = module.vpc.outputs.vpcs[local.secondary_role_index].id
   service_name        = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
   vpc_endpoint_type   = "Interface"
