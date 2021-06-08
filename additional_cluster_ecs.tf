@@ -151,7 +151,7 @@ resource "aws_ecs_capacity_provider" "additional_mgmt_metrics_cluster" {
   name  = "mgmt-${local.additional_metrics_friendly_name}"
 
   auto_scaling_group_provider {
-    auto_scaling_group_arn         = aws_autoscaling_group.additional_mgmt_metrics_cluster[local.secondary_role_index].arn
+    auto_scaling_group_arn         = aws_autoscaling_group.additional_mgmt_metrics_cluster[0].arn
     managed_termination_protection = "DISABLED"
 
     managed_scaling {
