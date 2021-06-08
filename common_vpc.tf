@@ -113,7 +113,7 @@ resource "aws_security_group_rule" "cert_metrics_ingress_internet_proxy" {
   to_port                  = var.internet_proxy_port
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.cert_metrics.id
-  security_group_id        = aws_security_group.secondary_internet_proxy_endpoint[0].id
+  security_group_id        = aws_security_group.secondary_internet_proxy_endpoint.id
 }
 
 resource "aws_security_group_rule" "alertmanager_egress_internet_proxy" {
