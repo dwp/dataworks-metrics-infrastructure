@@ -104,8 +104,6 @@ The drawback is that as we are routing the queries through the query node, there
 When creating new services to consume `internal-compute`, all work should be carried out and applied in this repo, before adding the remote state to the `interface_vpce_source_security_group_ids` list in the `internal-compute` [VPC](https://git.ucd.gpn.gov.uk/dip/aws-internal-compute/blob/c73d0a6a159debe59795d5be6b99c3f947414eeb/vpc.tf#L19), otherwise co flicts occurr which break applies.
 
 
-### Notes 
-
 ## VPC Interfaces and Security Groups 
 
 To use a VPC interface endpoint you must first create one as seen below for the internet proxy endpoint:   
@@ -120,7 +118,7 @@ To use a VPC interface endpoint you must first create one as seen below for the 
         tags                = merge(local.tags, { Name = var.name })
      }
      
-To be able to use this endpoint from your service, a Security Group must be associated with it. In the case of this example, we want to be able to communicate with the above interface from the `cert_metrics` SG. After adding the required `ingress/egress` rules you will also have to associate the SG with the correct VPC.  
+To be able to use this endpoint from your service a Security Group must be associated with it. In the case of this example, we want to be able to communicate with the above interface from the `cert_metrics` SG. After adding the required `ingress/egress` rules you will also have to associate the SG with the correct VPC.  
    
        interface_vpce_source_security_group_ids = local.is_management_env ? [
        aws_security_group.grafana[0].id,
