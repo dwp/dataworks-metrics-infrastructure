@@ -171,7 +171,7 @@ resource "aws_ecs_service" "cert_metrics" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [aws_security_group.cert_metrics.id, aws_security_group.monitoring_common[local.secondary_role_index].id]
+    security_groups = [local.is_management_env ? aws_security_group.cert_metrics[local.primary_role_index].id : aws_security_group.cert_metrics[local.secondary_role_index].id, aws_security_group.monitoring_common[local.secondary_role_index].id]
     subnets         = module.vpc.outputs.private_subnets[local.secondary_role_index]
   }
 

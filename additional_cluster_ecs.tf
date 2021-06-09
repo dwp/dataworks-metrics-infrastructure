@@ -151,7 +151,7 @@ resource "aws_ecs_capacity_provider" "additional_mgmt_metrics_cluster" {
   name  = "mgmt-${local.additional_metrics_friendly_name}"
 
   auto_scaling_group_provider {
-    auto_scaling_group_arn         = aws_autoscaling_group.additional_mgmt_metrics_cluster[0].arn
+    auto_scaling_group_arn         = aws_autoscaling_group.additional_mgmt_metrics_cluster[local.primary_role_index].arn
     managed_termination_protection = "DISABLED"
 
     managed_scaling {
@@ -184,11 +184,11 @@ resource "aws_autoscaling_group" "additional_mgmt_metrics_cluster" {
   health_check_grace_period = 600
   health_check_type         = "EC2"
   force_delete              = true
-  vpc_zone_identifier       = module.vpc.outputs.private_subnets[local.secondary_role_index]
+  vpc_zone_identifier       = module.vpc.outputs.private_subnets[local.primary_role_index]
 
   launch_template {
-    id      = aws_launch_template.additional_mgmt_metrics_cluster[0].id
-    version = aws_launch_template.additional_mgmt_metrics_cluster[0].latest_version
+    id      = aws_launch_template.additional_mgmt_metrics_cluster[local.primary_role_index].id
+    version = aws_launch_template.additional_mgmt_metrics_cluster[local.primary_role_index].latest_version
   }
 
   lifecycle {
@@ -223,7 +223,7 @@ resource "aws_launch_template" "additional_mgmt_metrics_cluster" {
     associate_public_ip_address = false
     delete_on_termination       = true
 
-    security_groups = [aws_security_group.mgmt_metrics_cluster[local.primary_role_index].id, aws_security_group.monitoring_common[local.secondary_role_index].id]
+    security_groups = [aws_security_group.mgmt_metrics_cluster[local.primary_role_index].id, aws_security_group.monitoring_common[local.primary_role_index].id]
   }
 
   user_data = base64encode(templatefile("userdata.tpl",
