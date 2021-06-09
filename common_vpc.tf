@@ -72,15 +72,15 @@ resource "aws_vpc_endpoint" "internet_proxy" {
   tags                = merge(local.tags, { Name = var.name })
 }
 
-//resource "aws_vpc_endpoint" "secondary_internet_proxy" {
-//  vpc_id              = module.vpc.outputs.vpcs[local.secondary_role_index].id
-//  service_name        = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
-//  vpc_endpoint_type   = "Interface"
-//  security_group_ids  = [aws_security_group.secondary_internet_proxy_endpoint.id]
-//  subnet_ids          = module.vpc.outputs.private_subnets[local.secondary_role_index]
-//  private_dns_enabled = false
-//  tags                = merge(local.tags, { Name = var.name })
-//}
+resource "aws_vpc_endpoint" "secondary_internet_proxy" {
+  vpc_id              = module.vpc.outputs.vpcs[local.secondary_role_index].id
+  service_name        = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
+  vpc_endpoint_type   = "Interface"
+  security_group_ids  = [aws_security_group.secondary_internet_proxy_endpoint.id]
+  subnet_ids          = module.vpc.outputs.private_subnets[local.secondary_role_index]
+  private_dns_enabled = false
+  tags                = merge(local.tags, { Name = var.name })
+}
 
 resource "aws_security_group_rule" "grafana_egress_internet_proxy" {
   count                    = local.is_management_env ? 1 : 0
