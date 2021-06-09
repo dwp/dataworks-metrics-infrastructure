@@ -16,7 +16,8 @@ module "vpc" {
     aws_security_group.cloudwatch_exporter.id,
     aws_security_group.thanos_store[0].id,
     aws_security_group.metrics_cluster.id,
-    aws_security_group.mgmt_metrics_cluster[0].id
+    aws_security_group.mgmt_metrics_cluster[0].id,
+    aws_security_group.cert_metrics.id
     ] : [
     aws_security_group.prometheus.id,
     aws_security_group.cloudwatch_exporter.id,

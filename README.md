@@ -131,6 +131,7 @@ To be able to use this endpoint from your service a Security Group must be assoc
        aws_security_group.thanos_store[0].id,
        aws_security_group.metrics_cluster.id,
        aws_security_group.mgmt_metrics_cluster[0].id,
+       aws_security_group.cert_metrics.id] 
        ] : [
        aws_security_group.prometheus.id,
        aws_security_group.cloudwatch_exporter.id,
@@ -139,7 +140,7 @@ To be able to use this endpoint from your service a Security Group must be assoc
        aws_security_group.metrics_cluster.id,
        aws_security_group.cert_metrics.id] 
 
-The `cert_metrics` SG is deployed into the `montoring-slave vpc` and therefore it sits on the `else` side of the above if/else condition of `local.is_management_env`.   
+The `cert_metrics` SG is deployed into the `montoring-slave vpc` in all envs and therefore it sits on both sides of the above if/else condition of `local.is_management_env`.   
 This also needs to reflected in the VPC module `vpc.tf.j2`.  
 
     interface_vpce_source_security_group_ids   = [{% if value == "master" %}
