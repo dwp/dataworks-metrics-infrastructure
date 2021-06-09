@@ -30,7 +30,6 @@ module "monitoring_{{value}}_vpc" {
                                                  var.interface_vpce_source_security_group_ids[7],
                                                  var.interface_vpce_source_security_group_ids[8],
                                                  var.interface_vpce_source_security_group_ids[9],
-                                                 var.interface_vpce_source_security_group_ids[10]
                                                 {% endif %}
                                                 {% endif %}]
   interface_vpce_subnet_ids                  = aws_subnet.monitoring_{{value}}_private.*.id
