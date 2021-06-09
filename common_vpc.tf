@@ -105,7 +105,6 @@ resource "aws_security_group_rule" "grafana_ingress_internet_proxy" {
 }
 
 resource "aws_security_group_rule" "cert_metrics_ingress_internet_proxy" {
-  count                    = local.is_management_env ? 0 : 1
   description              = "Allow proxy access from cert retriever"
   type                     = "ingress"
   from_port                = var.internet_proxy_port
