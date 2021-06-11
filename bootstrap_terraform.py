@@ -19,31 +19,37 @@ def main():
     elif 'AWS_SECRETS_ROLE' in os.environ:
         secrets_session = assumed_role_session(os.environ['AWS_SECRETS_ROLE'])
     if 'AWS_REGION' in os.environ:
-        ssm = boto3.client('ssm', region_name=os.environ['AWS_REGION'])
         secrets_manager = secrets_session.client(
             'secretsmanager', region_name=os.environ['AWS_REGION'])
     else:
-        ssm = boto3.client('ssm')
         secrets_manager = secrets_session.client('secretsmanager')
 
     try:
-        parameter = ssm.get_parameter(
-            Name='terraform_bootstrap_config', WithDecryption=False)
         monitoring_secret = secrets_manager.get_secret_value(
             SecretId="/concourse/dataworks/monitoring")
+    except botocore.exceptions.ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        if "The security token included in the request is invalid" in error_message:
+            print("ERROR: Invalid security token used when calling Secrets Manager for monitoring_secret. Have you run `aws-sts` recently?")
+        else:
+            print("ERROR: Problem calling Secrets Manager for monitoring_secret: {}".format(
+                error_message))
+        sys.exit(1)
+
+    try:
         terraform_secret = secrets_manager.get_secret_value(
             SecretId="/concourse/dataworks/terraform")
     except botocore.exceptions.ClientError as e:
         error_message = e.response["Error"]["Message"]
         if "The security token included in the request is invalid" in error_message:
-            print("ERROR: Invalid security token used when calling AWS SSM or Secrets Manager. Have you run `aws-sts` recently?")
+            print("ERROR: Invalid security token used when calling Secrets Manager for terraform_secret. Have you run `aws-sts` recently?")
         else:
-            print("ERROR: Problem calling AWS SSM or Secrets Manager: {}".format(
+            print("ERROR: Problem calling Secrets Manager for terraform_secret: {}".format(
                 error_message))
         sys.exit(1)
 
     config_data = yaml.load(
-        parameter['Parameter']['Value'], Loader=yaml.FullLoader)
+        terraform_secret['SecretBinary'], Loader=yaml.FullLoader)
     config_data['roles'] = json.loads(monitoring_secret['SecretBinary'])[
         os.getenv('TF_WORKSPACE', 'development')]
     config_data['ports'] = json.loads(
