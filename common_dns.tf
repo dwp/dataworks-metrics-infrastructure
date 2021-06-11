@@ -1,32 +1,3 @@
-provider "aws" {
-  version = "~> 3.25.0"
-  region  = var.region
-  alias   = "management_dns"
-
-  assume_role {
-    role_arn = "arn:aws:iam::${local.account["management"]}:role/${var.assume_role}"
-  }
-}
-provider "aws" {
-  version = "~> 3.25.0"
-  region  = var.region
-  alias   = "management_zone"
-
-  assume_role {
-    role_arn = "arn:aws:iam::${local.account[local.slave_peerings[local.environment]]}:role/${var.assume_role}"
-  }
-}
-
-provider "aws" {
-  version = "~> 3.25.0"
-  region  = var.region
-  alias   = "non_management_zone"
-
-  assume_role {
-    role_arn = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
-  }
-}
-
 locals {
   fqdn = join(".", [var.name, local.parent_domain_name[local.environment]])
 }

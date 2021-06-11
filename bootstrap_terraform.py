@@ -10,7 +10,6 @@ import json
 import datetime
 from dateutil.tz import tzlocal
 
-
 def main():
     if 'AWS_PROFILE' in os.environ:
         boto3.setup_default_session(profile_name=os.environ['AWS_PROFILE'])
@@ -28,18 +27,38 @@ def main():
         secrets_manager = secrets_session.client('secretsmanager')
 
     try:
-        parameter = ssm.get_parameter(
-            Name='terraform_bootstrap_config', WithDecryption=False)
         monitoring_secret = secrets_manager.get_secret_value(
             SecretId="/concourse/dataworks/monitoring")
-        dataworks_secret = secrets_manager.get_secret_value(
-            SecretId="/concourse/dataworks/dataworks-secrets")
     except botocore.exceptions.ClientError as e:
         error_message = e.response["Error"]["Message"]
         if "The security token included in the request is invalid" in error_message:
-            print("ERROR: Invalid security token used when calling AWS SSM or Secrets Manager. Have you run `aws-sts` recently?")
+            print("ERROR: Invalid security token used when calling Secrets Manager for monitoring_secret. Have you run `aws-sts` recently?")
         else:
-            print("ERROR: Problem calling AWS SSM or Secrets Manager: {}".format(
+            print("ERROR: Problem calling Secrets Manager for monitoring_secret: {}".format(
+                error_message))
+        sys.exit(1)
+
+    try:
+        terraform_secret = secrets_manager.get_secret_value(
+            SecretId="/concourse/dataworks/terraform")
+    except botocore.exceptions.ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        if "The security token included in the request is invalid" in error_message:
+            print("ERROR: Invalid security token used when calling Secrets Manager for terraform_secret. Have you run `aws-sts` recently?")
+        else:
+            print("ERROR: Problem calling Secrets Manager for terraform_secret: {}".format(
+                error_message))
+        sys.exit(1)
+
+    try:
+        parameter = ssm.get_parameter(
+            Name='terraform_bootstrap_config', WithDecryption=False)
+    except botocore.exceptions.ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        if "The security token included in the request is invalid" in error_message:
+            print("ERROR: Invalid security token used when calling SSM. Have you run `aws-sts` recently?")
+        else:
+            print("ERROR: Problem calling SSM: {}".format(
                 error_message))
         sys.exit(1)
 
@@ -61,6 +80,8 @@ def main():
         monitoring_secret['SecretBinary'])["adg_dns_zone_ids"]
     config_data['mongo_latest_dns_zone_ids'] = json.loads(
         monitoring_secret['SecretBinary'])["mongo_latest_dns_zone_ids"]
+    config_data['terraform'] = json.loads(
+        terraform_secret['SecretBinary'])["terraform"]
 
     with open('modules/vpc/vpc.tf.j2') as in_template:
         template = jinja2.Template(in_template.read())

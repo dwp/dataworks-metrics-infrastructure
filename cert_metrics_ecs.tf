@@ -53,7 +53,7 @@ data "template_file" "cert_retriever_definition" {
     environment_variables = jsonencode([
       {
         "name" : "CERT_RETRIEVER_ROLE",
-        "value" : "${local.roles[local.secondary_role_index]}"
+        "value" : local.roles[local.secondary_role_index]
       },
       {
         "name" : "LOG_LEVEL",
@@ -61,27 +61,27 @@ data "template_file" "cert_retriever_definition" {
       },
       {
         "name" : "HTTP_PROXY",
-        "value" : "${local.internet_proxy.url}"
+        "value" : local.internet_proxy.url
       },
       {
         "name" : "HTTPS_PROXY",
-        "value" : "${local.internet_proxy.url}"
+        "value" : local.internet_proxy.url
       },
       {
         "name" : "NO_PROXY",
-        "value" : "${local.no_proxy}"
+        "value" : local.no_proxy
       },
       {
         "name" : "AWS_DEFAULT_REGION",
-        "value" : "${var.region}"
+        "value" : var.region
       },
       {
         "name" : "APPLICATION",
-        "value" : "${var.name}"
+        "value" : var.name
       },
       {
         "name" : "ENVIRONMENT",
-        "value" : "${local.environment}"
+        "value" : local.environment
       },
       {
         "name" : "CERTS_DESTINATION_FOLDER",
@@ -122,7 +122,7 @@ data "template_file" "cert_exporter_definition" {
     environment_variables = jsonencode([
       {
         "name" : "CERT_EXPORTER_ROLE",
-        "value" : "${local.roles[local.secondary_role_index]}"
+        "value" : local.roles[local.secondary_role_index]
       },
       {
         "name" : "LOG_LEVEL",
@@ -130,27 +130,27 @@ data "template_file" "cert_exporter_definition" {
       },
       {
         "name" : "HTTP_PROXY",
-        "value" : "${local.internet_proxy.url}"
+        "value" : local.internet_proxy.url
       },
       {
         "name" : "HTTPS_PROXY",
-        "value" : "${local.internet_proxy.url}"
+        "value" : local.internet_proxy.url
       },
       {
         "name" : "NO_PROXY",
-        "value" : "${local.no_proxy}"
+        "value" : local.no_proxy
       },
       {
         "name" : "AWS_DEFAULT_REGION",
-        "value" : "${var.region}"
+        "value" : var.region
       },
       {
         "name" : "APPLICATION",
-        "value" : "${var.name}"
+        "value" : var.name
       },
       {
         "name" : "ENVIRONMENT",
-        "value" : "${local.environment}"
+        "value" : local.environment
       },
       {
         name  = "PROMETHEUS",
