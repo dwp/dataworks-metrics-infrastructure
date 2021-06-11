@@ -36,7 +36,7 @@ data "template_file" "thanos_query_definition" {
       },
       {
         "name" : "STORE_HOSTNAMES",
-        "value" : "${join(" ", concat(formatlist("${var.name}-${var.secondary}.%s.services.${var.parent_domain_name}", local.master_peerings[local.slave_peerings[local.environment]]), formatlist("thanos-store.%s.services.${var.parent_domain_name}", "${local.slave_peerings[local.environment]}")))}"
+        "value" : join(" ", concat(formatlist("${var.name}-${var.secondary}.%s.services.${var.parent_domain_name}", local.master_peerings[local.slave_peerings[local.environment]]), formatlist("thanos-store.%s.services.${var.parent_domain_name}", "${local.slave_peerings[local.environment]}")))
       },
       {
         "name" : "THANOS_QUERY_CONFIG_CHANGE_DEPENDENCY",
