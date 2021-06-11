@@ -384,7 +384,7 @@ variable "region" {
 }
 
 provider "aws" {
-  version = "~> 3.42.0"
+version = "~> 3.42.0"
   region  = var.region
 
   assume_role {
@@ -393,7 +393,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  version = "~> 3.42.0"
+version = "~> 3.42.0"
   alias   = "management"
   region  = var.region
 
@@ -403,7 +403,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  version = "~> 3.42.0"
+version = "~> 3.42.0"
   alias   = "dmi_management"
   region  = var.region
 
@@ -413,7 +413,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  version = "~> 3.42.0"
+version = "~> 3.42.0"
   alias   = "management_dns"
   region  = var.region
 
@@ -422,7 +422,7 @@ provider "aws" {
   }
 }
 provider "aws" {
-  version = "~> 3.42.0"
+version = "~> 3.42.0"
   alias   = "management_zone"
   region  = var.region
 
@@ -432,7 +432,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  version = "~> 3.42.0"
+version = "~> 3.42.0"
   region  = var.region
   alias   = "non_management_zone"
 

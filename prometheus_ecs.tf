@@ -69,11 +69,11 @@ data "template_file" "prometheus_definition" {
     environment_variables = jsonencode([
       {
         "name" : "PROMETHEUS_ROLE",
-        "value" : "${local.roles[local.secondary_role_index]}"
+        "value" : local.roles[local.secondary_role_index]
       },
       {
         "name" : "PROMETHEUS_CONFIG_CHANGE_DEPENDENCY",
-        "value" : "${md5(data.template_file.prometheus.rendered)}"
+        "value" : md5(data.template_file.prometheus.rendered)
       },
       {
         "name" : "LOG_LEVEL",
@@ -151,7 +151,7 @@ data "template_file" "thanos_receiver_prometheus_definition" {
     environment_variables = jsonencode([
       {
         "name" : "THANOS_STORE_CONFIG_CHANGE_DEPENDENCY",
-        "value" : "${md5(data.template_file.thanos_config.rendered)}"
+        "value" : md5(data.template_file.thanos_config.rendered)
       },
       {
         "name" : "THANOS_ALLOW_EXISTING_BUCKET_USE"
@@ -159,7 +159,7 @@ data "template_file" "thanos_receiver_prometheus_definition" {
       },
       {
         "name" : "RECEIVE_ENV"
-        "value" : "${local.environment}"
+        "value" : local.environment
       },
       {
         "name" : "LOG_LEVEL",
