@@ -19,9 +19,11 @@ def main():
     elif 'AWS_SECRETS_ROLE' in os.environ:
         secrets_session = assumed_role_session(os.environ['AWS_SECRETS_ROLE'])
     if 'AWS_REGION' in os.environ:
+        ssm = boto3.client('ssm', region_name=os.environ['AWS_REGION'])
         secrets_manager = secrets_session.client(
             'secretsmanager', region_name=os.environ['AWS_REGION'])
     else:
+        ssm = boto3.client('ssm')
         secrets_manager = secrets_session.client('secretsmanager')
 
     try:
@@ -48,8 +50,20 @@ def main():
                 error_message))
         sys.exit(1)
 
+    try:
+        parameter = ssm.get_parameter(
+            Name='terraform_bootstrap_config', WithDecryption=False)
+    except botocore.exceptions.ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        if "The security token included in the request is invalid" in error_message:
+            print("ERROR: Invalid security token used when calling SSM. Have you run `aws-sts` recently?")
+        else:
+            print("ERROR: Problem calling SSM: {}".format(
+                error_message))
+        sys.exit(1)
+
     config_data = yaml.load(
-        terraform_secret['SecretBinary'], Loader=yaml.FullLoader)
+        parameter['Parameter']['Value'], Loader=yaml.FullLoader)
     config_data['roles'] = json.loads(monitoring_secret['SecretBinary'])[
         os.getenv('TF_WORKSPACE', 'development')]
     config_data['ports'] = json.loads(
