@@ -36,7 +36,7 @@ data "template_file" "alertmanager_definition" {
       },
       {
         "name" : "ALERTMANAGER_CONFIG_CHANGE_DEPENDENCY",
-        "value" : "${md5(data.template_file.alertmanager[local.primary_role_index].rendered)}"
+        "value" : md5(data.template_file.alertmanager[local.primary_role_index].rendered)
       }
     ])
   }

@@ -1,5 +1,5 @@
 provider "aws" {
-  version = "~> 3.25.0"
+  version = "~> 3.42.0"
   region  = var.region
   alias   = "management_dns"
 
@@ -8,7 +8,7 @@ provider "aws" {
   }
 }
 provider "aws" {
-  version = "~> 3.25.0"
+  version = "~> 3.42.0"
   region  = var.region
   alias   = "management_zone"
 
@@ -18,7 +18,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  version = "~> 3.25.0"
+  version = "~> 3.42.0"
   region  = var.region
   alias   = "non_management_zone"
 

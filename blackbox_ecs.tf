@@ -31,7 +31,7 @@ data "template_file" "blackbox_definition" {
     environment_variables = jsonencode([
       {
         "name" : "BLACKBOX_CONFIG_CHANGE_DEPENDENCY",
-        "value" : "${md5(data.template_file.blackbox.rendered)}"
+        "value" : md5(data.template_file.blackbox.rendered)
       },
       {
         name  = "PROMETHEUS",

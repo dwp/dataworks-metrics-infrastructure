@@ -40,7 +40,7 @@ data "template_file" "hbase_exporter_definition" {
       },
       {
         "name" : "HBASE_CONFIG_CHANGE_DEPENDENCY",
-        "value" : "${md5(data.template_file.hbase_exporter[local.secondary_role_index].rendered)}"
+        "value" : md5(data.template_file.hbase_exporter[local.secondary_role_index].rendered)
       }
     ])
   }

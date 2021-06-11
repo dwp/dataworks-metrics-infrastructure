@@ -1,5 +1,5 @@
 provider "aws" {
-  version = "~> 3.25.0"
+  version = "~> 3.42.0"
   region  = var.region
   alias   = "dmi_management"
 

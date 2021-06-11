@@ -44,7 +44,7 @@ data "template_file" "thanos_ruler_definition" {
       },
       {
         "name" : "THANOS_RULER_CONFIG_CHANGE_DEPENDENCY",
-        "value" : "${md5(data.template_file.thanos_ruler.rendered)}"
+        "value" : md5(data.template_file.thanos_ruler.rendered)
       }
     ])
   }

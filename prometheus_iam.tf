@@ -42,7 +42,7 @@ data "aws_iam_policy_document" "prometheus_read_config" {
     ]
 
     resources = [
-      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn}",
+      local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn : data.terraform_remote_state.common.outputs.config_bucket.arn,
     ]
   }
 
@@ -67,7 +67,7 @@ data "aws_iam_policy_document" "prometheus_read_config" {
     ]
 
     resources = [
-      "${local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn}",
+      local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn,
     ]
   }
 }
@@ -140,7 +140,7 @@ data "aws_iam_policy_document" "monitoring_bucket_read_write" {
     ]
 
     resources = [
-      "${local.is_management_env ? aws_s3_bucket.monitoring[local.primary_role_index].arn : data.terraform_remote_state.management_dmi.outputs.monitoring_bucket.arn}",
+      local.is_management_env ? aws_s3_bucket.monitoring[local.primary_role_index].arn : data.terraform_remote_state.management_dmi.outputs.monitoring_bucket.arn,
       "${local.is_management_env ? aws_s3_bucket.monitoring[local.primary_role_index].arn : data.terraform_remote_state.management_dmi.outputs.monitoring_bucket.arn}/*",
     ]
   }
@@ -157,7 +157,7 @@ data "aws_iam_policy_document" "monitoring_bucket_read_write" {
     ]
 
     resources = [
-      "${local.is_management_env ? aws_kms_key.monitoring_bucket_cmk[local.primary_role_index].arn : data.terraform_remote_state.management_dmi.outputs.monitoring_bucket.key}",
+      local.is_management_env ? aws_kms_key.monitoring_bucket_cmk[local.primary_role_index].arn : data.terraform_remote_state.management_dmi.outputs.monitoring_bucket.key,
     ]
   }
 }
