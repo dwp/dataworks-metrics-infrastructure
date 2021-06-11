@@ -1,13 +1,3 @@
-provider "aws" {
-  version = "~> 3.25.0"
-  region  = var.region
-  alias   = "dmi_management"
-
-  assume_role {
-    role_arn = "arn:aws:iam::${lookup(local.account, lookup(local.slave_peerings, local.environment))}:role/${var.assume_role}"
-  }
-}
-
 resource "aws_vpc_peering_connection" "prometheus" {
   peer_owner_id = lookup(local.account, lookup(local.slave_peerings, local.environment))
   peer_vpc_id   = local.is_management_env ? module.vpc.outputs.vpcs[0].id : data.terraform_remote_state.management_dmi.outputs.vpcs[0].id

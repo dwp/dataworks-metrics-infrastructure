@@ -10,7 +10,6 @@ import json
 import datetime
 from dateutil.tz import tzlocal
 
-
 def main():
     if 'AWS_PROFILE' in os.environ:
         boto3.setup_default_session(profile_name=os.environ['AWS_PROFILE'])
@@ -32,8 +31,8 @@ def main():
             Name='terraform_bootstrap_config', WithDecryption=False)
         monitoring_secret = secrets_manager.get_secret_value(
             SecretId="/concourse/dataworks/monitoring")
-        dataworks_secret = secrets_manager.get_secret_value(
-            SecretId="/concourse/dataworks/dataworks-secrets")
+        terraform_secret = secrets_manager.get_secret_value(
+            SecretId="/concourse/dataworks/terraform")
     except botocore.exceptions.ClientError as e:
         error_message = e.response["Error"]["Message"]
         if "The security token included in the request is invalid" in error_message:
@@ -61,6 +60,8 @@ def main():
         monitoring_secret['SecretBinary'])["adg_dns_zone_ids"]
     config_data['mongo_latest_dns_zone_ids'] = json.loads(
         monitoring_secret['SecretBinary'])["mongo_latest_dns_zone_ids"]
+    config_data['terraform'] = json.loads(
+        terraform_secret['SecretBinary'])["terraform"]
 
     with open('modules/vpc/vpc.tf.j2') as in_template:
         template = jinja2.Template(in_template.read())
