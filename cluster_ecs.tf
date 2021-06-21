@@ -1,6 +1,6 @@
 resource "aws_ecs_cluster" "metrics_ecs_cluster" {
   name               = local.cluster_name
-  capacity_providers = local.is_management_env ? [aws_ecs_capacity_provider.metrics_cluster.name, aws_ecs_capacity_provider.mgmt_metrics_cluster[local.primary_role_index].name] : [aws_ecs_capacity_provider.metrics_cluster.name]
+  capacity_providers = local.is_management_env ? [aws_ecs_capacity_provider.metrics_cluster.name, aws_ecs_capacity_provider.mgmt_metrics_cluster[local.primary_role_index].name, aws_ecs_capacity_provider.additional_mgmt_metrics_cluster[0].name] : [aws_ecs_capacity_provider.metrics_cluster.name, aws_ecs_capacity_provider.additional_metrics_cluster.name]
 
   tags = merge(
     local.tags,
@@ -107,6 +107,9 @@ resource "aws_launch_template" "metrics_cluster" {
       folder        = "/mnt/config"
       mnt_bucket    = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
       name          = local.metrics_ecs_friendly_name
+      ecs_attributes = jsonencode({
+        "instance-type" = "prometheus"
+      })
     }
   ))
 
@@ -254,6 +257,9 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
       folder        = "/mnt/config"
       mnt_bucket    = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
       name          = local.metrics_ecs_friendly_name
+      ecs_attributes = jsonencode({
+        "instance-type" = "prometheus"
+      })
     }
   ))
 

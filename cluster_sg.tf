@@ -27,7 +27,7 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_adg_pushgateway
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = aws_security_group.metrics_cluster.id
-  source_security_group_id = aws_security_group.adg_pushgateway[0].id
+  source_security_group_id = data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.adg_pushgateway_vpce_security_group.id
 }
 
 resource "aws_security_group_rule" "allow_metrics_cluster_egress_sdx_pushgateway" {
@@ -38,7 +38,7 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_sdx_pushgateway
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = aws_security_group.metrics_cluster.id
-  source_security_group_id = aws_security_group.sdx_pushgateway[0].id
+  source_security_group_id = data.terraform_remote_state.aws_sdx.outputs.vpce_security_groups.sdx_pushgateway_vpce_security_group.id
 }
 
 resource "aws_security_group_rule" "allow_metrics_cluster_egress_pdm_exporter" {
@@ -50,6 +50,17 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_pdm_exporter" {
   to_port                  = var.json_exporter_port
   security_group_id        = aws_security_group.metrics_cluster.id
   source_security_group_id = aws_security_group.pdm_exporter[0].id
+}
+
+resource "aws_security_group_rule" "allow_metrics_cluster_egress_pdm_pushgateway" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allows metrics cluster to access PDM pushgateway"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = var.pushgateway_port
+  to_port                  = var.pushgateway_port
+  security_group_id        = aws_security_group.metrics_cluster.id
+  source_security_group_id = data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.pdm_pushgateway_vpce_security_group.id
 }
 
 resource "aws_security_group_rule" "allow_metrics_cluster_egress_hbase_exporter" {
@@ -71,7 +82,7 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_htme_pushgatewa
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = aws_security_group.metrics_cluster.id
-  source_security_group_id = aws_security_group.htme_pushgateway[0].id
+  source_security_group_id = data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.htme_pushgateway_vpce_security_group.id
 }
 
 resource "aws_security_group_rule" "allow_metrics_cluster_egress_ingest_pushgateway" {
@@ -82,7 +93,29 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_ingest_pushgate
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = aws_security_group.metrics_cluster.id
-  source_security_group_id = aws_security_group.ingest_pushgateway[0].id
+  source_security_group_id = data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.vpce_security_groups.ingest_pushgateway_security_group.id
+}
+
+resource "aws_security_group_rule" "allow_metrics_cluster_egress_clive_pushgateway" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allows metrics cluster to access Clive pushgateway"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = var.pushgateway_port
+  to_port                  = var.pushgateway_port
+  security_group_id        = aws_security_group.metrics_cluster.id
+  source_security_group_id = data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.clive_pushgateway_vpce_security_group.id
+}
+
+resource "aws_security_group_rule" "allow_metrics_cluster_egress_mongo_latest_pushgateway" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allows metrics cluster to access mongo latest pushgateway"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = var.pushgateway_port
+  to_port                  = var.pushgateway_port
+  security_group_id        = aws_security_group.metrics_cluster.id
+  source_security_group_id = data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.mongo_latest_vpce_pushgateway_security_group.id
 }
 
 resource "aws_security_group" "mgmt_metrics_cluster" {
@@ -106,4 +139,15 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_cloudwatch_expo
   to_port                  = var.cloudwatch_exporter_port
   security_group_id        = aws_security_group.mgmt_metrics_cluster[0].id
   source_security_group_id = aws_security_group.cloudwatch_exporter.id
+}
+
+resource "aws_security_group_rule" "allow_metrics_cluster_egress_azkaban_pushgateway" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allows metrics cluster to access ADG pushgateway"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = var.pushgateway_port
+  to_port                  = var.pushgateway_port
+  security_group_id        = aws_security_group.metrics_cluster.id
+  source_security_group_id = data.terraform_remote_state.aws_analytical_env_infra.outputs.vpce_security_groups.azkaban_pushgateway_vpce_security_group.id
 }

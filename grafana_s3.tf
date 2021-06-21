@@ -5,7 +5,7 @@ data template_file "grafana" {
     grafana_domain = aws_route53_record.grafana_loadbalancer[0].fqdn
     client_id      = aws_cognito_user_pool_client.grafana[0].id
     client_secret  = aws_cognito_user_pool_client.grafana[0].client_secret
-    cognito_domain = data.terraform_remote_state.aws_concourse.outputs.cognito.user_pool_domain
+    cognito_domain = data.terraform_remote_state.dataworks_cognito.outputs.cognito.user_pool_domain
     region         = var.region
   }
 }
@@ -83,6 +83,10 @@ data template_file "azkaban_dashboard" {
 
 data template_file "snapshot_sender_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/snapshot_sender.json")
+}
+
+data template_file "certificate_expiry_dashboard" {
+  template = file("${path.module}/config/grafana/provisioning/dashboards/certificate_expiry.json")
 }
 
 resource "aws_s3_bucket_object" "grafana" {
@@ -261,6 +265,15 @@ resource "aws_s3_bucket_object" "snapshot_sender_dashboard" {
   count      = local.is_management_env ? 1 : 0
   bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
   key        = "${var.name}/grafana/provisioning/dashboards/private/snapshot_sender.json"
+  content    = data.template_file.snapshot_sender_dashboard.rendered
+  kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  tags       = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_s3_bucket_object" "certificate_expiry_dashboard" {
+  count      = local.is_management_env ? 1 : 0
+  bucket     = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${var.name}/grafana/provisioning/dashboards/private/certificate_expiry.json"
   content    = data.template_file.snapshot_sender_dashboard.rendered
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.cmk_arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   tags       = merge(local.tags, { Name = var.name })

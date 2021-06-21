@@ -50,6 +50,28 @@ variable "prometheus_task_cpu" {
   }
 }
 
+variable "cert_metrics_task_cpu" {
+  default = {
+    development    = "2048"
+    qa             = "2048"
+    integration    = "2048"
+    preprod        = "2048"
+    production     = "2048"
+    management     = "2048"
+    management-dev = "2048"
+  }
+}
+
+variable "ingest_pushgateway_task_cpu" {
+  default = {
+    development = "512"
+    qa          = "512"
+    integration = "512"
+    preprod     = "512"
+    production  = "1024"
+  }
+}
+
 variable "prometheus_task_memory" {
   default = {
     development    = "16384"
@@ -59,6 +81,18 @@ variable "prometheus_task_memory" {
     production     = "16384"
     management     = "16384"
     management-dev = "16384"
+  }
+}
+
+variable "cert_metrics_task_memory" {
+  default = {
+    development    = "2048"
+    qa             = "2048"
+    integration    = "2048"
+    preprod        = "2048"
+    production     = "2048"
+    management     = "2048"
+    management-dev = "2048"
   }
 }
 
@@ -136,7 +170,31 @@ variable "prometheus_cpu" {
     qa             = "1024"
     integration    = "1024"
     preprod        = "1024"
-    production     = "2048"
+    production     = "1024"
+    management     = "1024"
+    management-dev = "1024"
+  }
+}
+
+variable "cert_retriever_cpu" {
+  default = {
+    development    = "512"
+    qa             = "512"
+    integration    = "512"
+    preprod        = "512"
+    production     = "512"
+    management     = "512"
+    management-dev = "512"
+  }
+}
+
+variable "cert_exporter_cpu" {
+  default = {
+    development    = "1024"
+    qa             = "1024"
+    integration    = "1024"
+    preprod        = "1024"
+    production     = "1024"
     management     = "1024"
     management-dev = "1024"
   }
@@ -178,6 +236,30 @@ variable "prometheus_memory" {
   }
 }
 
+variable "cert_retriever_memory" {
+  default = {
+    development    = "1024"
+    qa             = "1024"
+    integration    = "1024"
+    preprod        = "1024"
+    production     = "1024"
+    management     = "1024"
+    management-dev = "1024"
+  }
+}
+
+variable "cert_exporter_memory" {
+  default = {
+    development    = "1024"
+    qa             = "1024"
+    integration    = "1024"
+    preprod        = "1024"
+    production     = "1024"
+    management     = "1024"
+    management-dev = "1024"
+  }
+}
+
 variable "https_port" {
   default = 443
 }
@@ -197,6 +279,9 @@ variable "cloudwatch_exporter_port" {}
 variable "pushgateway_port" {}
 variable "json_exporter_port" {}
 variable "jmx_port" {}
+variable "cert_metrics_port" {
+  default = 8080
+}
 
 variable "subnets" {
   description = "define sizes for subnets using Terraform cidrsubnet function. For an empty /24 VPC, the defaults will create /28 public subnets and /26 private subnets, one of each in each AZ."
@@ -239,11 +324,37 @@ variable "desired_capacity" {
   }
 }
 
+variable "additional_metrics_ecs_cluster_asg_max" {
+  description = "Max metrics asg size"
+  default = {
+    development    = 1
+    qa             = 1
+    integration    = 1
+    preprod        = 1
+    production     = 1
+    management     = 1
+    management-dev = 1
+  }
+}
+
+variable "additional_cluster_desired_capacity" {
+  description = "Desired asg size"
+  default = {
+    development    = 1
+    qa             = 1
+    integration    = 1
+    preprod        = 1
+    production     = 1
+    management     = 1
+    management-dev = 1
+  }
+}
+
 variable "image_versions" {
   description = "pinned image versions to use"
   default = {
-    prometheus            = "0.0.17"
-    thanos                = "0.0.24"
+    prometheus            = "0.0.19"
+    thanos                = "0.0.29"
     alertmanager          = "0.0.5"
     ecs-service-discovery = "0.0.4"
     grafana               = "0.0.12"
@@ -252,7 +363,8 @@ variable "image_versions" {
     hive-exporter         = "0.0.4"
     awscli                = "0.0.10"
     blackbox              = "0.0.3"
-
+    cert_retriever        = "0.0.8"
+    cert_exporter         = "0.0.1"
   }
 }
 
@@ -266,6 +378,18 @@ variable "metrics_ecs_cluster_ec2_size" {
     production     = "c5.4xlarge"
     management     = "t3.2xlarge"
     management-dev = "t3.2xlarge"
+  }
+}
+
+variable "additional_metrics_ecs_cluster_ec2_size" {
+  default = {
+    development    = "t3.medium"
+    qa             = "t3.medium"
+    integration    = "t3.medium"
+    preprod        = "t3.medium"
+    production     = "t3.medium"
+    management     = "t3.medium"
+    management-dev = "t3.medium"
   }
 }
 

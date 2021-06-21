@@ -8,7 +8,7 @@ resource "aws_wafregional_web_acl" "acl" {
   }
 
   default_action {
-    type = "ALLOW"
+    type = "BLOCK"
   }
 
   rule {

@@ -72,8 +72,8 @@ meta:
           type: docker-image
           source:
             repository: hashicorp/terraform
-            version: ((dataworks.terraform_version))
-            tag: ((dataworks.terraform_version))
+            version: ((dataworks.terraform_13_version))
+            tag: ((dataworks.terraform_13_version))
         run:
           path: sh
           args:
@@ -118,8 +118,8 @@ meta:
           type: docker-image
           source:
             repository: hashicorp/terraform
-            version: ((dataworks.terraform_version))
-            tag: ((dataworks.terraform_version))
+            version: ((dataworks.terraform_13_version))
+            tag: ((dataworks.terraform_13_version))
         run:
           path: sh
           args:
@@ -216,8 +216,8 @@ meta:
           type: docker-image
           source:
             repository: hashicorp/terraform
-            version: ((dataworks.terraform_version))
-            tag: ((dataworks.terraform_version))
+            version: ((dataworks.terraform_13_version))
+            tag: ((dataworks.terraform_13_version))
         run:
           path: sh
           args:

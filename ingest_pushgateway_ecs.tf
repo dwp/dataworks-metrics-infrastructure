@@ -3,7 +3,7 @@ resource "aws_ecs_task_definition" "ingest_pushgateway" {
   family                   = "ingest-pushgateway"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "512"
+  cpu                      = var.ingest_pushgateway_task_cpu[local.environment]
   memory                   = "4096"
   task_role_arn            = aws_iam_role.ingest_pushgateway[local.primary_role_index].arn
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
@@ -17,7 +17,7 @@ data "template_file" "ingest_pushgateway_definition" {
   vars = {
     name          = "ingest-pushgateway"
     group_name    = "pushgateway"
-    cpu           = var.fargate_cpu
+    cpu           = var.ingest_pushgateway_task_cpu[local.environment]
     image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_pushgateway_url, var.image_versions.prom-pushgateway)
     memory        = var.fargate_memory
     user          = "nobody"
@@ -50,36 +50,13 @@ resource "aws_ecs_service" "ingest_pushgateway" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [aws_security_group.ingest_pushgateway[local.primary_role_index].id]
+    security_groups = [data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.vpce_security_groups.ingest_pushgateway_security_group.id]
     subnets         = data.terraform_remote_state.aws_ingestion.outputs.ingestion_subnets.id
   }
 
   service_registries {
-    registry_arn   = aws_service_discovery_service.ingest_pushgateway[local.primary_role_index].arn
+    registry_arn   = data.terraform_remote_state.aws_ingestion.outputs.private_dns.ingest_service_discovery.arn
     container_name = "ingest-pushgateway"
-  }
-
-  tags = merge(local.tags, { Name = var.name })
-}
-
-resource "aws_service_discovery_private_dns_namespace" "ingest_services" {
-  count = local.is_management_env ? 0 : 1
-  name  = "${local.environment}.ingest.services.${var.parent_domain_name}"
-  vpc   = data.terraform_remote_state.aws_ingestion.outputs.vpc.vpc.vpc.id
-  tags  = merge(local.tags, { Name = var.name })
-}
-
-resource "aws_service_discovery_service" "ingest_pushgateway" {
-  count = local.is_management_env ? 0 : 1
-  name  = "ingest-pushgateway"
-
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.ingest_services[0].id
-
-    dns_records {
-      ttl  = 10
-      type = "A"
-    }
   }
 
   tags = merge(local.tags, { Name = var.name })

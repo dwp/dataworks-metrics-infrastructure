@@ -100,3 +100,74 @@ The drawback is that as we are routing the queries through the query node, there
 
 ![Current Architecture](docs/metrics_architecture_080121.png)
 
+## Uncommon Dependancies
+When creating new services to consume `internal-compute`, all work should be carried out and applied in this repo, before adding the remote state to the `interface_vpce_source_security_group_ids` list in the `internal-compute` [VPC](https://git.ucd.gpn.gov.uk/dip/aws-internal-compute/blob/c73d0a6a159debe59795d5be6b99c3f947414eeb/vpc.tf#L19), otherwise co flicts occurr which break applies.
+
+
+## VPC Interfaces and Security Groups 
+
+To use a VPC interface endpoint you must first create one as seen below for the internet proxy endpoint:   
+
+    resource "aws_vpc_endpoint" "secondary_internet_proxy" {
+        vpc_id              = module.vpc.outputs.vpcs[local.secondary_role_index].id
+        service_name        = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
+        vpc_endpoint_type   = "Interface"
+        security_group_ids  = [aws_security_group.secondary_internet_proxy_endpoint.id]
+        subnet_ids          = module.vpc.outputs.private_subnets[local.secondary_role_index]
+        private_dns_enabled = false
+        tags                = merge(local.tags, { Name = var.name })
+     }
+     
+To be able to use this endpoint from your service a Security Group must be associated with it. In the case of this example, we want to be able to communicate with the above interface from the `cert_metrics` SG. After adding the required `ingress/egress` rules you will also have to associate the SG with the correct VPC.  
+   
+       interface_vpce_source_security_group_ids = local.is_management_env ? [
+       aws_security_group.grafana[0].id,
+       aws_security_group.thanos_query[0].id,
+       aws_security_group.thanos_ruler[0].id,
+       aws_security_group.alertmanager[0].id,
+       aws_security_group.outofband[0].id,
+       aws_security_group.prometheus.id,
+       aws_security_group.cloudwatch_exporter.id,
+       aws_security_group.thanos_store[0].id,
+       aws_security_group.metrics_cluster.id,
+       aws_security_group.mgmt_metrics_cluster[0].id,
+       aws_security_group.cert_metrics.id] 
+       ] : [
+       aws_security_group.prometheus.id,
+       aws_security_group.cloudwatch_exporter.id,
+       aws_security_group.pdm_exporter[0].id,
+       aws_security_group.hbase_exporter[0].id,
+       aws_security_group.metrics_cluster.id,
+       aws_security_group.cert_metrics.id] 
+
+The `cert_metrics` SG is deployed into the `montoring-slave vpc` in all envs and therefore it sits on both sides of the above if/else condition of `local.is_management_env`.   
+This also needs to reflected in the VPC module `vpc.tf.j2`.  
+
+    interface_vpce_source_security_group_ids   = [{% if value == "master" %}
+     var.interface_vpce_source_security_group_ids[0],
+     var.interface_vpce_source_security_group_ids[1],
+     var.interface_vpce_source_security_group_ids[2],
+     var.interface_vpce_source_security_group_ids[3],
+     var.interface_vpce_source_security_group_ids[4],
+     var.interface_vpce_source_security_group_ids[7],
+     var.interface_vpce_source_security_group_ids[8],
+     var.interface_vpce_source_security_group_ids[9]
+    {% else %}
+    {% if roles[0] == "slave" %}
+     var.interface_vpce_source_security_group_ids[0],
+     var.interface_vpce_source_security_group_ids[1],
+     var.interface_vpce_source_security_group_ids[2],
+     var.interface_vpce_source_security_group_ids[3],
+     var.interface_vpce_source_security_group_ids[4],
+     var.interface_vpce_source_security_group_ids[5]
+    {% else %}
+     var.interface_vpce_source_security_group_ids[5],
+     var.interface_vpce_source_security_group_ids[6],
+     var.interface_vpce_source_security_group_ids[7],
+     var.interface_vpce_source_security_group_ids[8],
+     var.interface_vpce_source_security_group_ids[9],
+     var.interface_vpce_source_security_group_ids[10]
+    {% endif %}
+    {% endif %}]
+Because `cert_metrics` is the fifth SG in our `common-vpc.tf` and is in the `monitoring-slave-vpc`, it is referred to by its index and put into the `if roles[0] == "slave"` condition.  
+This line specifically refers to the `cert_metrics` SG `var.interface_vpce_source_security_group_ids[5]`

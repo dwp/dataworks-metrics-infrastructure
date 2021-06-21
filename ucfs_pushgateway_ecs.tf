@@ -50,7 +50,7 @@ resource "aws_ecs_service" "ucfs_claimant_api_pushgateway" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [aws_security_group.ucfs_claimant_api_pushgateway[0].id]
+    security_groups = [data.terraform_remote_state.ucfs-claimant.outputs.vpce_security_groups.ucfs_claimant_api_pushgateway.id]
     subnets         = data.terraform_remote_state.ucfs-claimant.outputs.subnet_ucfs_claimant_api_connectivity.*.id
   }
 

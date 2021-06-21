@@ -50,36 +50,13 @@ resource "aws_ecs_service" "pdm_pushgateway" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [aws_security_group.pdm_pushgateway[local.primary_role_index].id]
+    security_groups = [data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.pdm_pushgateway_vpce_security_group.id]
     subnets         = data.terraform_remote_state.aws_internal_compute.outputs.pdm_subnet_new.ids
   }
 
   service_registries {
-    registry_arn   = aws_service_discovery_service.pdm_pushgateway[local.primary_role_index].arn
+    registry_arn   = data.terraform_remote_state.aws_pdm_dataset_generation.outputs.private_dns.pdm_service_discovery.arn
     container_name = "pdm-pushgateway"
-  }
-
-  tags = merge(local.tags, { Name = var.name })
-}
-
-resource "aws_service_discovery_private_dns_namespace" "pdm_services" {
-  count = local.is_management_env ? 0 : 1
-  name  = "${local.environment}.pdm.services.${var.parent_domain_name}"
-  vpc   = data.terraform_remote_state.aws_internal_compute.outputs.vpc.vpc.vpc.id
-  tags  = merge(local.tags, { Name = var.name })
-}
-
-resource "aws_service_discovery_service" "pdm_pushgateway" {
-  count = local.is_management_env ? 0 : 1
-  name  = "pdm-pushgateway"
-
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.pdm_services[0].id
-
-    dns_records {
-      ttl  = 10
-      type = "A"
-    }
   }
 
   tags = merge(local.tags, { Name = var.name })

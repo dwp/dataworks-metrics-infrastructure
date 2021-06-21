@@ -43,7 +43,7 @@ data "template_file" "grafana_definition" {
       },
       {
         "name" : "GRAFANA_CONFIG_CHANGE_DEPENDENCY",
-        "value" : "${md5(data.template_file.grafana[local.primary_role_index].rendered)}"
+        "value" : md5(data.template_file.grafana[local.primary_role_index].rendered)
       },
       {
         "name" : "SECRET_ID",
@@ -70,7 +70,7 @@ data "template_file" "grafana_sidecar_definition" {
     mount_points  = jsonencode([])
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
     essential     = false
-    entrypoint    = "${base64encode(file("${path.module}/config/grafana/status_check.sh"))}"
+    entrypoint    = base64encode(file("${path.module}/config/grafana/status_check.sh"))
 
     environment_variables = jsonencode([
       {
