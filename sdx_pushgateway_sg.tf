@@ -82,7 +82,7 @@ resource "aws_security_group_rule" "allow_data_egress_ingress_sdx_pushgateway" {
   protocol                 = "tcp"
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
-  security_group_id        = data.terraform_remote_state.dataworks-aws-data-egress.outputs.security_group.data_egress_server.id
+  security_group_id        = data.terraform_remote_state.dataworks-aws-data-egress.outputs.security_group.data_egress_server
   source_security_group_id = data.terraform_remote_state.snapshot_sender.outputs.security_group.snapshot_sender
 }
 
@@ -94,5 +94,5 @@ resource "aws_security_group_rule" "allow_data_egress_egress_sdx_pushgateway" {
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = data.terraform_remote_state.snapshot_sender.outputs.security_group.snapshot_sender
-  source_security_group_id = data.terraform_remote_state.dataworks-aws-data-egress.outputs.security_group.data_egress_server.id
+  source_security_group_id = data.terraform_remote_state.dataworks-aws-data-egress.outputs.security_group.data_egress_server
 }
