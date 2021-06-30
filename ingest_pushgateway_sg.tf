@@ -28,7 +28,7 @@ resource "aws_security_group_rule" "allow_k2hb_ingress_ingest_pushgateway" {
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.vpce_security_groups.ingest_pushgateway_security_group.id
-  source_security_group_id = data.terraform_remote_state.aws_ingest-consumers.outputs.security_group.k2hb_common
+  source_security_group_id = data.terraform_remote_state.aws_ingest_consumers.outputs.security_group.k2hb_common
 }
 
 resource "aws_security_group_rule" "allow_k2hb_egress_ingest_pushgateway" {
@@ -38,7 +38,7 @@ resource "aws_security_group_rule" "allow_k2hb_egress_ingest_pushgateway" {
   protocol                 = "tcp"
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
-  security_group_id        = data.terraform_remote_state.aws_ingest-consumers.outputs.security_group.k2hb_common
+  security_group_id        = data.terraform_remote_state.aws_ingest_consumers.outputs.security_group.k2hb_common
   source_security_group_id = data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.vpce_security_groups.ingest_pushgateway_security_group.id
 }
 

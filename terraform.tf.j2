@@ -207,7 +207,7 @@ data "terraform_remote_state" "aws_analytical_env_app" {
   }
 }
 
-data "terraform_remote_state" "aws_ingest-consumers" {
+data "terraform_remote_state" "aws_ingest_consumers" {
   backend   = "s3"
   workspace = lookup(local.common_workspace, terraform.workspace)
 
