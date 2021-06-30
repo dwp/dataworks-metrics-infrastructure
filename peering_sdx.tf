@@ -89,7 +89,7 @@ resource "aws_security_group_rule" "prometheus_allow_egress_sft" {
 
 resource "aws_security_group_rule" "sft_allow_ingress_prometheus_jmx" {
   count                    = local.is_management_env ? 0 : 1
-  description              = "Allow prometheus ${var.secondary} to access adg namenode metrics"
+  description              = "Allow prometheus ${var.secondary} to access sft namenode metrics"
   type                     = "ingress"
   protocol                 = "tcp"
   from_port                = 9996
