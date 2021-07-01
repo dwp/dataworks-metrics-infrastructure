@@ -64,9 +64,9 @@ resource "aws_security_group_rule" "prometheus_allow_egress_snapshot_sender" {
   source_security_group_id = data.terraform_remote_state.snapshot_sender.outputs.security_group.snapshot_sender
 }
 
-resource "aws_security_group_rule" "prometheus_allow_egress_sft" {
+resource "aws_security_group_rule" "prometheus_allow_egress_data_egress" {
   count                    = local.is_management_env ? 0 : 1
-  description              = "Allow prometheus ${var.secondary} to access sft metrics"
+  description              = "Allow prometheus ${var.secondary} to access jmx metrics"
   type                     = "egress"
   protocol                 = "tcp"
   from_port                = 9996
@@ -75,9 +75,9 @@ resource "aws_security_group_rule" "prometheus_allow_egress_sft" {
   source_security_group_id = data.terraform_remote_state.dataworks-aws-data-egress.outputs.security_group.data_egress_server
 }
 
-resource "aws_security_group_rule" "sft_allow_ingress_prometheus_jmx" {
+resource "aws_security_group_rule" "data_egress_allow_ingress_prometheus_jmx" {
   count                    = local.is_management_env ? 0 : 1
-  description              = "Allow prometheus ${var.secondary} to access sft jmx metrics"
+  description              = "Allow prometheus ${var.secondary} to access jmx metrics"
   type                     = "ingress"
   protocol                 = "tcp"
   from_port                = 9996
