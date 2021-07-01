@@ -64,27 +64,15 @@ resource "aws_security_group_rule" "prometheus_allow_egress_snapshot_sender" {
   source_security_group_id = data.terraform_remote_state.snapshot_sender.outputs.security_group.snapshot_sender
 }
 
-
-resource "aws_security_group_rule" "sft_allow_ingress_prometheus" {
-  count                    = local.is_management_env ? 0 : 1
-  description              = "Allow prometheus ${var.secondary} to access sft metrics"
-  type                     = "ingress"
-  protocol                 = "tcp"
-  from_port                = var.prometheus_port
-  to_port                  = var.prometheus_port
-  security_group_id        = data.terraform_remote_state.dataworks-aws-data-egress.outputs.sft_agent_service.security_group
-  source_security_group_id = aws_security_group.prometheus.id
-}
-
 resource "aws_security_group_rule" "prometheus_allow_egress_sft" {
   count                    = local.is_management_env ? 0 : 1
   description              = "Allow prometheus ${var.secondary} to access sft metrics"
   type                     = "egress"
   protocol                 = "tcp"
-  from_port                = var.prometheus_port
-  to_port                  = var.prometheus_port
+  from_port                = 9996
+  to_port                  = 9996
   security_group_id        = aws_security_group.prometheus.id
-  source_security_group_id = data.terraform_remote_state.dataworks-aws-data-egress.outputs.sft_agent_service.security_group
+  source_security_group_id = data.terraform_remote_state.dataworks-aws-data-egress.outputs.security_group.data_egress_server
 }
 
 resource "aws_security_group_rule" "sft_allow_ingress_prometheus_jmx" {
@@ -94,6 +82,6 @@ resource "aws_security_group_rule" "sft_allow_ingress_prometheus_jmx" {
   protocol                 = "tcp"
   from_port                = 9996
   to_port                  = 9996
-  security_group_id        = data.terraform_remote_state.dataworks-aws-data-egress.outputs.sft_agent_service.security_group
+  security_group_id        = data.terraform_remote_state.dataworks-aws-data-egress.outputs.security_group.data_egress_server
   source_security_group_id = aws_security_group.prometheus.id
 }
