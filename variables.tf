@@ -398,3 +398,9 @@ variable "ecs_hardened_ami_id" {
   type        = string
   default     = "ami-014a6060ae79e83df"
 }
+
+variable "test_ami" {
+  description = "Defines if cluster should test untested ECS AMI"
+  type        = bool
+  default     = false
+}

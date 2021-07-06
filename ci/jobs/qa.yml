@@ -1,5 +1,6 @@
 jobs:
   - name: qa
+    serial_groups: [qa-applies]
     max_in_flight: 1
     plan:
       - get: dw-al2-ecs-ami

@@ -48,8 +48,23 @@ resources:
         state: available
         name: dw-al2-ecs-ami-*
 
+  - name: untested-dw-al2-ecs-ami
+    type: ami
+    check_every: 5m
+    source:
+      aws_role_arn: "arn:aws:iam::((aws_account.management)):role/ci"
+      region: ((dataworks.aws_region))
+      filters:
+        owner-id: "((aws_account.management))"
+        is-public: false
+        state: available
+        name: untested-dw-al2-ecs-ami-*
+
   - name: every-60m
     type: time
     icon: clock-outline
     source:
       interval: 60m
+
+  - name: meta-qa
+    type: meta
