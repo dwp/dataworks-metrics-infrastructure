@@ -1,5 +1,5 @@
 resource "aws_ecs_task_definition" "test_ecs_ami" {
-  count                    = local.environment == "development" ? 1 : 0 # TODO: change to qa before committing
+  count                    = local.environment == "qa" ? 1 : 0
   family                   = "test_ecs_ami"
   network_mode             = "bridge"
   requires_compatibilities = ["EC2"]
@@ -10,7 +10,7 @@ resource "aws_ecs_task_definition" "test_ecs_ami" {
 }
 
 data "template_file" "test_ecs_ami_definition" {
-  count    = local.environment == "development" ? 1 : 0 # TODO: change to qa before committing
+  count    = local.environment == "qa" ? 1 : 0
   template = file("${path.module}/container_definition.tpl")
   vars = {
     name          = "test-ecs-ami"

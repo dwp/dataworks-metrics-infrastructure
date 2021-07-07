@@ -15,7 +15,7 @@ meta:
           args:
             - -exc
             - |
-              set -x
+              set +x
               source /assume-role
               creds=$(cat << EOF  
               {
@@ -247,7 +247,7 @@ meta:
             - |
               export AWS_DEFAULT_REGION
               source /assume-role
-              set -x
+              set +x
               max_retries=5
               task_json="$(aws ecs run-task --cluster "$CLUSTER_NAME" --task-definition test_ecs_ami --overrides "{\"containerOverrides\": [{\"name\": \"test-ecs-ami\", \"command\": [\"sh\", \"-c\", \"sleep 300\"]}]}")"
               task_arn=$(echo $task_json | jq -r '.tasks[0].taskArn')
@@ -264,7 +264,7 @@ meta:
               exit 1
       params:
         AWS_DEFAULT_REGION: ((dataworks.aws_region))
-        AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci # change to qa when committing
+        AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
         CLUSTER_NAME: metrics
 
     ami-test-results:

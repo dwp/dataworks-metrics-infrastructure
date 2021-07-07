@@ -4,26 +4,25 @@ jobs:
     serial_groups: [qa-applies]
     plan:
       - in_parallel:
-          - get: meta
+          - put: meta
             resource: meta
-            trigger: false
           - get: dw-al2-ecs-ami
             resource: untested-dw-al2-ecs-ami
             trigger: true
-#      - .: (( inject meta.plan.terraform-bootstrap ))
-#        config:
-#          params:
-#            AWS_ACC: ((aws_account.qa))
-#      - .: (( inject meta.plan.terraform-apply ))
-#        config:
-#          params:
-#            TF_WORKSPACE: qa
-#            TEST_AMI_RUN: true
-#      - .: (( inject meta.plan.terraform-plan ))
-#        config:
-#          params:
-#            TF_WORKSPACE: qa
-#            TEST_AMI_RUN: true
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        config:
+          params:
+            AWS_ACC: ((aws_account.qa))
+      - .: (( inject meta.plan.terraform-apply ))
+        config:
+          params:
+            TF_WORKSPACE: qa
+            TEST_AMI_RUN: true
+      - .: (( inject meta.plan.terraform-plan ))
+        config:
+          params:
+            TF_WORKSPACE: qa
+            TEST_AMI_RUN: true
       - .: (( inject meta.plan.test-ecs-ami ))
     on_failure:
       do:
