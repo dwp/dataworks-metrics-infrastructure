@@ -247,20 +247,25 @@ meta:
             - |
               export AWS_DEFAULT_REGION
               source /assume-role
-              set +x
+              set -x
               max_retries=5
-              task_json="$(aws ecs run-task --cluster "$CLUSTER_NAME" --task-definition test_ecs_ami)"
-              container_id="$(echo "$task_json" | jq '.tasks[0].containers[0].containerArn' | awk -F '/' '{print $2}' | sed 's/.$//'"
+              task_json="$(aws ecs run-task --cluster "$CLUSTER_NAME" --task-definition test_ecs_ami --overrides "{\"containerOverrides\": [{\"name\": \"test-ecs-ami\", \"command\": [\"sh\", \"-c\", \"sleep 300\"]}]}")"
+              sleep 15
+              container_id="$(echo $task_json | jq '.tasks[0].containers[0].containerArn' | awk -F '/' '{print $NF}' | sed 's/.$//')"
               container_json="$(aws ecs describe-container-instances \
-                  --cluster '$CLUSTER_NAME' \
-                  --container-instances '$container_id')"
-              while max_retries > 0
+                  --cluster "$CLUSTER_NAME" \
+                  --container-instances "$container_id")"
+              while [ $max_retries > 0 ]
               do
-                container_status="$(echo '$container_json' | jq '.containerInstances.[0].status')"
-                if [ '$containers_status' == "ACTIVE" ]; then
+                container_json="$(aws ecs describe-container-instances \
+                    --cluster "$CLUSTER_NAME" \
+                    --container-instances "$container_id")"
+                container_status="$(echo "$container_json" | jq '.containerInstances[0].status')"
+                if [ "$containers_status" == "ACTIVE" ]; then
                   exit 0
                 fi
                 let "max_retries-=1"
+                sleep 15
               done
               exit 1
       params:
