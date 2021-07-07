@@ -5,7 +5,7 @@ jobs:
     plan:
       - in_parallel:
           - get: meta
-            resource: meta-qa
+            resource: meta
             trigger: false
           - get: dw-al2-ecs-ami
             resource: untested-dw-al2-ecs-ami

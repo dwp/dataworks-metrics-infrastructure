@@ -250,22 +250,16 @@ meta:
               set -x
               max_retries=5
               task_json="$(aws ecs run-task --cluster "$CLUSTER_NAME" --task-definition test_ecs_ami --overrides "{\"containerOverrides\": [{\"name\": \"test-ecs-ami\", \"command\": [\"sh\", \"-c\", \"sleep 300\"]}]}")"
-              sleep 15
-              container_id="$(echo $task_json | jq '.tasks[0].containers[0].containerArn' | awk -F '/' '{print $NF}' | sed 's/.$//')"
-              container_json="$(aws ecs describe-container-instances \
-                  --cluster "$CLUSTER_NAME" \
-                  --container-instances "$container_id")"
+              task_arn=$(echo $task_json | jq -r '.tasks[0].taskArn')
               while [ $max_retries > 0 ]
               do
-                container_json="$(aws ecs describe-container-instances \
-                    --cluster "$CLUSTER_NAME" \
-                    --container-instances "$container_id")"
-                container_status="$(echo "$container_json" | jq '.containerInstances[0].status')"
-                if [ "$containers_status" == "ACTIVE" ]; then
+                sleep 15
+                task_json="$(aws ecs describe-tasks --cluster "$CLUSTER_NAME" --tasks $task_arn)"
+                container_status="$(echo "$task_json" | jq -r '.tasks[0].containers[0].lastStatus')"
+                if [ "$container_status" == "RUNNING" ]; then
                   exit 0
                 fi
                 let "max_retries-=1"
-                sleep 15
               done
               exit 1
       params:
