@@ -64,29 +64,6 @@ resource "aws_security_group_rule" "allow_claimant_api_consumers_egress_ingest_p
   source_security_group_id = data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.vpce_security_groups.ingest_pushgateway_security_group.id
 }
 
-resource "aws_security_group_rule" "allow_claimant_api_get_award_details_ingress_ingest_pushgateway" {
-  count                    = local.is_management_env ? 0 : 1
-  description              = "Allows claimant api get award details lambda to access ingest pushgateway"
-  type                     = "ingress"
-  protocol                 = "tcp"
-  from_port                = var.pushgateway_port
-  to_port                  = var.pushgateway_port
-  security_group_id        = data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.vpce_security_groups.ingest_pushgateway_security_group.id
-  source_security_group_id = data.terraform_remote_state.ucfs-claimant.outputs.ucfs_claimant_lambda_london_sg.id
-}
-
-resource "aws_security_group_rule" "allow_claimant_api_get_award_details_egress_ingest_pushgateway" {
-  count                    = local.is_management_env ? 0 : 1
-  description              = "Allows claimant api get award details lambda to access ingest pushgateway"
-  type                     = "egress"
-  protocol                 = "tcp"
-  from_port                = var.pushgateway_port
-  to_port                  = var.pushgateway_port
-  security_group_id        = data.terraform_remote_state.ucfs-claimant.outputs.ucfs_claimant_lambda_london_sg.id
-  source_security_group_id = data.terraform_remote_state.aws_ingestion.outputs.ingestion_vpc.vpce_security_groups.ingest_pushgateway_security_group.id
-}
-
-
 resource "aws_security_group_rule" "allow_prometheus_egress_ingest_pushgateway" {
   count                    = local.is_management_env ? 0 : 1
   description              = "Allows prometheus to access ingest pushgateway"
