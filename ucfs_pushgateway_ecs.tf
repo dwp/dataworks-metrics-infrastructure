@@ -84,3 +84,11 @@ resource "aws_service_discovery_service" "ucfs_claimant_api_pushgateway" {
 
   tags = merge(local.tags, { Name = var.name })
 }
+
+output "ucfs_claimant_api_pushgateway_discovery" {
+  value = aws_service_discovery_service.ucfs_claimant_api_pushgateway
+}
+
+output "ucfs_claimant_api_pushgateway_discovery_dns" {
+  value = aws_service_discovery_private_dns_namespace.ucfs_claimant_api_services
+}
