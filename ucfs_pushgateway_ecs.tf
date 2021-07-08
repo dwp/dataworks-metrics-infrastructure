@@ -87,12 +87,12 @@ resource "aws_service_discovery_service" "ucfs_claimant_api_pushgateway" {
 
 output "ucfs_claimant_api_pushgateway_discovery" {
   value = {
-    name = aws_service_discovery_service.ucfs_claimant_api_pushgateway.name
+    name = aws_service_discovery_service.ucfs_claimant_api_pushgateway[0].name
   }
 }
 
 output "ucfs_claimant_api_pushgateway_discovery_dns" {
   value = {
-    name = aws_service_discovery_private_dns_namespace.ucfs_claimant_api_services.name
+    name = aws_service_discovery_private_dns_namespace.ucfs_claimant_api_services[0].name
   }
 }
