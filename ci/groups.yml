@@ -104,6 +104,10 @@ groups:
       - cycle-htme-pushgateway-production
       - cycle-ingest-pushgateway-production
 
+  - name: ami-test
+    jobs:
+      - apply-and-test-with-ami
+
   - name: update-pipeline
     jobs:
       - update-pipeline

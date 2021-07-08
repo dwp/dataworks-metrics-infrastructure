@@ -41,6 +41,8 @@ spruce:
         regexp: ".*.yml"
       - with_in: ci/jobs/cycle-containers/cert-metrics/
         regexp: ".*.yml"
+      - with_in: ci/jobs/ami-test/
+        regexp: ".*.yml"
     to: aviator_pipeline.yml
 fly:
   name: metrics-infrastructure

@@ -15,7 +15,7 @@ meta:
           args:
             - -exc
             - |
-              set -x
+              set +x
               source /assume-role
               creds=$(cat << EOF  
               {
@@ -229,3 +229,80 @@ meta:
           - name: dataworks-metrics-infrastructure
         outputs:
           - name: terraform-success
+
+    test-ecs-ami:
+      task: test-ecs-ami
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              export AWS_DEFAULT_REGION
+              source /assume-role
+              set +x
+              max_retries=5
+              task_json="$(aws ecs run-task --cluster "$CLUSTER_NAME" --task-definition test_ecs_ami --overrides "{\"containerOverrides\": [{\"name\": \"test-ecs-ami\", \"command\": [\"sh\", \"-c\", \"sleep 300\"]}]}")"
+              task_arn=$(echo $task_json | jq -r '.tasks[0].taskArn')
+              while [ $max_retries > 0 ]
+              do
+                sleep 15
+                task_json="$(aws ecs describe-tasks --cluster "$CLUSTER_NAME" --tasks $task_arn)"
+                container_status="$(echo "$task_json" | jq -r '.tasks[0].containers[0].lastStatus')"
+                if [ "$container_status" == "RUNNING" ]; then
+                  exit 0
+                fi
+                let "max_retries-=1"
+              done
+              exit 1
+      params:
+        AWS_DEFAULT_REGION: ((dataworks.aws_region))
+        AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
+        CLUSTER_NAME: metrics
+
+    ami-test-results:
+      task: ami-test-result
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.terraform_repository))
+            tag: ((dataworks.terraform_13_version))
+        params:
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+          GIT_USERNAME: ((dataworks.concourse_github_username))
+          GIT_EMAIL: ((dataworks.concourse_github_email))
+          GITHUB_TOKEN: ((dataworks-secrets.concourse_github_pat))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              set +x
+
+              AMI_ID=$(cat dw-al2-ecs-ami/id)
+              DATE=$(date -u)
+              PIPELINE="$(cat meta/build_pipeline_name)"
+
+              git config --global user.name "${GIT_USERNAME}"
+              git config --global user.email "${GIT_EMAIL}"
+
+              git clone https://${GITHUB_TOKEN}:x-oauth-basic@github.com/dwp/ami-builder-configs
+              cd ami-builder-configs/results
+
+              echo "$AMI_ID $RESULT" > "$PIPELINE.test"
+
+              git add "$PIPELINE.test"
+              git commit -m "Updating $PIPELINE AMI test on ${DATE}"
+              git push https://${GITHUB_TOKEN}:x-oauth-basic@github.com/dwp/ami-builder-configs
+        inputs:
+          - name: meta
+          - name: dw-al2-ecs-ami

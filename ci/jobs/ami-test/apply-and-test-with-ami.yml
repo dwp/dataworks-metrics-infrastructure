@@ -1,0 +1,41 @@
+jobs:
+  - name: apply-and-test-with-ami
+    max_in_flight: 1
+    serial_groups: [qa-applies]
+    plan:
+      - in_parallel:
+          - put: meta
+            resource: meta
+          - get: dw-al2-ecs-ami
+            resource: untested-dw-al2-ecs-ami
+            trigger: true
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        config:
+          params:
+            AWS_ACC: ((aws_account.qa))
+      - .: (( inject meta.plan.terraform-apply ))
+        config:
+          params:
+            TF_WORKSPACE: qa
+            TEST_AMI_RUN: true
+      - .: (( inject meta.plan.terraform-plan ))
+        config:
+          params:
+            TF_WORKSPACE: qa
+            TEST_AMI_RUN: true
+      - .: (( inject meta.plan.test-ecs-ami ))
+    on_failure:
+      do:
+        - .: (( inject meta.plan.ami-test-results ))
+          task: ami-test-result-fail
+          config:
+            params:
+              RESULT: FAILED
+    on_success:
+      do:
+        - .: (( inject meta.plan.ami-test-results ))
+          task: ami-test-result-success
+          config:
+              params:
+                RESULT: SUCCESS
+
