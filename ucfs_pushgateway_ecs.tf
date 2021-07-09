@@ -53,11 +53,11 @@ resource "aws_ecs_service" "ucfs_claimant_api_pushgateway" {
     security_groups = [data.terraform_remote_state.ucfs-claimant.outputs.vpce_security_groups.ucfs_claimant_api_pushgateway.id]
     subnets         = data.terraform_remote_state.ucfs-claimant.outputs.subnet_ucfs_claimant_api_connectivity.*.id
   }
-
-  service_registries {
-    registry_arn   = data.terraform_remote_state.ucfs-claimant.outputs.private_dns.ucfs_claimant_api_discovery.arn
-    container_name = "ucfs-claimant-api-pushgateway"
-  }
+//
+//  service_registries {
+//    registry_arn   = data.terraform_remote_state.ucfs-claimant.outputs.private_dns.ucfs_claimant_api_discovery.arn
+//    container_name = "ucfs-claimant-api-pushgateway"
+//  }
 
   tags = merge(local.tags, { Name = var.name })
 }
