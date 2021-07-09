@@ -53,34 +53,11 @@ resource "aws_ecs_service" "ucfs_claimant_api_pushgateway" {
     security_groups = [data.terraform_remote_state.ucfs-claimant.outputs.vpce_security_groups.ucfs_claimant_api_pushgateway.id]
     subnets         = data.terraform_remote_state.ucfs-claimant.outputs.subnet_ucfs_claimant_api_connectivity.*.id
   }
-
-  service_registries {
-    registry_arn   = aws_service_discovery_service.ucfs_claimant_api_pushgateway[0].arn
-    container_name = "ucfs-claimant-api-pushgateway"
-  }
-
-  tags = merge(local.tags, { Name = var.name })
-}
-
-resource "aws_service_discovery_private_dns_namespace" "ucfs_claimant_api_services" {
-  count = local.is_management_env ? 0 : 1
-  name  = "${local.environment}.ucfs-claimant.services.${var.parent_domain_name}"
-  vpc   = data.terraform_remote_state.ucfs-claimant.outputs.ucfs_claimant_api_vpc.vpc.id
-  tags  = merge(local.tags, { Name = var.name })
-}
-
-resource "aws_service_discovery_service" "ucfs_claimant_api_pushgateway" {
-  count = local.is_management_env ? 0 : 1
-  name  = "ucfs-claimant-api-pushgateway"
-
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.ucfs_claimant_api_services[0].id
-
-    dns_records {
-      ttl  = 10
-      type = "A"
-    }
-  }
+  //
+  //  service_registries {
+  //    registry_arn   = data.terraform_remote_state.ucfs-claimant.outputs.private_dns.ucfs_claimant_api_discovery.arn
+  //    container_name = "ucfs-claimant-api-pushgateway"
+  //  }
 
   tags = merge(local.tags, { Name = var.name })
 }
