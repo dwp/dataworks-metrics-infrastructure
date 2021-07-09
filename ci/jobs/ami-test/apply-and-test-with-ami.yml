@@ -9,6 +9,8 @@ jobs:
           - get: dw-al2-ecs-ami
             resource: untested-dw-al2-ecs-ami
             trigger: true
+          - get: dataworks-metrics-infrastructure
+          - get: dataworks-dashboards
       - .: (( inject meta.plan.terraform-bootstrap ))
         config:
           params:
