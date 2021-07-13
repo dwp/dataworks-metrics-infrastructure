@@ -41,3 +41,25 @@ resource "aws_security_group_rule" "allow_ucfs_claimant_ingress_ucfs_claimant_ap
   security_group_id = data.terraform_remote_state.ucfs-claimant.outputs.vpce_security_groups.ucfs_claimant_api_pushgateway.id
   cidr_blocks       = [data.terraform_remote_state.ucfs-claimant.outputs.ucfs_claimant_vpc.cidr_block]
 }
+
+resource "aws_security_group_rule" "allow_ucfs_claimant_lambda_ingress_sdx_pushgateway" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allows Snapshot Sender ucfs claimant lambda to access sdx pushgateway"
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = var.pushgateway_port
+  to_port                  = var.pushgateway_port
+  security_group_id        = data.terraform_remote_state.ucfs-claimant.outputs.vpce_security_groups.ucfs_claimant_api_pushgateway.id
+  source_security_group_id = data.terraform_remote_state.ucfs-claimant.outputs.security_groups.ucfs_claimant_lambda_london
+}
+
+resource "aws_security_group_rule" "allow_ucfs_claimant_lambda_egress_sdx_pushgateway" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allows Snapshot Sender ucfs claimant lambda to access sdx pushgateway"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = var.pushgateway_port
+  to_port                  = var.pushgateway_port
+  security_group_id        = data.terraform_remote_state.ucfs-claimant.outputs.security_groups.ucfs_claimant_lambda_london
+  source_security_group_id = data.terraform_remote_state.ucfs-claimant.outputs.vpce_security_groups.ucfs_claimant_api_pushgateway.id
+}
