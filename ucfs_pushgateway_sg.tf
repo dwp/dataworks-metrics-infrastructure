@@ -42,9 +42,9 @@ resource "aws_security_group_rule" "allow_ucfs_claimant_ingress_ucfs_claimant_ap
   cidr_blocks       = [data.terraform_remote_state.ucfs-claimant.outputs.ucfs_claimant_vpc.cidr_block]
 }
 
-resource "aws_security_group_rule" "allow_ucfs_claimant_lambda_ingress_sdx_pushgateway" {
+resource "aws_security_group_rule" "allow_get_award_details_london_lambda_ingress_cfs_claimant_pushgateway" {
   count                    = local.is_management_env ? 0 : 1
-  description              = "Allows Snapshot Sender ucfs claimant lambda to access sdx pushgateway"
+  description              = "Allows Snapshot Sender get award details London lambda to access ucfs claimant pushgateway"
   type                     = "ingress"
   protocol                 = "tcp"
   from_port                = var.pushgateway_port
@@ -53,9 +53,9 @@ resource "aws_security_group_rule" "allow_ucfs_claimant_lambda_ingress_sdx_pushg
   source_security_group_id = data.terraform_remote_state.ucfs-claimant.outputs.security_groups.ucfs_claimant_lambda_london
 }
 
-resource "aws_security_group_rule" "allow_ucfs_claimant_lambda_egress_sdx_pushgateway" {
+resource "aws_security_group_rule" "allow_get_award_details_london_lambda_egress_ucfs_claimant_pushgateway" {
   count                    = local.is_management_env ? 0 : 1
-  description              = "Allows Snapshot Sender ucfs claimant lambda to access sdx pushgateway"
+  description              = "Allows Snapshot Sender get award details London lambda to access ucfs claimant pushgateway"
   type                     = "egress"
   protocol                 = "tcp"
   from_port                = var.pushgateway_port
