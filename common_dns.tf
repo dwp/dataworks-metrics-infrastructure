@@ -273,3 +273,17 @@ resource "aws_route53_zone_association" "mongo_latestservices" {
   zone_id    = local.is_management_env ? null_resource.dummy.id : local.mongo_latest_dns_zone_ids[local.environment]
   depends_on = [aws_route53_vpc_association_authorization.mongo_latest_services]
 }
+
+resource "aws_route53_vpc_association_authorization" "ucfs_claimant_services" {
+  count   = local.is_management_env ? 0 : 1
+  vpc_id  = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
+  zone_id = data.terraform_remote_state.aws_clive.outputs.private_dns.ucfs_claimant_api_service_discovery_dns.hosted_zone
+}
+
+resource "aws_route53_zone_association" "ucfs_claimant_services" {
+  count      = local.is_management_env ? 0 : 1
+  provider   = aws.non_management_zone
+  vpc_id     = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
+  zone_id    = local.is_management_env ? null_resource.dummy.id : local.clive_dns_zone_ids[local.environment]
+  depends_on = [aws_route53_vpc_association_authorization.ucfs_claimant_services]
+}
