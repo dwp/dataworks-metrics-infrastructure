@@ -251,8 +251,6 @@ meta:
               set -x
 
               instance_ids=$(aws ec2 describe-instances --filters Name=tag:Name,Values=metrics-ecs-cluster-* Name=instance-state-name,Values=running | jq -r '.Reservations[].Instances[].InstanceId')
-              echo $instance_ids
-              exit 0
 
               for instance_id in $instance_ids;
                 do
@@ -268,11 +266,12 @@ meta:
                 do
                   sleep "$SLEEP_TIME"
                   instance_ids=$(aws ec2 describe-instances --filters Name=tag:Name,Values=metrics-ecs-cluster-* Name=instance-state-name,Values=running | jq -r '.Reservations[].Instances[].InstanceId')
-                  instance_count=$(echo "${#instance_ids[@]}")
+                  #instance_count=$(echo "${#instance_ids[@]}")
+                  instance_count=$(echo $instance_ids | tr ' ' '\n' | wc -l)
                   if [[ $instance_count -eq $desired_capacity ]]; then
                     image_ids="$(aws ec2 describe-instances --instance-ids $instance_ids | jq -r '.Reservations[] | .Instances[] | .ImageId')"
                     for i in $image_ids; do
-                      if [ ! "$i" -eq "$ami_id" ]; then
+                      if [ ! "$i" == "$ami_id" ]; then
                         echo "Instance found with wrong AMI ID, Exiting..."
                         exit 1
                       fi;
@@ -312,7 +311,7 @@ meta:
               source /assume-role
               set +x
               max_retries=5
-              task_json="$(aws ecs run-task --cluster "$CLUSTER_NAME" --capacity-provider-strategy=metrics-cluster --task-definition test_ecs_ami --overrides "{\"containerOverrides\": [{\"name\": \"test-ecs-ami\", \"command\": [\"sh\", \"-c\", \"sleep 300\"]}]}")"
+              task_json="$(aws ecs run-task --cluster "$CLUSTER_NAME" --capacity-provider-strategy="metrics-cluster" --task-definition test_ecs_ami --overrides "{\"containerOverrides\": [{\"name\": \"test-ecs-ami\", \"command\": [\"sh\", \"-c\", \"sleep 300\"]}]}")"
               task_arn=$(echo $task_json | jq -r '.tasks[0].taskArn')
               while [ $max_retries > 0 ]
               do
