@@ -277,7 +277,7 @@ resource "aws_route53_zone_association" "mongo_latestservices" {
 resource "aws_route53_vpc_association_authorization" "ucfs_claimant_services" {
   count   = local.is_management_env ? 0 : 1
   vpc_id  = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
-  zone_id = data.terraform_remote_state.aws_clive.outputs.private_dns.ucfs_claimant_api_service_discovery_dns.hosted_zone
+  zone_id = data.terraform_remote_state.ucfs-claimant.outputs.private_dns.ucfs_claimant_api_service_discovery_dns.hosted_zone
 }
 
 resource "aws_route53_zone_association" "ucfs_claimant_services" {
