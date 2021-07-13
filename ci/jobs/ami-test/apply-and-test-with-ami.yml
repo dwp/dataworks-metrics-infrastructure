@@ -15,29 +15,30 @@ jobs:
         config:
           params:
             AWS_ACC: ((aws_account.qa))
-      - .: (( inject meta.plan.terraform-apply ))
-        config:
-          params:
-            TF_WORKSPACE: qa
-            TEST_AMI_RUN: true
-      - .: (( inject meta.plan.terraform-plan ))
-        config:
-          params:
-            TF_WORKSPACE: qa
-            TEST_AMI_RUN: true
+#      - .: (( inject meta.plan.terraform-apply ))
+#        config:
+#          params:
+#            TF_WORKSPACE: qa
+#            TEST_AMI_RUN: true
+#      - .: (( inject meta.plan.terraform-plan ))
+#        config:
+#          params:
+#            TF_WORKSPACE: qa
+#            TEST_AMI_RUN: true
+      - .: (( inject meta.plan.terminate-ecs-instances ))
       - .: (( inject meta.plan.test-ecs-ami ))
-    on_failure:
-      do:
-        - .: (( inject meta.plan.ami-test-results ))
-          task: ami-test-result-fail
-          config:
-            params:
-              RESULT: FAILED
-    on_success:
-      do:
-        - .: (( inject meta.plan.ami-test-results ))
-          task: ami-test-result-success
-          config:
-              params:
-                RESULT: SUCCESS
+#    on_failure:
+#      do:
+#        - .: (( inject meta.plan.ami-test-results ))
+#          task: ami-test-result-fail
+#          config:
+#            params:
+#              RESULT: FAILED
+#    on_success:
+#      do:
+#        - .: (( inject meta.plan.ami-test-results ))
+#          task: ami-test-result-success
+#          config:
+#              params:
+#                RESULT: SUCCESS
 
