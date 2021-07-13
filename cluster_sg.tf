@@ -49,7 +49,7 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_ucfs_claimant_p
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = aws_security_group.metrics_cluster.id
-  source_security_group_id = data.terraform_remote_state.aws_sdx.outputs.vpce_security_groups.ucfs_claimant_api_pushgateway.id
+  source_security_group_id = data.terraform_remote_state.ucfs-claimant.outputs.vpce_security_groups.ucfs_claimant_api_pushgateway.id
 }
 
 resource "aws_security_group_rule" "allow_metrics_cluster_egress_pdm_exporter" {
