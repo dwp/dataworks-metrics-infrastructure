@@ -682,6 +682,14 @@ locals {
       production  = "{{clive_dns_zone_ids.production}}"
   }
 
+  ucfs_claimant_dns_zone_ids = {
+     development = "{{ucfs_claimant_dns_zone_ids.development}}"
+     qa          = "{{ucfs_claimant_dns_zone_ids.qa}}"
+     integration = "{{ucfs_claimant_dns_zone_ids.integration}}"
+     preprod     = "{{ucfs_claimant_dns_zone_ids.preprod}}"
+     production  = "{{ucfs_claimant_dns_zone_ids.production}}"
+  }
+
   mongo_latest_dns_zone_ids = {
       development = "{{mongo_latest_dns_zone_ids.development}}"
       qa          = "{{mongo_latest_dns_zone_ids.qa}}"

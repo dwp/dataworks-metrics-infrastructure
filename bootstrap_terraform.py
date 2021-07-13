@@ -64,6 +64,8 @@ def main():
         monitoring_secret['SecretBinary'])["pdm_dns_zone_ids"]
     config_data['clive_dns_zone_ids'] = json.loads(
         monitoring_secret['SecretBinary'])["clive_dns_zone_ids"]
+    config_data['ucfs_claimant_dns_zone_ids'] = json.loads(
+        monitoring_secret['SecretBinary'])["ucfs_claimant_dns_zone_ids"]
     config_data['adg_dns_zone_ids'] = json.loads(
         monitoring_secret['SecretBinary'])["adg_dns_zone_ids"]
     config_data['mongo_latest_dns_zone_ids'] = json.loads(
