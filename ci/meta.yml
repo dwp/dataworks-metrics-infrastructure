@@ -248,7 +248,7 @@ meta:
               export AWS_DEFAULT_REGION
               ami_id=$(cat dw-al2-ecs-ami/id)
               source /assume-role
-              set -x
+              set +x
 
               instance_ids=$(aws ec2 describe-instances --filters Name=tag:Name,Values=metrics-ecs-cluster-* Name=instance-state-name,Values=running | jq -r '.Reservations[].Instances[].InstanceId')
 
@@ -311,7 +311,7 @@ meta:
               source /assume-role
               set +x
               max_retries=5
-              task_json="$(aws ecs run-task --cluster "$CLUSTER_NAME" --capacity-provider-strategy="metrics-cluster" --task-definition test_ecs_ami --overrides "{\"containerOverrides\": [{\"name\": \"test-ecs-ami\", \"command\": [\"sh\", \"-c\", \"sleep 300\"]}]}")"
+              task_json="$(aws ecs run-task --cluster "$CLUSTER_NAME" --capacity-provider-strategy 'capacityProvider=metrics-cluster' --task-definition ami_ecs_test_td --overrides "{\"containerOverrides\": [{\"name\": \"test-ecs-ami\", \"command\": [\"sh\", \"-c\", \"sleep 300\"]}]}")"
               task_arn=$(echo $task_json | jq -r '.tasks[0].taskArn')
               while [ $max_retries > 0 ]
               do
