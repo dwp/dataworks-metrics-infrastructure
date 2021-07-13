@@ -41,6 +41,17 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_sdx_pushgateway
   source_security_group_id = data.terraform_remote_state.aws_sdx.outputs.vpce_security_groups.sdx_pushgateway_vpce_security_group.id
 }
 
+resource "aws_security_group_rule" "allow_metrics_cluster_egress_ucfs_claimant_pushgateway" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allows metrics cluster to access UCFS claimant pushgateway"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = var.pushgateway_port
+  to_port                  = var.pushgateway_port
+  security_group_id        = aws_security_group.metrics_cluster.id
+  source_security_group_id = data.terraform_remote_state.ucfs-claimant.outputs.vpce_security_groups.ucfs_claimant_api_pushgateway.id
+}
+
 resource "aws_security_group_rule" "allow_metrics_cluster_egress_pdm_exporter" {
   count                    = local.is_management_env ? 0 : 1
   description              = "Allows metrics cluster to access PDM exporter"
