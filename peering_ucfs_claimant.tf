@@ -16,7 +16,7 @@ resource "aws_route" "ucfs_claimant_prometheus" {
 resource "aws_route" "prometheus_ucfs_claimant" {
   count                     = local.is_management_env ? 0 : local.zone_count
   route_table_id            = module.vpc.outputs.private_route_tables[local.secondary_role_index][count.index]
-  destination_cidr_block    = local.cidr_block[local.environment].ucfs-claimant-api
+  destination_cidr_block    = local.cidr_block_ucfs_claimant_vpc
   vpc_peering_connection_id = aws_vpc_peering_connection.ucfs_claimant[0].id
 }
 
