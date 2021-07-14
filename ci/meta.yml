@@ -266,7 +266,6 @@ meta:
                 do
                   sleep "$SLEEP_TIME"
                   instance_ids=$(aws ec2 describe-instances --filters Name=tag:Name,Values=metrics-ecs-cluster-* Name=instance-state-name,Values=running | jq -r '.Reservations[].Instances[].InstanceId')
-                  #instance_count=$(echo "${#instance_ids[@]}")
                   instance_count=$(echo $instance_ids | tr ' ' '\n' | wc -l)
                   if [[ $instance_count -eq $desired_capacity ]]; then
                     image_ids="$(aws ec2 describe-instances --instance-ids $instance_ids | jq -r '.Reservations[] | .Instances[] | .ImageId')"
