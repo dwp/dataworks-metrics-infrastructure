@@ -8,7 +8,7 @@ resource "aws_vpc_peering_connection" "ucfs_claimant" {
 
 resource "aws_route" "ucfs_claimant_prometheus" {
   count                     = local.is_management_env ? 0 : 1
-  route_table_id            = data.terraform_remote_state.ucfs-claimant.outputs.ucfs_claimant_api_vpc.vpc.default_route_table_id
+  route_table_id            = data.terraform_remote_state.ucfs-claimant.outputs.route_tables.ucfs_claimant_api.id
   destination_cidr_block    = local.cidr_block[local.environment].mon-slave-vpc
   vpc_peering_connection_id = aws_vpc_peering_connection.ucfs_claimant[0].id
 }
@@ -16,7 +16,7 @@ resource "aws_route" "ucfs_claimant_prometheus" {
 resource "aws_route" "prometheus_ucfs_claimant" {
   count                     = local.is_management_env ? 0 : local.zone_count
   route_table_id            = module.vpc.outputs.private_route_tables[local.secondary_role_index][count.index]
-  destination_cidr_block    = data.terraform_remote_state.ucfs-claimant.outputs.ucfs_claimant_api_vpc.vpc.cidr_block
+  destination_cidr_block    = local.cidr_block_ucfs_claimant_vpc
   vpc_peering_connection_id = aws_vpc_peering_connection.ucfs_claimant[0].id
 }
 
