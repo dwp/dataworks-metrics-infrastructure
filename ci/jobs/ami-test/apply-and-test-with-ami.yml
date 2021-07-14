@@ -25,6 +25,7 @@ jobs:
           params:
             TF_WORKSPACE: qa
             TEST_AMI_RUN: true
+      - .: (( inject meta.plan.terminate-ecs-instances ))
       - .: (( inject meta.plan.test-ecs-ami ))
     on_failure:
       do:
