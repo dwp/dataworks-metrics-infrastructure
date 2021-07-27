@@ -88,6 +88,14 @@ data "template_file" "cert_retriever_definition" {
         "value" : "/certificates"
       },
       {
+        "name" : "ADDITIONAL_CERTS_BUCKET",
+        "value" : data.terraform_remote_state.aws_sdx.outputs.sdx_mitm_service_1_cert.bucket
+      },
+      {
+        "name" : "ADDITIONAL_CERTS_PREFIXES",
+        "value" : join(",", local.certs_prefixes)
+      },
+      {
         name  = "PROMETHEUS",
         value = "true"
       }
