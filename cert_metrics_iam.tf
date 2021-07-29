@@ -203,7 +203,8 @@ data "aws_iam_policy_document" "cert_metrics_get_s3_certs" {
     effect = "Allow"
 
     actions = [
-      "s3:*",
+      "s3:ListBucket",
+      "s3:GetObject"
     ]
 
     resources = [
@@ -212,5 +213,4 @@ data "aws_iam_policy_document" "cert_metrics_get_s3_certs" {
     ]
   }
 }
-
 
