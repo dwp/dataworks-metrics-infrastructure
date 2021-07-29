@@ -187,3 +187,30 @@ data "aws_iam_policy_document" "cert_metrics_ecs_exec" {
   }
 }
 
+resource "aws_iam_role_policy_attachment" "cert_metrics_get_s3_certs" {
+  role       = aws_iam_role.cert_metrics.name
+  policy_arn = aws_iam_policy.cert_metrics_get_s3_certs.arn
+}
+
+resource "aws_iam_policy" "cert_metrics_get_s3_certs" {
+  name        = "cert_metricsAccessS3certificates"
+  description = "Allow cert_metrics container to get non-ACM certificates"
+  policy      = data.aws_iam_policy_document.cert_metrics_get_s3_certs.json
+}
+
+data "aws_iam_policy_document" "cert_metrics_get_s3_certs" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:*",
+    ]
+
+    resources = [
+      "arn:aws:s3:::${data.terraform_remote_state.aws_sdx.outputs.sdx_mitm_service_1_cert.bucket}",
+      "arn:aws:s3:::${data.terraform_remote_state.aws_sdx.outputs.sdx_mitm_service_1_cert.bucket}/*",
+    ]
+  }
+}
+
+
