@@ -709,7 +709,11 @@ locals {
       preprod     = "{{mongo_latest_dns_zone_ids.preprod}}"
       production  = "{{mongo_latest_dns_zone_ids.production}}"
   }
+
+  certs_prefixes = ["server_certificates", "ca_certificates"]
+
 }
+
 
 data "aws_iam_user" "breakglass" {
   user_name = "breakglass"
