@@ -44,7 +44,7 @@ variable "prometheus_task_cpu" {
     qa             = "4096"
     integration    = "4096"
     preprod        = "4096"
-    production     = "8192"
+    production     = "16384"
     management     = "4096"
     management-dev = "4096"
   }
@@ -78,7 +78,7 @@ variable "prometheus_task_memory" {
     qa             = "16384"
     integration    = "16384"
     preprod        = "16384"
-    production     = "16384"
+    production     = "32768"
     management     = "16384"
     management-dev = "16384"
   }
@@ -170,7 +170,7 @@ variable "prometheus_cpu" {
     qa             = "1024"
     integration    = "1024"
     preprod        = "1024"
-    production     = "1024"
+    production     = "2048"
     management     = "1024"
     management-dev = "1024"
   }
@@ -230,7 +230,7 @@ variable "prometheus_memory" {
     qa             = "8192"
     integration    = "8192"
     preprod        = "8192"
-    production     = "8192"
+    production     = "16384"
     management     = "8192"
     management-dev = "8192"
   }
@@ -375,7 +375,7 @@ variable "metrics_ecs_cluster_ec2_size" {
     qa             = "t3.2xlarge"
     integration    = "t3.2xlarge"
     preprod        = "t3.2xlarge"
-    production     = "c5.4xlarge"
+    production     = "c5.8xlarge"
     management     = "t3.2xlarge"
     management-dev = "t3.2xlarge"
   }
