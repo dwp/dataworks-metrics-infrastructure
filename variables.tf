@@ -44,7 +44,7 @@ variable "prometheus_task_cpu" {
     qa             = "4096"
     integration    = "4096"
     preprod        = "4096"
-    production     = "16384"
+    production     = "10240"
     management     = "4096"
     management-dev = "4096"
   }
