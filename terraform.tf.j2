@@ -710,6 +710,14 @@ locals {
       production  = "{{mongo_latest_dns_zone_ids.production}}"
   }
 
+  kickstart_adg_dns_zone_ids = {
+      development = "{{kickstart_adg_dns_zone_ids.development}}"
+      qa          = "{{kickstart_adg_dns_zone_ids.qa}}"
+      integration = "{{kickstart_adg_dns_zone_ids.integration}}"
+      preprod     = "{{kickstart_adg_dns_zone_ids.preprod}}"
+      production  = "{{kickstart_adg_dns_zone_ids.production}}"
+  }
+
   certs_prefixes = ["server_certificates", "ca_certificates"]
 
 }
