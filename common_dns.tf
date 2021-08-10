@@ -263,7 +263,7 @@ resource "aws_route53_zone_association" "clive_services" {
 resource "aws_route53_vpc_association_authorization" "kickstart_adg_services" {
   count   = local.is_management_env ? 0 : 1
   vpc_id  = local.is_management_env ? null_resource.dummy.id : module.vpc.outputs.vpcs[0].id
-  zone_id = data.terraform_remote_state.aws_clive.outputs.private_dns.kickstart_adg_service_discovery_dns.hosted_zone
+  zone_id = data.terraform_remote_state.dataworks_aws_kickstart_adg.outputs.private_dns.kickstart_adg_service_discovery_dns.hosted_zone
 }
 
 resource "aws_route53_zone_association" "kickstart_adg_services" {
