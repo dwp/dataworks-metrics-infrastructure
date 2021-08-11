@@ -50,8 +50,8 @@ resource "aws_ecs_service" "kickstart_adg_pushgateway" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.kickstart_adg_pushgateway_vpce_security_group.id]
-    subnets         = data.terraform_remote_state.aws_internal_compute.outputs.kickstart_adg_subnet.ids
+    security_groups  = [data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.kickstart_adg_pushgateway_vpce_security_group.id]
+    subnets          = data.terraform_remote_state.aws_internal_compute.outputs.kickstart_adg_subnet.ids
   }
 
   service_registries {
