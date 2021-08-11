@@ -126,7 +126,7 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_uc_feature_push
   from_port                = var.pushgateway_port
   to_port                  = var.pushgateway_port
   security_group_id        = aws_security_group.metrics_cluster.id
-  source_security_group_id = data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.uc_feature_pushgateway_vpce_security_group.id
+  source_security_group_id = data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.uc_feature_vpce_pushgateway_security_group.id
 }
 
 resource "aws_security_group_rule" "allow_metrics_cluster_egress_kickstart_adg_pushgateway" {

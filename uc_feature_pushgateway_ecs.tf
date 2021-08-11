@@ -50,7 +50,7 @@ resource "aws_ecs_service" "uc_feature_pushgateway" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    security_groups = [data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.uc_feature_pushgateway_vpce_security_group.id]
+    security_groups = [data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.uc_feature_vpce_pushgateway_security_group.id]
     subnets         = data.terraform_remote_state.aws_internal_compute.outputs.uc_feature_subnet.ids
   }
 
