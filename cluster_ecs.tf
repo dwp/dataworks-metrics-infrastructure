@@ -13,6 +13,12 @@ resource "aws_ecs_cluster" "metrics_ecs_cluster" {
     name  = "containerInsights"
     value = "enabled"
   }
+
+  lifecycle {
+    ignore_changes = [
+      setting,
+    ]
+  }
 }
 
 resource "aws_cloudwatch_log_group" "metrics_ecs_cluster" {
