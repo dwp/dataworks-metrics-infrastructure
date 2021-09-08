@@ -82,6 +82,9 @@ def main():
     config_data["uc_feature_dns_zone_ids"] = json.loads(monitoring_secret["SecretBinary"])[
         "uc_feature_dns_zone_ids"
     ]
+    config_data["cyi_dns_zone_ids"] = json.loads(monitoring_secret["SecretBinary"])[
+        "cyi_dns_zone_ids"
+    ]
     config_data["ucfs_claimant_dns_zone_ids"] = json.loads(
         monitoring_secret["SecretBinary"]
     )["ucfs_claimant_dns_zone_ids"]
