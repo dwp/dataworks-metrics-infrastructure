@@ -48,6 +48,13 @@ resource "aws_route" "uc_feature_prometheus_secondary" {
   vpc_peering_connection_id = aws_vpc_peering_connection.internal_compute[0].id
 }
 
+resource "aws_route" "cyi_prometheus_secondary" {
+  count                     = local.is_management_env ? 0 : 1
+  route_table_id            = data.terraform_remote_state.aws_internal_compute.outputs.route_table_ids.cyi
+  destination_cidr_block    = local.cidr_block[local.environment].mon-slave-vpc
+  vpc_peering_connection_id = aws_vpc_peering_connection.internal_compute[0].id
+}
+
 resource "aws_route" "kickstart_adg_prometheus_secondary" {
   count                     = local.is_management_env ? 0 : 1
   route_table_id            = data.terraform_remote_state.aws_internal_compute.outputs.route_table_ids.kickstart_adg

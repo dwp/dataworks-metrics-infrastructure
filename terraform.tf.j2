@@ -389,6 +389,20 @@ data "terraform_remote_state" "aws_uc_feature" {
   }
 }
 
+data "terraform_remote_state" "aws_cyi" {
+  backend   = "s3"
+  workspace = lookup(local.common_workspace, terraform.workspace)
+
+  config = {
+    bucket         = "{{terraform.state_file_bucket}}"
+    key            = "terraform/dataworks/aws-cyi-infrastructure.tfstate"
+    region         = "{{terraform.state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
 data "terraform_remote_state" "dataworks_aws_kickstart_adg" {
   backend   = "s3"
   workspace = lookup(local.common_workspace, terraform.workspace)
@@ -714,6 +728,14 @@ locals {
       integration = "{{uc_feature_dns_zone_ids.integration}}"
       preprod     = "{{uc_feature_dns_zone_ids.preprod}}"
       production  = "{{uc_feature_dns_zone_ids.production}}"
+  }
+
+  cyi_dns_zone_ids = {
+      development = "{{cyi_dns_zone_ids.development}}"
+      qa          = "{{cyi_dns_zone_ids.qa}}"
+      integration = "{{cyi_dns_zone_ids.integration}}"
+      preprod     = "{{cyi_dns_zone_ids.preprod}}"
+      production  = "{{cyi_dns_zone_ids.production}}"
   }
 
   ucfs_claimant_dns_zone_ids = {

@@ -129,6 +129,17 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_uc_feature_push
   source_security_group_id = data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.uc_feature_vpce_pushgateway_security_group.id
 }
 
+resource "aws_security_group_rule" "allow_metrics_cluster_egress_cyi_pushgateway" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allows metrics cluster to access CYI pushgateway"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = var.pushgateway_port
+  to_port                  = var.pushgateway_port
+  security_group_id        = aws_security_group.metrics_cluster.id
+  source_security_group_id = data.terraform_remote_state.aws_internal_compute.outputs.vpce_security_groups.cyi_vpce_pushgateway_security_group.id
+}
+
 resource "aws_security_group_rule" "allow_metrics_cluster_egress_kickstart_adg_pushgateway" {
   count                    = local.is_management_env ? 0 : 1
   description              = "Allows metrics cluster to access ks adg pushgateway"
