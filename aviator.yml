@@ -39,6 +39,12 @@ spruce:
         regexp: ".*.yml"
       - with_in: ci/jobs/cycle-containers/ucfs-claimant-pushgateway/
         regexp: ".*.yml"
+      - with_in: ci/jobs/cycle-containers/clive-pushgateway/
+        regexp: ".*.yml"
+      - with_in: ci/jobs/cycle-containers/cyi-pushgateway/
+        regexp: ".*.yml"
+      - with_in: ci/jobs/cycle-containers/uc-feature-pushgateway/
+        regexp: ".*.yml"
       - with_in: ci/jobs/cycle-containers/blackbox/
         regexp: ".*.yml"
       - with_in: ci/jobs/cycle-containers/cert-metrics/

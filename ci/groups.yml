@@ -52,6 +52,9 @@ groups:
       - cycle-htme-pushgateway-development
       - cycle-ingest-pushgateway-development
       - cycle-ucfs-pushgateway-development
+      - cycle-cyi-pushgateway-development
+      - cycle-clive-pushgateway-development
+      - cycle-uc-feature-pushgateway-development
 
 
   - name: admin-qa
@@ -67,6 +70,9 @@ groups:
       - cycle-htme-pushgateway-qa
       - cycle-ingest-pushgateway-qa
       - cycle-ucfs-pushgateway-qa
+      - cycle-cyi-pushgateway-qa
+      - cycle-clive-pushgateway-qa
+      - cycle-uc-feature-pushgateway-qa
 
   - name: admin-integration
     jobs:
@@ -81,6 +87,9 @@ groups:
       - cycle-htme-pushgateway-integration
       - cycle-ingest-pushgateway-integration
       - cycle-ucfs-pushgateway-integration
+      - cycle-cyi-pushgateway-integration
+      - cycle-clive-pushgateway-integration
+      - cycle-uc-feature-pushgateway-integration
 
 
   - name: admin-preprod
@@ -96,6 +105,9 @@ groups:
       - cycle-htme-pushgateway-preprod
       - cycle-ingest-pushgateway-preprod
       - cycle-ucfs-pushgateway-preprod
+      - cycle-cyi-pushgateway-preprod
+      - cycle-clive-pushgateway-preprod
+      - cycle-uc-feature-pushgateway-preprod
 
 
   - name: admin-production
@@ -111,6 +123,9 @@ groups:
       - cycle-htme-pushgateway-production
       - cycle-ingest-pushgateway-production
       - cycle-ucfs-pushgateway-production
+      - cycle-cyi-pushgateway-production
+      - cycle-clive-pushgateway-production
+      - cycle-uc-feature-pushgateway-production
 
   - name: ami-test
     jobs:
