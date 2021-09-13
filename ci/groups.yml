@@ -105,9 +105,9 @@ groups:
       - cycle-htme-pushgateway-preprod
       - cycle-ingest-pushgateway-preprod
       - cycle-ucfs-pushgateway-preprod
-      - cycle-cyi-pushgateway-production
-      - cycle-clive-pushgateway-production
-      - cycle-uc-feature-pushgateway-production
+      - cycle-cyi-pushgateway-preprod
+      - cycle-clive-pushgateway-preprod
+      - cycle-uc-feature-pushgateway-preprod
 
 
   - name: admin-production
