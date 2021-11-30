@@ -230,7 +230,7 @@ variable "prometheus_memory" {
     qa             = "8192"
     integration    = "8192"
     preprod        = "8192"
-    production     = "16384"
+    production     = "32768"
     management     = "8192"
     management-dev = "8192"
   }
