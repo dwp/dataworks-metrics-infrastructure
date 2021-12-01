@@ -170,7 +170,7 @@ variable "prometheus_cpu" {
     qa             = "1024"
     integration    = "1024"
     preprod        = "1024"
-    production     = "4096"
+    production     = "8192"
     management     = "1024"
     management-dev = "1024"
   }
