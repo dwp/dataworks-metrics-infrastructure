@@ -78,7 +78,7 @@ variable "prometheus_task_memory" {
     qa             = "16384"
     integration    = "16384"
     preprod        = "16384"
-    production     = "32768"
+    production     = "49152"
     management     = "16384"
     management-dev = "16384"
   }
