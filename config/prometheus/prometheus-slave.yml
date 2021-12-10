@@ -414,9 +414,7 @@ scrape_configs:
     scrape_timeout: 10s
     dns_sd_config:
       names:
-        - ${analytical-frontend-domain-name}
-
-
+        - ${analytical_frontend_domain_name}
 
 remote_write:
   - url: http://localhost:10903/api/v1/receive
