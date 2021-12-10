@@ -691,7 +691,7 @@ locals {
   )
   nifi_endpoint_url               = local.is_management_env ? null_resource.dummy.id : data.terraform_remote_state.snapshot_sender.outputs.nifi_endpoint_url
   blackbox_hostname               = local.is_management_env ? null_resource.dummy.id : "${data.terraform_remote_state.aws_sdx.outputs.private_dns.blackbox_service_discovery.name}.${data.terraform_remote_state.aws_sdx.outputs.private_dns.sdx_service_discovery_dns.name}"
-  analytical_frontend_domain_name = local.is_management_env ? null_resource.dummy.id : data.terraform_remote_state.analytical-frontend-service.frontend_service.value.frontend_service_discovery_dns.name
+  analytical_frontend_domain_name = local.is_management_env ? null_resource.dummy.id : data.terraform_remote_state.analytical-frontend-service.frontend_service.frontend_service_discovery_dns.name
 
   dns_zone_ids = {
     management-dev = {
