@@ -407,5 +407,16 @@ scrape_configs:
       - target_label: __address__
         replacement: ${blackbox_hostname}:9115
 
+  - job_name: 'analytical-frontend'
+    metrics_path: /metrics
+    scheme: http
+    scrape_interval: 1m
+    scrape_timeout: 10s
+    dns_sd_config:
+      names:
+        - ${analytical-frontend-domain-name}
+
+
+
 remote_write:
   - url: http://localhost:10903/api/v1/receive

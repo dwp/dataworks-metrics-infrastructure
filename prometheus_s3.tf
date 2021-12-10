@@ -1,10 +1,11 @@
 data template_file "prometheus" {
   template = file("${path.module}/config/prometheus/prometheus-slave.yml")
   vars = {
-    parent_domain_name = var.parent_domain_name
-    environment        = local.environment
-    nifi_endpoint      = local.nifi_endpoint_url
-    blackbox_hostname  = local.blackbox_hostname
+    parent_domain_name              = var.parent_domain_name
+    environment                     = local.environment
+    nifi_endpoint                   = local.nifi_endpoint_url
+    blackbox_hostname               = local.blackbox_hostname
+    analytical_frontend_domain_name = local.analytical_frontend_domain_name
   }
 }
 
