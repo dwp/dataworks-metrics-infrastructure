@@ -40,3 +40,14 @@ resource "aws_security_group_rule" "allow_prometheus_egress_hbase_exporter" {
   security_group_id        = aws_security_group.prometheus.id
   source_security_group_id = aws_security_group.hbase_exporter[0].id
 }
+
+resource "aws_security_group_rule" "allow_prometheus_egress_analytical_frontend_service" {
+  count                    = local.is_management_env ? 0 : 1
+  description              = "Allows prometheus to access Analytical Frontend Service"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = data.terraform_remote_state.analytical-frontend-service.outputs.frontend_service.service_port
+  to_port                  = data.terraform_remote_state.analytical-frontend-service.outputs.frontend_service.service_port
+  security_group_id        = aws_security_group.prometheus.id
+  source_security_group_id = data.terraform_remote_state.analytical-frontend-service.outputs.frontend_service.sg_id
+}

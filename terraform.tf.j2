@@ -263,6 +263,20 @@ data "terraform_remote_state" "aws_crypto" {
   }
 }
 
+data "terraform_remote_state" "analytical-frontend-service" {
+  backend   = "s3"
+  workspace = lookup(local.common_workspace, terraform.workspace)
+
+  config = {
+    bucket         = "{{terraform.state_file_bucket}}"
+    key            = "terraform/dataworks/analytical-frontend-service.tfstate"
+    region         = "{{terraform.state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
 data "terraform_remote_state" "analytical-service-infra" {
   backend   = "s3"
   workspace = lookup(local.common_workspace, terraform.workspace)
@@ -675,8 +689,9 @@ locals {
       AmazonECSManaged  = ""
     }
   )
-  nifi_endpoint_url = local.is_management_env ? null_resource.dummy.id : data.terraform_remote_state.snapshot_sender.outputs.nifi_endpoint_url
-  blackbox_hostname  = local.is_management_env ? null_resource.dummy.id : "${data.terraform_remote_state.aws_sdx.outputs.private_dns.blackbox_service_discovery.name}.${data.terraform_remote_state.aws_sdx.outputs.private_dns.sdx_service_discovery_dns.name}"
+  nifi_endpoint_url               = local.is_management_env ? null_resource.dummy.id : data.terraform_remote_state.snapshot_sender.outputs.nifi_endpoint_url
+  blackbox_hostname               = local.is_management_env ? null_resource.dummy.id : "${data.terraform_remote_state.aws_sdx.outputs.private_dns.blackbox_service_discovery.name}.${data.terraform_remote_state.aws_sdx.outputs.private_dns.sdx_service_discovery_dns.name}"
+  analytical_frontend_domain_name = local.is_management_env ? null_resource.dummy.id : "${data.terraform_remote_state.analytical-frontend-service.outputs.frontend_service.frontend_service_discovery.name}.${data.terraform_remote_state.analytical-frontend-service.outputs.frontend_service.frontend_service_discovery_dns.name}"
 
   dns_zone_ids = {
     management-dev = {
