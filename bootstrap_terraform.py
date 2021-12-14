@@ -97,6 +97,9 @@ def main():
     config_data["kickstart_adg_dns_zone_ids"] = json.loads(
         monitoring_secret["SecretBinary"]
     )["kickstart_adg_dns_zone_ids"]
+    config_data["analytical_frontend_dns_zone_ids"] = json.loads(
+        monitoring_secret["SecretBinary"]
+    )["analytical_frontend_dns_zone_ids"]
 
     with open("modules/vpc/vpc.tf.j2") as in_template:
         template = jinja2.Template(in_template.read())

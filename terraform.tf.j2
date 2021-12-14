@@ -777,6 +777,14 @@ locals {
       production  = "{{kickstart_adg_dns_zone_ids.production}}"
   }
 
+  analytical_frontend_dns_zone_ids = {
+      development = "{{analytical_frontend_dns_zone_ids.development}}"
+      qa          = "{{analytical_frontend_dns_zone_ids.qa}}"
+      integration = "{{analytical_frontend_dns_zone_ids.integration}}"
+      preprod     = "{{analytical_frontend_dns_zone_ids.preprod}}"
+      production  = "{{analytical_frontend_dns_zone_ids.production}}"
+  }
+
   certs_prefixes = ["server_certificates", "ca_certificates"]
 
 }
