@@ -1,5 +1,5 @@
 resource "aws_security_group_rule" "allow_prometheus_ingress_analytical_frontend" {
-  count                    = local.is_management_env ? 1 : 0
+  count                    = local.is_management_env ? 0 : 1
   description              = "Allows prometheus to access analytical frontend service"
   type                     = "ingress"
   protocol                 = "tcp"
