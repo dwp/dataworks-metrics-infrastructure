@@ -412,7 +412,7 @@ scrape_configs:
     scheme: https
     scrape_interval: 1m
     scrape_timeout: 10s
-    dns_sd_config:
+    dns_sd_configs:
       names:
         - ${analytical_frontend_domain_name}
     tls_config:
