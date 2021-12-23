@@ -409,12 +409,14 @@ scrape_configs:
 
   - job_name: 'analytical-frontend'
     metrics_path: /metrics
-    scheme: http
+    scheme: https
     scrape_interval: 1m
     scrape_timeout: 10s
     dns_sd_config:
       names:
         - ${analytical_frontend_domain_name}
+    tls_config:
+      insecure_skip_verify: true # We trust the self signed certificate
 
 remote_write:
   - url: http://localhost:10903/api/v1/receive
