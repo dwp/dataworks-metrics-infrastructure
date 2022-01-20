@@ -1,4 +1,4 @@
-data template_file "grafana" {
+data "template_file" "grafana" {
   count    = local.is_management_env ? 1 : 0
   template = file("${path.module}/config/grafana/grafana.ini")
   vars = {
@@ -10,86 +10,86 @@ data template_file "grafana" {
   }
 }
 
-data template_file "grafana_datasource_config" {
+data "template_file" "grafana_datasource_config" {
   template = file("${path.module}/config/grafana/provisioning/datasources/datasource.yaml")
   vars = {
     thanos_query_hostname = "thanos-query.${local.environment}.services.${var.parent_domain_name}"
   }
 }
 
-data template_file "grafana_dashboard_config" {
+data "template_file" "grafana_dashboard_config" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/dashboards.tpl")
 }
 
-data template_file "security_dashboard" {
+data "template_file" "security_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/security_dashboard.json")
 }
 
-data template_file "adg_dashboard" {
+data "template_file" "adg_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/adg_dashboard.json")
 }
 
-data template_file "pdm_dashboard" {
+data "template_file" "pdm_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/pdm_dashboard.json")
 }
 
-data template_file "analytical_emr_dashboard" {
+data "template_file" "analytical_emr_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/analytical_emr_dashboard.json")
 }
 
-data template_file "concourse_dashboard" {
+data "template_file" "concourse_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/concourse_dashboard.json")
 }
 
-data template_file "HDFS_DataNode" {
+data "template_file" "HDFS_DataNode" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/HDFS-DataNode.json")
 }
 
-data template_file "HDFS_NameNode" {
+data "template_file" "HDFS_NameNode" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/HDFS-NameNode.json")
 }
 
-data template_file "JVM_Metrics" {
+data "template_file" "JVM_Metrics" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/JVM_Metrics.json")
 }
 
-data template_file "Log_Metrics" {
+data "template_file" "Log_Metrics" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/Log_Metrics.json")
 }
 
-data template_file "OS_Level_Metrics" {
+data "template_file" "OS_Level_Metrics" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/OS_Level_Metrics.json")
 }
 
-data template_file "RPC_Metrics" {
+data "template_file" "RPC_Metrics" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/RPC_Metrics.json")
 }
 
-data template_file "YARN_Node_Manager" {
+data "template_file" "YARN_Node_Manager" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/YARN-Node_Manager.json")
 }
 
-data template_file "htme_dashboard" {
+data "template_file" "htme_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/htme_dashboard.json")
 }
 
-data template_file "status_dashboard" {
+data "template_file" "status_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/status_dashboard.json")
 }
 
-data template_file "azkaban_dashboard" {
+data "template_file" "azkaban_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/azkaban_dashboard.json")
 }
 
-data template_file "snapshot_sender_dashboard" {
+data "template_file" "snapshot_sender_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/snapshot_sender.json")
 }
 
-data template_file "certificate_expiry_dashboard" {
+data "template_file" "certificate_expiry_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/certificate_expiry.json")
 }
 
-data template_file "claimant_api_lambda_dashboard" {
+data "template_file" "claimant_api_lambda_dashboard" {
   template = file("${path.module}/config/grafana/provisioning/dashboards/claimant_api_lambda_dashboard.json")
 }
 

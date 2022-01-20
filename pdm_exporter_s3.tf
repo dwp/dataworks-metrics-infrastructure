@@ -1,4 +1,4 @@
-data template_file "pdm_exporter" {
+data "template_file" "pdm_exporter" {
   count    = local.is_management_env ? 0 : 1
   template = file("${path.module}/config/json_exporter/pdm_config.yml")
   vars = {

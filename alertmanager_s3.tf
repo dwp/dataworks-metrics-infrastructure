@@ -1,5 +1,5 @@
 
-data template_file "alertmanager" {
+data "template_file" "alertmanager" {
   count    = local.is_management_env ? 1 : 0
   template = file("${path.module}/config/alertmanager/config.yml")
   vars = {
