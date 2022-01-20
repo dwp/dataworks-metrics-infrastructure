@@ -1,4 +1,4 @@
-data template_file "blackbox" {
+data "template_file" "blackbox" {
   template = file("${path.module}/config/blackbox/blackbox.yml")
   vars = {
     parent_domain_name = var.parent_domain_name

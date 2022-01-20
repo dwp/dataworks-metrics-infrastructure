@@ -1,4 +1,4 @@
-data template_file "prometheus" {
+data "template_file" "prometheus" {
   template = file("${path.module}/config/prometheus/prometheus-slave.yml")
   vars = {
     parent_domain_name              = var.parent_domain_name

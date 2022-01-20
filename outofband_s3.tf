@@ -1,4 +1,4 @@
-data template_file "outofband" {
+data "template_file" "outofband" {
   template = file("${path.module}/config/prometheus/prometheus-outofband.yml")
   vars = {
     parent_domain_name = var.parent_domain_name
@@ -6,7 +6,7 @@ data template_file "outofband" {
   }
 }
 
-data template_file "outofband_rules" {
+data "template_file" "outofband_rules" {
   template = file("${path.module}/config/prometheus/outofband-rules.yml")
 }
 

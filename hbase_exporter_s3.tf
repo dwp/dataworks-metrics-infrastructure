@@ -1,4 +1,4 @@
-data template_file "hbase_exporter" {
+data "template_file" "hbase_exporter" {
   count    = local.is_management_env ? 0 : 1
   template = file("${path.module}/config/json_exporter/hbase_config.yml")
   vars = {
