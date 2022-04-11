@@ -785,6 +785,14 @@ locals {
       production  = "{{analytical_frontend_dns_zone_ids.production}}"
   }
 
+  htme_dns_zone_ids = {
+      development = "{{htme_dns_zone_ids.development}}"
+      qa          = "{{htme_dns_zone_ids.qa}}"
+      integration = "{{htme_dns_zone_ids.integration}}"
+      preprod     = "{{htme_dns_zone_ids.preprod}}"
+      production  = "{{htme_dns_zone_ids.production}}"
+  }
+
   certs_prefixes = ["server_certificates", "ca_certificates"]
 
 }
