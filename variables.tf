@@ -354,7 +354,7 @@ variable "image_versions" {
   description = "pinned image versions to use"
   default = {
     prometheus            = "0.0.19"
-    thanos                = "0.0.29"
+    thanos                = "test17"
     alertmanager          = "0.0.5"
     ecs-service-discovery = "0.0.8"
     grafana               = "0.0.12"

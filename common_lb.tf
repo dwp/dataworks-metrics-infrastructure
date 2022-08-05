@@ -69,6 +69,19 @@ resource "aws_lb_target_group" "thanos_query" {
   tags = merge(local.tags, { Name = "thanos-query" })
 }
 
+resource "aws_lb_target_group" "thanos_store" {
+  count       = local.is_management_env ? 1 : 0
+  name        = "thanos-store-grpc"
+  port        = var.thanos_port_grpc
+  protocol    = "TCP"
+  vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
+  target_type = "ip"
+
+  depends_on = [aws_lb.monitoring]
+
+  tags = merge(local.tags, { Name = "thanos-store" })
+}
+
 resource "aws_lb_target_group" "thanos_ruler" {
   count       = local.is_management_env ? 1 : 0
   name        = "thanos-ruler-http"
@@ -165,6 +178,22 @@ resource "aws_lb_listener_rule" "thanos_query" {
   condition {
     host_header {
       values = [aws_route53_record.thanos_query_loadbalancer[local.primary_role_index].fqdn]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "thanos_store" {
+  count        = local.is_management_env ? 1 : 0
+  listener_arn = aws_lb_listener.monitoring[local.primary_role_index].arn
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.thanos_store[local.primary_role_index].arn
+  }
+
+  condition {
+    host_header {
+      values = [aws_route53_record.thanos_store_loadbalancer[local.primary_role_index].fqdn]
     }
   }
 }
