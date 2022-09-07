@@ -15,10 +15,10 @@ resource "aws_ecs_task_definition" "thanos_store" {
 
     efs_volume_configuration {
       transit_encryption = "ENABLED"
-      file_system_id     = aws_efs_file_system.thanos_store.id
+      file_system_id     = aws_efs_file_system.thanos_store[0].id
 
       authorization_config {
-        access_point_id = aws_efs_access_point.thanos_store.id
+        access_point_id = aws_efs_access_point.thanos_store[0].id
         iam             = "ENABLED"
       }
     }
@@ -98,6 +98,7 @@ resource "aws_service_discovery_service" "thanos_store" {
 }
 
 resource "aws_efs_file_system" "thanos_store" {
+  count          = local.is_management_env ? 1 : 0
   creation_token = "thanos-store"
 
   tags = {
@@ -106,14 +107,15 @@ resource "aws_efs_file_system" "thanos_store" {
 }
 
 resource "aws_efs_mount_target" "thanos_store" {
-  count           = length(module.vpc.outputs.private_subnets[local.primary_role_index])
-  file_system_id  = aws_efs_file_system.thanos_store.id
+  count           = local.is_management_env ? length(module.vpc.outputs.private_subnets[local.primary_role_index]) : 0
+  file_system_id  = aws_efs_file_system.thanos_store[0].id
   subnet_id       = module.vpc.outputs.private_subnets[local.primary_role_index][count.index]
   security_groups = [aws_security_group.thanos_store_efs[0].id]
 }
 
 resource "aws_efs_access_point" "thanos_store" {
-  file_system_id = aws_efs_file_system.thanos_store.id
+  count          = local.is_management_env ? 1 : 0
+  file_system_id = aws_efs_file_system.thanos_store[0].id
 
   posix_user {
     gid = 65534
