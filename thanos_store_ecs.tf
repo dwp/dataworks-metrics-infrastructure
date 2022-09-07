@@ -15,7 +15,7 @@ resource "aws_ecs_task_definition" "thanos_store" {
 
     efs_volume_configuration {
       transit_encryption = "ENABLED"
-      file_system_id = aws_efs_file_system.thanos_store.id
+      file_system_id     = aws_efs_file_system.thanos_store.id
 
       authorization_config {
         access_point_id = aws_efs_access_point.thanos_store.id
@@ -41,7 +41,7 @@ data "template_file" "thanos_store_definition" {
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
-    mount_points = jsonencode([{container_path="/data/thanos", source_volume="thanos-store"}])
+    mount_points = jsonencode([{ container_path = "/data/thanos", source_volume = "thanos-store" }])
 
     environment_variables = jsonencode([
       {
@@ -124,8 +124,8 @@ resource "aws_efs_access_point" "thanos_store" {
     path = "/data/thanos"
 
     creation_info {
-      owner_uid = 65534
-      owner_gid = 65534
+      owner_uid   = 65534
+      owner_gid   = 65534
       permissions = "755"
     }
   }

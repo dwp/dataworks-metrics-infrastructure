@@ -67,23 +67,23 @@ resource "aws_security_group_rule" "ingress_in_thanos_store_from_efs" {
 }
 
 resource "aws_security_group_rule" "ingress_inside_thanos_store_from_efs" {
-  count                    = local.is_management_env ? 1 : 0
-  description              = "ingress_inside_thanos_store_from_efs"
-  type                     = "ingress"
-  protocol                 = "-1"
-  from_port                = 0
-  to_port                  = 0
-  security_group_id        = aws_security_group.thanos_store_efs[0].id
-  self                     = true
+  count             = local.is_management_env ? 1 : 0
+  description       = "ingress_inside_thanos_store_from_efs"
+  type              = "ingress"
+  protocol          = "-1"
+  from_port         = 0
+  to_port           = 0
+  security_group_id = aws_security_group.thanos_store_efs[0].id
+  self              = true
 }
 
 resource "aws_security_group_rule" "egress_inside_thanos_store_from_efs" {
-  count                    = local.is_management_env ? 1 : 0
-  description              = "egress_inside_thanos_store_from_efs"
-  type                     = "egress"
-  protocol                 = "-1"
-  from_port                = 0
-  to_port                  = 0
-  security_group_id        = aws_security_group.thanos_store_efs[0].id
-  self                     = true
+  count             = local.is_management_env ? 1 : 0
+  description       = "egress_inside_thanos_store_from_efs"
+  type              = "egress"
+  protocol          = "-1"
+  from_port         = 0
+  to_port           = 0
+  security_group_id = aws_security_group.thanos_store_efs[0].id
+  self              = true
 }
