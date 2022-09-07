@@ -98,29 +98,29 @@ variable "cert_metrics_task_memory" {
 
 variable "store_cpu" {
   default = {
-    management     = "2048"
-    management-dev = "2048"
+    management     = "4096"
+    management-dev = "4096"
   }
 }
 
 variable "store_memory" {
   default = {
-    management     = "4096"
-    management-dev = "4096"
+    management     = "8192"
+    management-dev = "8192"
   }
 }
 
 variable "store_task_cpu" {
   default = {
-    management     = "2048"
-    management-dev = "2048"
+    management     = "4096"
+    management-dev = "4096"
   }
 }
 
 variable "store_task_memory" {
   default = {
-    management     = "4096"
-    management-dev = "4096"
+    management     = "8192"
+    management-dev = "8192"
   }
 }
 
@@ -354,7 +354,7 @@ variable "image_versions" {
   description = "pinned image versions to use"
   default = {
     prometheus            = "0.0.19"
-    thanos                = "0.0.29"
+    thanos                = "0.0.32"
     alertmanager          = "0.0.5"
     ecs-service-discovery = "0.0.8"
     grafana               = "0.0.12"

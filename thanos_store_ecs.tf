@@ -9,6 +9,20 @@ resource "aws_ecs_task_definition" "thanos_store" {
   execution_role_arn       = local.is_management_env ? data.terraform_remote_state.management.outputs.ecs_task_execution_role.arn : data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.thanos_store_definition[local.primary_role_index].rendered}]"
   tags                     = merge(local.tags, { Name = var.name })
+
+  volume {
+    name = "thanos-store"
+
+    efs_volume_configuration {
+      transit_encryption = "ENABLED"
+      file_system_id = aws_efs_file_system.thanos_store.id
+
+      authorization_config {
+        access_point_id = aws_efs_access_point.thanos_store.id
+        iam             = "ENABLED"
+      }
+    }
+  }
 }
 
 data "template_file" "thanos_store_definition" {
@@ -27,7 +41,7 @@ data "template_file" "thanos_store_definition" {
     region        = data.aws_region.current.name
     config_bucket = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
 
-    mount_points = jsonencode([])
+    mount_points = jsonencode([{container_path="/data/thanos", source_volume="thanos-store"}])
 
     environment_variables = jsonencode([
       {
@@ -81,4 +95,38 @@ resource "aws_service_discovery_service" "thanos_store" {
   }
 
   tags = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_efs_file_system" "thanos_store" {
+  creation_token = "thanos-store"
+
+  tags = {
+    Name = "thanos-store"
+  }
+}
+
+resource "aws_efs_mount_target" "thanos_store" {
+  count           = length(module.vpc.outputs.private_subnets[local.primary_role_index])
+  file_system_id  = aws_efs_file_system.thanos_store.id
+  subnet_id       = module.vpc.outputs.private_subnets[local.primary_role_index][count.index]
+  security_groups = [aws_security_group.thanos_store_efs[0].id]
+}
+
+resource "aws_efs_access_point" "thanos_store" {
+  file_system_id = aws_efs_file_system.thanos_store.id
+
+  posix_user {
+    gid = 65534
+    uid = 65534
+  }
+
+  root_directory {
+    path = "/data/thanos"
+
+    creation_info {
+      owner_uid = 65534
+      owner_gid = 65534
+      permissions = "755"
+    }
+  }
 }
