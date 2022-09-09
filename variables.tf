@@ -105,8 +105,8 @@ variable "store_cpu" {
 
 variable "store_memory" {
   default = {
-    management     = "8192"
-    management-dev = "8192"
+    management     = "30720"
+    management-dev = "30720"
   }
 }
 
@@ -119,8 +119,8 @@ variable "store_task_cpu" {
 
 variable "store_task_memory" {
   default = {
-    management     = "8192"
-    management-dev = "8192"
+    management     = "30720"
+    management-dev = "30720"
   }
 }
 
@@ -354,7 +354,7 @@ variable "image_versions" {
   description = "pinned image versions to use"
   default = {
     prometheus            = "0.0.19"
-    thanos                = "0.0.33"
+    thanos                = "0.0.34"
     alertmanager          = "0.0.5"
     ecs-service-discovery = "0.0.8"
     grafana               = "0.0.12"
