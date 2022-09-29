@@ -3,26 +3,26 @@ on:
   - pull_request
 jobs:
   terraform:
-    name: 'Terraform fmt'
-    runs-on: ubuntu-latest
-    steps:
-      - name: 'Checkout'
-        uses: actions/checkout@master
-      - name: 'Terraform Format'
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: ${{ secrets.TERRAFORM_14_VERSION }}
-          tf_actions_subcommand: 'fmt'
-          tf_actions_working_dir: '.'
-          tf_actions_comment: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # name: 'Terraform fmt'
+    # runs-on: ubuntu-latest
+    # steps:
+    #   - name: 'Checkout'
+    #     uses: actions/checkout@master
+    #   - name: 'Terraform Format'
+    #     uses: hashicorp/terraform-github-actions@master
+    #     with:
+    #       tf_actions_version: ${{ secrets.TERRAFORM_14_VERSION }}
+    #       tf_actions_subcommand: 'fmt'
+    #       tf_actions_working_dir: '.'
+    #       tf_actions_comment: true
+    #     env:
+    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: TF Version
         id: tfv
         run: |
           pwd
-          echo ${{secrets.TERRAFORM_14_VERSION }} | sed 's/./& /g'
+          echo ${{secrets.TERRAFORM_VERSION }} | sed 's/./& /g'
 
       - name: tflint
         id: tflint
