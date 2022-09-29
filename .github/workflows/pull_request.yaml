@@ -18,6 +18,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: TF Version
+        id: tflint
+        run: |
+          pwd
+          echo ${{secrets.TERRAFORM_14_VERSION }} | sed 's/./& /g'
+
       - name: tflint
         id: tflint
         run: |
