@@ -19,7 +19,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: TF Version
-        id: tflint
+        id: tfv
         run: |
           pwd
           echo ${{secrets.TERRAFORM_14_VERSION }} | sed 's/./& /g'
