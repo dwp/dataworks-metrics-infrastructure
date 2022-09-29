@@ -50,7 +50,7 @@ resource "aws_s3_bucket" "monitoring" {
   acl    = "private"
   tags = merge(
     local.tags,
-    map("Name", "Metrics Store")
+    tomap({"Name"="Metrics Store"})
   )
 
   versioning {
