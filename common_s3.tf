@@ -28,8 +28,7 @@ resource "aws_kms_key" "monitoring_bucket_cmk" {
   })
   tags = merge(
     local.tags,
-    map("Name", "Monitoring bucket key"),
-    map("ProtectsSensitiveData", "False")
+    tomap({"Name"="Monitoring bucket key", "ProtectsSensitiveData"="False"})
   )
 }
 
@@ -51,7 +50,7 @@ resource "aws_s3_bucket" "monitoring" {
   acl    = "private"
   tags = merge(
     local.tags,
-    map("Name", "Metrics Store")
+    tomap({"Name"="Metrics Store"})
   )
 
   versioning {
