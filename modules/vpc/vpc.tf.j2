@@ -3,7 +3,7 @@ data "aws_availability_zones" "current" {}
 {% for value in roles %}
 module "monitoring_{{value}}_vpc" {
   source                                     = "dwp/vpc/aws"
-  version                                    = "3.0.10"
+  version                                    = "3.0.15"
   vpc_name                                   = "monitoring-{{value}}"
   region                                     = var.region
   vpc_cidr_block                             = var.vpc_cidr_block.mon-{{value}}-vpc
