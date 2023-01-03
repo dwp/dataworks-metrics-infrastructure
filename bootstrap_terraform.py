@@ -97,9 +97,6 @@ def main():
     config_data["mongo_latest_dns_zone_ids"] = json.loads(
         monitoring_secret["SecretBinary"]
     )["mongo_latest_dns_zone_ids"]
-    config_data["kickstart_adg_dns_zone_ids"] = json.loads(
-        monitoring_secret["SecretBinary"]
-    )["kickstart_adg_dns_zone_ids"]
     config_data["analytical_frontend_dns_zone_ids"] = json.loads(
         monitoring_secret["SecretBinary"]
     )["analytical_frontend_dns_zone_ids"]
