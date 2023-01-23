@@ -126,7 +126,7 @@ resource "aws_launch_template" "metrics_cluster" {
   }
 
   block_device_mappings {
-    device_name = "/dev/xvda"
+    device_name = "/dev/sda1"
 
     ebs {
       volume_size           = local.ebs_volume_size[local.environment]
@@ -276,7 +276,7 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
   }
 
   block_device_mappings {
-    device_name = "/dev/xvda"
+    device_name = "/dev/sda1"
 
     ebs {
       volume_size           = local.mgmt_ebs_volume_size[local.environment]
