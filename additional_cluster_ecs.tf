@@ -65,7 +65,7 @@ resource "aws_autoscaling_group" "additional_metrics_cluster" {
 
 resource "aws_launch_template" "additional_metrics_cluster" {
   name          = local.additional_metrics_friendly_name
-  image_id      = var.ecs_hardened_ami_id
+  image_id      = var.dw_al2_ecs_ami_id
   instance_type = var.additional_metrics_ecs_cluster_ec2_size[local.environment]
 
   network_interfaces {
@@ -216,7 +216,7 @@ resource "aws_autoscaling_group" "additional_mgmt_metrics_cluster" {
 resource "aws_launch_template" "additional_mgmt_metrics_cluster" {
   count         = local.is_management_env ? 1 : 0
   name          = "mgmt-${local.additional_metrics_friendly_name}"
-  image_id      = var.ecs_hardened_ami_id
+  image_id      = var.dw_al2_ecs_ami_id
   instance_type = var.additional_metrics_ecs_cluster_ec2_size[local.environment]
 
   network_interfaces {
