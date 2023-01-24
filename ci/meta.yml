@@ -86,7 +86,7 @@ meta:
                 source ../previous_success/exit-if-succeeded.sh
               fi
               exit_status=0
-              export TF_VAR_ecs_hardened_ami_id=$(cat ../dw-al2-ecs-ami/id)
+              export TF_VAR_dw_al2_ecs_ami_id=$(cat ../dw-al2-ecs-ami/id)
               cp -r ../dataworks-dashboards config/grafana/provisioning/dashboards
               cp ../terraform-config/terraform.tf .
               cp ../terraform-config/terraform.tfvars .
@@ -135,7 +135,7 @@ meta:
                 source ../previous_success/exit-if-succeeded.sh
               fi
               if [ -f ../terraform-success/success ]; then
-                export TF_VAR_ecs_hardened_ami_id=$(cat ../dw-al2-ecs-ami/id)
+                export TF_VAR_dw_al2_ecs_ami_id=$(cat ../dw-al2-ecs-ami/id)
                 cp -r ../dataworks-dashboards config/grafana/provisioning/dashboards
                 cp ../terraform-config/terraform.tf .
                 cp ../terraform-config/terraform.tfvars .

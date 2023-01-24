@@ -94,7 +94,7 @@ resource "aws_autoscaling_group" "metrics_cluster" {
 
 resource "aws_launch_template" "metrics_cluster" {
   name          = local.metrics_friendly_name
-  image_id      = var.ecs_hardened_ami_id
+  image_id      = var.dw_al2_ecs_ami_id
   instance_type = var.metrics_ecs_cluster_ec2_size[local.environment]
 
   network_interfaces {
@@ -126,7 +126,7 @@ resource "aws_launch_template" "metrics_cluster" {
   }
 
   block_device_mappings {
-    device_name = "/dev/xvda"
+    device_name = "/dev/sda1"
 
     ebs {
       volume_size           = local.ebs_volume_size[local.environment]
@@ -245,7 +245,7 @@ resource "aws_autoscaling_group" "mgmt_metrics_cluster" {
 resource "aws_launch_template" "mgmt_metrics_cluster" {
   count         = local.is_management_env ? 1 : 0
   name          = "mgmt-${local.metrics_friendly_name}"
-  image_id      = var.ecs_hardened_ami_id
+  image_id      = var.dw_al2_ecs_ami_id
   instance_type = var.metrics_ecs_cluster_ec2_size[local.environment]
 
   network_interfaces {
@@ -276,7 +276,7 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
   }
 
   block_device_mappings {
-    device_name = "/dev/xvda"
+    device_name = "/dev/sda1"
 
     ebs {
       volume_size           = local.mgmt_ebs_volume_size[local.environment]
