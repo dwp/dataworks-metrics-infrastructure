@@ -443,15 +443,6 @@ provider "aws" {
     }
   }
 
-  default_tags {
-    tags = {
-      Application      = "DataWorks"                              # As per our definition on ServiceNow
-      Function         = "Data and Analytics"                     # As per our definition on ServiceNow
-      Environment      = local.hcs_environment[local.environment] # Set up locals as per Tagging doc requirements https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
-      Business-Project = "PRJ0022507"                             # This seems to replace costcode as per the doc https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
-    }
-  }
-
   assume_role {
     role_arn = "arn:aws:iam::${lookup(local.account, local.environment)}:role/${var.assume_role}"
   }
