@@ -12,7 +12,7 @@ terraform {
 
   required_providers {
     aws = {
-      version = "~> 3.45.0"
+      version = "~> 4.53"
     }
   }
 }
@@ -433,6 +433,15 @@ variable "region" {
 
 provider "aws" {
   region  = var.region
+  
+  default_tags {
+    tags = {
+      Application      = "DataWorks"                              # As per our definition on ServiceNow
+      Function         = "Data and Analytics"                     # As per our definition on ServiceNow
+      Environment      = local.hcs_environment[local.environment] # Set up locals as per Tagging doc requirements https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
+      Business-Project = "PRJ0022507"                             # This seems to replace costcode as per the doc https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
+    }
+  }
 
   assume_role {
     role_arn = "arn:aws:iam::${lookup(local.account, local.environment)}:role/${var.assume_role}"
@@ -443,6 +452,15 @@ provider "aws" {
   alias   = "management"
   region  = var.region
 
+  default_tags {
+    tags = {
+      Application      = "DataWorks"                              # As per our definition on ServiceNow
+      Function         = "Data and Analytics"                     # As per our definition on ServiceNow
+      Environment      = local.hcs_environment[local.environment] # Set up locals as per Tagging doc requirements https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
+      Business-Project = "PRJ0022507"                             # This seems to replace costcode as per the doc https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
+    }
+  }
+
   assume_role {
     role_arn = "arn:aws:iam::${local.account.management}:role/${var.assume_role}"
   }
@@ -451,6 +469,15 @@ provider "aws" {
 provider "aws" {
   alias   = "dmi_management"
   region  = var.region
+
+  default_tags {
+    tags = {
+      Application      = "DataWorks"                              # As per our definition on ServiceNow
+      Function         = "Data and Analytics"                     # As per our definition on ServiceNow
+      Environment      = local.hcs_environment[local.environment] # Set up locals as per Tagging doc requirements https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
+      Business-Project = "PRJ0022507"                             # This seems to replace costcode as per the doc https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
+    }
+  }
 
   assume_role {
     role_arn = "arn:aws:iam::${lookup(local.account, lookup(local.slave_peerings, local.environment))}:role/${var.assume_role}"
@@ -461,6 +488,15 @@ provider "aws" {
   alias   = "management_dns"
   region  = var.region
 
+  default_tags {
+    tags = {
+      Application      = "DataWorks"                              # As per our definition on ServiceNow
+      Function         = "Data and Analytics"                     # As per our definition on ServiceNow
+      Environment      = local.hcs_environment[local.environment] # Set up locals as per Tagging doc requirements https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
+      Business-Project = "PRJ0022507"                             # This seems to replace costcode as per the doc https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
+    }
+  }
+
   assume_role {
     role_arn = "arn:aws:iam::${local.account["management"]}:role/${var.assume_role}"
   }
@@ -468,6 +504,15 @@ provider "aws" {
 provider "aws" {
   alias   = "management_zone"
   region  = var.region
+
+  default_tags {
+    tags = {
+      Application      = "DataWorks"                              # As per our definition on ServiceNow
+      Function         = "Data and Analytics"                     # As per our definition on ServiceNow
+      Environment      = local.hcs_environment[local.environment] # Set up locals as per Tagging doc requirements https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
+      Business-Project = "PRJ0022507"                             # This seems to replace costcode as per the doc https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
+    }
+  }
 
   assume_role {
     role_arn = "arn:aws:iam::${local.account[local.slave_peerings[local.environment]]}:role/${var.assume_role}"
@@ -477,6 +522,15 @@ provider "aws" {
 provider "aws" {
   region  = var.region
   alias   = "non_management_zone"
+
+  default_tags {
+    tags = {
+      Application      = "DataWorks"                              # As per our definition on ServiceNow
+      Function         = "Data and Analytics"                     # As per our definition on ServiceNow
+      Environment      = local.hcs_environment[local.environment] # Set up locals as per Tagging doc requirements https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
+      Business-Project = "PRJ0022507"                             # This seems to replace costcode as per the doc https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
+    }
+  }
 
   assume_role {
     role_arn = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
@@ -567,12 +621,24 @@ locals {
   tags = {
   {% for key, value in common_tags.items() %}
     {{key}} = "{{value}}"{% endfor %}
-    Name         = "prometheus"
-    Environment  = local.environment
-    Project      = "monitoring"
-    Application  = "dataworks-metrics-infrastructure"
-    Persistence  = "Ignore"
-    AutoShutdown = "False"
+    Name             = "prometheus"
+    DWX_Environment  = local.environment
+    DWX_Project      = "monitoring"
+    DWX_Application  = "dataworks-metrics-infrastructure"
+    Persistence      = "Ignore"
+    AutoShutdown     = "False"
+  }
+
+  # Configured as per Tagging doc requirements https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
+  # Also required as per Tenable documentation https://engineering.dwp.gov.uk/products/gold-images/agents/tenable/
+  hcs_environment = {
+    development    = "Dev"
+    qa             = "Test"
+    integration    = "Stage"
+    preprod        = "Stage"
+    production     = "Production"
+    management     = "SP_Tooling"
+    management-dev = "DT_Tooling"
   }
 
   root_dns_name = {
