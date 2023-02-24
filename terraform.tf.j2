@@ -442,6 +442,8 @@ provider "aws" {
       Business-Project = "PRJ0022507"                             # This seems to replace costcode as per the doc https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
     }
 
+  }
+
   assume_role {
     role_arn = "arn:aws:iam::${lookup(local.account, local.environment)}:role/${var.assume_role}"
   }
