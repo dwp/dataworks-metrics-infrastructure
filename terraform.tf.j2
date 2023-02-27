@@ -620,8 +620,6 @@ locals {
   is_management_env = contains(local.management_envs, local.environment)
 
   tags = {
-  {% for key, value in common_tags.items() %}
-    {{key}} = "{{value}}"{% endfor %}
     Name             = "prometheus"
     DWX_Environment  = local.environment
     DWX_Application  = "dataworks-metrics-infrastructure"
