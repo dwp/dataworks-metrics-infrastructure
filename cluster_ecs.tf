@@ -129,9 +129,9 @@ resource "aws_launch_template" "metrics_cluster" {
       cwa_disk_io_metrics_collection_interval          = local.cw_agent_disk_io_metrics_collection_interval
       cwa_mem_metrics_collection_interval              = local.cw_agent_mem_metrics_collection_interval
       cwa_netstat_metrics_collection_interval          = local.cw_agent_netstat_metrics_collection_interval
-      ecs_attributes                                   = jsonencode({
-                                                            "instance-type" = "prometheus"
-                                                          })
+      ecs_attributes = jsonencode({
+        "instance-type" = "prometheus"
+      })
     }
   ))
 
@@ -295,9 +295,9 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
       cwa_disk_io_metrics_collection_interval          = local.cw_agent_disk_io_metrics_collection_interval
       cwa_mem_metrics_collection_interval              = local.cw_agent_mem_metrics_collection_interval
       cwa_netstat_metrics_collection_interval          = local.cw_agent_netstat_metrics_collection_interval
-      ecs_attributes                                   = jsonencode({
-                                                            "instance-type" = "prometheus"
-                                                          })
+      ecs_attributes = jsonencode({
+        "instance-type" = "prometheus"
+      })
     }
   ))
 
