@@ -1,0 +1,9 @@
+/var/log/metrics/metrics.out {
+    copytruncate
+    missingok
+    notifempty
+    maxsize 1024k
+    rotate 10
+    daily
+    create 0640 metrics dip_export
+}

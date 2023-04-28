@@ -658,6 +658,9 @@ locals {
   zone_count = length(data.aws_availability_zones.current.zone_ids)
   zone_names = data.aws_availability_zones.current.names
 
+  config_bucket_arn = data.terraform_remote_state.common.outputs.config_bucket["arn"]
+  config_bucket_cmk = data.terraform_remote_state.common.outputs.config_bucket_cmk["arn"]
+
   metrics_ecs_friendly_name = "metrics-ecs-cluster"
   additional_metrics_ecs_friendly_name = "additional-metrics-ecs-cluster"
   metrics_friendly_name = "metrics-cluster"
@@ -668,6 +671,15 @@ locals {
 
   cw_agent_namespace_metrics_ecs      = "/app/${local.metrics_ecs_friendly_name}"
   cw_agent_log_group_name_metrics_ecs = "/app/${local.metrics_ecs_friendly_name}"
+
+  cw_additional_metrics_server_agent_namespace                     = "/app/${local.additional_metrics_ecs_friendly_name}"
+  cw_metrics_server_agent_namespace                                = "/app/${local.metrics_ecs_friendly_name}"
+  cw_agent_metrics_collection_interval                             = 60
+  cw_agent_cpu_metrics_collection_interval                         = 60
+  cw_agent_disk_measurement_metrics_collection_interval            = 60
+  cw_agent_disk_io_metrics_collection_interval                     = 60
+  cw_agent_mem_metrics_collection_interval                         = 60
+  cw_agent_netstat_metrics_collection_interval                     = 60
 
   metrics_ecs_cluster_asg_autoshutdown = {
     development = "False"

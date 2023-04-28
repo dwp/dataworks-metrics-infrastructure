@@ -201,3 +201,60 @@ resource "aws_iam_role_policy_attachment" "metrics_cluster_ecs" {
   role       = aws_iam_role.metrics_cluster.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
 }
+
+
+resource "aws_iam_role_policy_attachment" "metrics_s3_attachment" {
+  role       = aws_iam_role.metrics_cluster.name
+  policy_arn = aws_iam_policy.metrics_s3.arn
+}
+
+resource "aws_iam_policy" "metrics_s3" {
+  name        = "MetricsS3ConfigAccess"
+  description = "Allow Metrics to access config bucket"
+  policy      = data.aws_iam_policy_document.metrics_s3_policy.json
+}
+
+data "aws_iam_policy_document" "metrics_s3_policy" {
+  statement {
+    sid    = "AllowECSToListConfigBucket"
+    effect = "Allow"
+
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:ListBucket",
+    ]
+
+    resources = [
+      local.config_bucket_arn
+    ]
+  }
+
+  statement {
+    sid    = "AllowECSToGetConfigBucketObjects"
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject*",
+    ]
+
+    resources = [
+      "${local.config_bucket_arn}/*"
+    ]
+  }
+
+
+  statement {
+    sid    = "AllowRoleConfigBucketKeyAccess"
+    effect = "Allow"
+
+    actions = [
+      "kms:Decrypt",
+      "kms:DescribeKey",
+    ]
+
+    resources = [
+      local.config_bucket_cmk
+    ]
+  }
+
+}
