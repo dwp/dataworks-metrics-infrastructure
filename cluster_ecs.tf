@@ -107,15 +107,31 @@ resource "aws_launch_template" "metrics_cluster" {
   user_data = base64encode(templatefile(
     "userdata.tpl",
     {
-      cluster_name  = local.cluster_name # Referencing the cluster resource causes a circular dependency
-      instance_role = aws_iam_instance_profile.metrics_cluster.name
-      region        = data.aws_region.current.name
-      folder        = "/mnt/config"
-      mnt_bucket    = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
-      name          = local.metrics_ecs_friendly_name
-      ecs_attributes = jsonencode({
-        "instance-type" = "prometheus"
-      })
+      cluster_name                                     = local.cluster_name # Referencing the cluster resource causes a circular dependency
+      instance_role                                    = aws_iam_instance_profile.metrics_cluster.name
+      region                                           = data.aws_region.current.name
+      folder                                           = "/mnt/config"
+      mnt_bucket                                       = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
+      name                                             = local.metrics_ecs_friendly_name
+      proxy_port                                       = var.proxy_port
+      proxy_host                                       = data.terraform_remote_state.aws_sdx.outputs.internet_proxy.host
+      hcs_environment                                  = local.hcs_environment[local.environment]
+      s3_scripts_bucket                                = data.terraform_remote_state.common.outputs.config_bucket.id
+      s3_script_logrotate                              = aws_s3_object.metrics_logrotate_script.id
+      s3_script_cloudwatch_shell                       = aws_s3_object.metrics_cloudwatch_script.id
+      s3_script_logging_shell                          = aws_s3_object.metrics_logging_script.id
+      s3_script_config_hcs_shell                       = aws_s3_object.metrics_config_hcs_script.id
+      cwa_namespace                                    = local.cw_metrics_server_agent_namespace
+      cwa_log_group_name                               = "${local.cw_metrics_server_agent_namespace}-${local.environment}"
+      cwa_metrics_collection_interval                  = local.cw_agent_metrics_collection_interval
+      cwa_cpu_metrics_collection_interval              = local.cw_agent_cpu_metrics_collection_interval
+      cwa_disk_measurement_metrics_collection_interval = local.cw_agent_disk_measurement_metrics_collection_interval
+      cwa_disk_io_metrics_collection_interval          = local.cw_agent_disk_io_metrics_collection_interval
+      cwa_mem_metrics_collection_interval              = local.cw_agent_mem_metrics_collection_interval
+      cwa_netstat_metrics_collection_interval          = local.cw_agent_netstat_metrics_collection_interval
+      ecs_attributes                                   = jsonencode({
+                                                            "instance-type" = "prometheus"
+                                                          })
     }
   ))
 

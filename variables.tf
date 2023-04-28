@@ -403,3 +403,9 @@ variable "test_ami" {
   type        = bool
   default     = false
 }
+
+variable "proxy_port" {
+  description = "proxy port"
+  type        = string
+  default     = "3128"
+}
