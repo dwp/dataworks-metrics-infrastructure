@@ -11,7 +11,7 @@ resource "aws_s3_object" "metrics_logrotate_script" {
 
 
   tags = merge(
-    local.common_tags,
+    local.tags,
     {
       Name = "metrics-logrotate-script"
     },
@@ -29,7 +29,7 @@ resource "aws_s3_object" "metrics_cloudwatch_script" {
   kms_key_id = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 
   tags = merge(
-    local.common_tags,
+    local.tags,
     {
       Name = "metrics-cloudwatch-script"
     },
@@ -47,7 +47,7 @@ resource "aws_s3_object" "metrics_logging_script" {
   kms_key_id = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 
   tags = merge(
-    local.common_tags,
+    local.tags,
     {
       Name = "metrics-logging-script"
     },
@@ -65,7 +65,7 @@ resource "aws_s3_object" "metrics_config_hcs_script" {
   kms_key_id = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 
   tags = merge(
-    local.common_tags,
+    local.tags,
     {
       Name = "metrics-config-hcs-script"
     },
