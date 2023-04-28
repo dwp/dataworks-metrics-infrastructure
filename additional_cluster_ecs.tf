@@ -85,7 +85,7 @@ resource "aws_launch_template" "additional_metrics_cluster" {
       mnt_bucket                                       = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
       name                                             = local.additional_metrics_ecs_friendly_name
       proxy_port                                       = var.proxy_port
-      proxy_host                                       = data.terraform_remote_state.aws_sdx.outputs.internet_proxy.host
+      proxy_host                                       = local.internet_proxy.host
       hcs_environment                                  = local.hcs_environment[local.environment]
       s3_scripts_bucket                                = data.terraform_remote_state.common.outputs.config_bucket.id
       s3_script_logrotate                              = aws_s3_object.metrics_logrotate_script.id
@@ -251,7 +251,7 @@ resource "aws_launch_template" "additional_mgmt_metrics_cluster" {
       mnt_bucket                                       = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.id : data.terraform_remote_state.common.outputs.config_bucket.id
       name                                             = local.additional_metrics_ecs_friendly_name
       proxy_port                                       = var.proxy_port
-      proxy_host                                       = data.terraform_remote_state.aws_sdx.outputs.internet_proxy.host
+      proxy_host                                       = local.internet_proxy.host
       hcs_environment                                  = local.hcs_environment[local.environment]
       s3_scripts_bucket                                = data.terraform_remote_state.common.outputs.config_bucket.id
       s3_script_logrotate                              = aws_s3_object.metrics_logrotate_script.id
