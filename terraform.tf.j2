@@ -658,8 +658,8 @@ locals {
   zone_count = length(data.aws_availability_zones.current.zone_ids)
   zone_names = data.aws_availability_zones.current.names
 
-  config_bucket_arn = data.terraform_remote_state.common.outputs.config_bucket["arn"]
-  config_bucket_cmk = data.terraform_remote_state.common.outputs.config_bucket_cmk["arn"]
+  config_bucket_arn = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket.arn :data.terraform_remote_state.common.outputs.config_bucket.arn
+  config_bucket_cmk = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket_cmk.arn :data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 
   metrics_ecs_friendly_name = "metrics-ecs-cluster"
   additional_metrics_ecs_friendly_name = "additional-metrics-ecs-cluster"
