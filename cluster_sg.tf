@@ -186,7 +186,7 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_azkaban_pushgat
 }
 
 resource "aws_security_group_rule" "egress_internet_proxy" {
-  description              = "Allow MetricsEMR access to proxy"
+  description              = "Allow Metrics access to proxy"
   from_port                = var.proxy_port
   protocol                 = "tcp"
   security_group_id        = aws_security_group.metrics_cluster.id
