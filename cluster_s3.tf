@@ -9,7 +9,6 @@ resource "aws_s3_object" "metrics_logrotate_script" {
   kms_key_id = local.is_management_env ? data.terraform_remote_state.management.outputs.config_bucket_cmk.arn : data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 
 
-
   tags = merge(
     local.tags,
     {
