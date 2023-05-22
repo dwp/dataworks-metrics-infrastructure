@@ -3,6 +3,7 @@ jobs:
     max_in_flight: 1
     plan:
       - get: dw-al2-ecs-ami
+        trigger: true
       - get: dataworks-metrics-infrastructure
         trigger: true
       - get: dataworks-dashboards
