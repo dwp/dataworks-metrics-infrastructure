@@ -129,6 +129,18 @@ resource "aws_launch_template" "metrics_cluster" {
       cwa_disk_io_metrics_collection_interval          = local.cw_agent_disk_io_metrics_collection_interval
       cwa_mem_metrics_collection_interval              = local.cw_agent_mem_metrics_collection_interval
       cwa_netstat_metrics_collection_interval          = local.cw_agent_netstat_metrics_collection_interval
+      install_tenable                                  = local.tenable_install[local.environment]
+      install_trend                                    = local.trend_install[local.environment]
+      install_tanium                                   = local.tanium_install[local.environment]
+      tanium_server_1                                  = local.tanium1
+      tanium_server_2                                  = local.tanium2
+      tanium_env                                       = local.tanium_env[local.environment]
+      tanium_port                                      = var.tanium_port_1
+      tanium_log_level                                 = local.tanium_log_level[local.environment]
+      tenant                                           = local.tenant
+      tenantid                                         = local.tenantid
+      token                                            = local.token
+      policyid                                         = local.policy_id[local.environment]
       ecs_attributes = jsonencode({
         "instance-type" = "prometheus"
       })
@@ -295,6 +307,18 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
       cwa_disk_io_metrics_collection_interval          = local.cw_agent_disk_io_metrics_collection_interval
       cwa_mem_metrics_collection_interval              = local.cw_agent_mem_metrics_collection_interval
       cwa_netstat_metrics_collection_interval          = local.cw_agent_netstat_metrics_collection_interval
+      install_tenable                                  = local.tenable_install[local.environment]
+      install_trend                                    = local.trend_install[local.environment]
+      install_tanium                                   = local.tanium_install[local.environment]
+      tanium_server_1                                  = local.tanium1
+      tanium_server_2                                  = local.tanium2
+      tanium_env                                       = local.tanium_env[local.environment]
+      tanium_port                                      = var.tanium_port_1
+      tanium_log_level                                 = local.tanium_log_level[local.environment]
+      tenant                                           = local.tenant
+      tenantid                                         = local.tenantid
+      token                                            = local.token
+      policyid                                         = local.policy_id[local.environment]
       ecs_attributes = jsonencode({
         "instance-type" = "prometheus"
       })
