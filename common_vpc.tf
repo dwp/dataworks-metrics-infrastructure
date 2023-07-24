@@ -100,7 +100,49 @@ resource "aws_vpc_endpoint" "secondary_internet_proxy" {
   private_dns_enabled = false
   tags                = merge(local.tags, { Name = var.name })
 }
+resource "aws_security_group" "tanium_service_endpoint" {
+  count       = local.is_management_env ? 1 : 0
+  name        = "tanium_service_endpoint"
+  description = "Control access to the Tanium Service VPC Endpoint"
+  vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
+  tags        = merge(local.tags, { Name = var.name })
+}
 
+resource "aws_vpc_endpoint" "tanium_service" {
+  count               = local.is_management_env ? 1 : 0
+  vpc_id              = module.vpc.vpc.id
+  service_name        = local.tanium_service_name[local.environment]
+  vpc_endpoint_type   = "Interface"
+  security_group_ids  = [aws_security_group.tanium_service_endpoint.id]
+  subnet_ids          = module.vpc.outputs.private_subnets[local.primary_role_index]
+  private_dns_enabled = false
+  tags                = merge(local.tags, { Name = "tanium-service" })
+}
+
+resource "aws_security_group" "secondary_tanium_service_endpoint" {
+  name        = "secondary_tanium_service_endpoint"
+  description = "Control access to the Tanium Service VPC Endpoint"
+  vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
+  tags        = merge(local.tags, { Name = var.name })
+}
+
+resource "aws_vpc_endpoint" "secondary_tanium_service" {
+  vpc_id              = module.vpc.outputs.vpcs[local.secondary_role_index].id
+  service_name        = local.tanium_service_name[local.environment]
+  vpc_endpoint_type   = "Interface"
+  security_group_ids  = [aws_security_group.tanium_service_endpoint.id]
+  subnet_ids          = module.vpc.outputs.private_subnets[local.secondary_role_index]
+  private_dns_enabled = false
+  tags                = merge(local.tags, { Name = "tanium-service" })
+}
+
+output "tanium_service_endpoint" {
+  value = {
+    id  = aws_vpc_endpoint.tanium_service.id
+    dns = aws_vpc_endpoint.tanium_service.dns_entry[0].dns_name
+    sg  = aws_security_group.tanium_service_endpoint.id
+  }
+}
 resource "aws_security_group_rule" "grafana_egress_internet_proxy" {
   count                    = local.is_management_env ? 1 : 0
   description              = "Allow Grafana internet access via the proxy"
