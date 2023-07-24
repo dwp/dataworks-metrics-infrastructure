@@ -143,6 +143,13 @@ output "tanium_service_endpoint" {
     sg  = aws_security_group.tanium_service_endpoint.id
   }
 }
+output "secondary_tanium_service_endpoint" {
+  value = {
+    id  = aws_vpc_endpoint.secondary_tanium_service.id
+    dns = aws_vpc_endpoint.secondary_tanium_service.dns_entry[0].dns_name
+    sg  = aws_security_group.secondary_tanium_service_endpoint.id
+  }
+}
 resource "aws_security_group_rule" "grafana_egress_internet_proxy" {
   count                    = local.is_management_env ? 1 : 0
   description              = "Allow Grafana internet access via the proxy"
