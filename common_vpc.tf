@@ -113,7 +113,7 @@ resource "aws_vpc_endpoint" "tanium_service" {
   security_group_ids  = [aws_security_group.tanium_service_endpoint.id]
   subnet_ids          = module.vpc.outputs.private_subnets[local.primary_role_index]
   private_dns_enabled = false
-  tags                = { 
+  tags = {
     Name = "tanium-service"
   }
 }
