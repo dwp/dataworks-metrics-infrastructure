@@ -245,7 +245,7 @@ resource "aws_security_group_rule" "data_egress_host_inbound_tanium_2" {
   security_group_id        = aws_security_group.tanium_service_endpoint[0].id
 }
 
-resource "aws_security_group_rule" "secondary metrics_host_outbound_tanium_1" {
+resource "aws_security_group_rule" "secondary_metrics_host_outbound_tanium_1" {
   description              = "Metrics host outbound port 1 to Tanium"
   type                     = "egress"
   from_port                = var.tanium_port_1
