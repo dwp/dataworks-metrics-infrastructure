@@ -102,16 +102,36 @@ resource "aws_vpc_endpoint" "secondary_internet_proxy" {
 }
 
 resource "aws_security_group" "tanium_service_endpoint" {
+  count       = local.is_management_env ? 1 : 0
   name        = "tanium_service_endpoint"
   description = "Control access to the Tanium Service VPC Endpoint"
   vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
 }
 resource "aws_vpc_endpoint" "tanium_service" {
+  count               = local.is_management_env ? 1 : 0
   vpc_id              = module.vpc.outputs.vpcs[local.primary_role_index].id
   service_name        = local.tanium_service_name[local.environment]
   vpc_endpoint_type   = "Interface"
-  security_group_ids  = [aws_security_group.tanium_service_endpoint.id]
+  security_group_ids  = [aws_security_group.tanium_service_endpoint[0].id]
   subnet_ids          = module.vpc.outputs.private_subnets[local.primary_role_index]
+  private_dns_enabled = false
+  tags = {
+    Name = "tanium-service"
+  }
+}
+
+resource "aws_security_group" "secondary_tanium_service_endpoint" {
+  name        = "tanium_service_endpoint"
+  description = "Control access to the Tanium Service VPC Endpoint"
+  vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
+}
+
+resource "aws_vpc_endpoint" "secondary_tanium_service" {
+  vpc_id              = module.vpc.outputs.vpcs[local.secondary_role_index].id
+  service_name        = local.tanium_service_name[local.environment]
+  vpc_endpoint_type   = "Interface"
+  security_group_ids  = [aws_security_group.secondary_tanium_service_endpoint.id]
+  subnet_ids          = module.vpc.outputs.private_subnets[local.secondary_role_index]
   private_dns_enabled = false
   tags = {
     Name = "tanium-service"
