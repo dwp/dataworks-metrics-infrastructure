@@ -85,7 +85,7 @@ resource "aws_vpc_endpoint" "internet_proxy" {
   vpc_id              = module.vpc.outputs.vpcs[local.primary_role_index].id
   service_name        = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
   vpc_endpoint_type   = "Interface"
-  security_group_ids  = [aws_security_group.internet_proxy_endpoint[local.primary_role_index].id]
+  security_group_ids  = local.is_management_env ? [aws_security_group.internet_proxy_endpoint[local.primary_role_index].id] : null
   subnet_ids          = module.vpc.outputs.private_subnets[local.primary_role_index]
   private_dns_enabled = false
   tags                = merge(local.tags, { Name = var.name })
@@ -113,7 +113,7 @@ resource "aws_vpc_endpoint" "tanium_service" {
   vpc_id              = module.vpc.vpc.id
   service_name        = local.tanium_service_name[local.environment]
   vpc_endpoint_type   = "Interface"
-  security_group_ids  = [aws_security_group.tanium_service_endpoint.id]
+  security_group_ids  = local.is_management_env ? [aws_security_group.tanium_service_endpoint.id] : null
   subnet_ids          = module.vpc.outputs.private_subnets[local.primary_role_index]
   private_dns_enabled = false
   tags                = merge(local.tags, { Name = "tanium-service" })
