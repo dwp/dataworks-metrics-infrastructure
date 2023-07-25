@@ -101,6 +101,23 @@ resource "aws_vpc_endpoint" "secondary_internet_proxy" {
   tags                = merge(local.tags, { Name = var.name })
 }
 
+resource "aws_security_group" "tanium_service_endpoint" {
+  name        = "tanium_service_endpoint"
+  description = "Control access to the Tanium Service VPC Endpoint"
+  vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
+}
+resource "aws_vpc_endpoint" "tanium_service" {
+  vpc_id              = module.vpc.outputs.vpcs[local.primary_role_index].id
+  service_name        = local.tanium_service_name[local.environment]
+  vpc_endpoint_type   = "Interface"
+  security_group_ids  = [aws_security_group.tanium_service_endpoint.id]
+  subnet_ids          = module.vpc.outputs.private_subnets[local.primary_role_index]
+  private_dns_enabled = false
+  tags                = { 
+    Name = tanium_service 
+  }
+}
+
 resource "aws_security_group_rule" "grafana_egress_internet_proxy" {
   count                    = local.is_management_env ? 1 : 0
   description              = "Allow Grafana internet access via the proxy"

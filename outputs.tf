@@ -18,6 +18,14 @@ output "monitoring_bucket" {
   }
 }
 
+output "tanium_service_endpoint" {
+  value = {
+    id  = aws_vpc_endpoint.tanium_service.id
+    dns = aws_vpc_endpoint.tanium_service.dns_entry[0].dns_name
+    sg  = aws_security_group.tanium_service_endpoint.id
+  }
+}
+
 resource "null_resource" "dummy" {}
 
 resource "null_resource" "dummy_2" {}
