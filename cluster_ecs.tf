@@ -132,7 +132,7 @@ resource "aws_launch_template" "metrics_cluster" {
       install_tenable                                  = local.tenable_install[local.environment]
       install_trend                                    = local.trend_install[local.environment]
       install_tanium                                   = local.tanium_install[local.environment]
-      tanium_server_1                                  = aws_vpc_endpoint.tanium_service[0].dns_entry[0].dns_name
+      tanium_server_1                                  = aws_vpc_endpoint.tanium_service.dns_entry[0].dns_name
       tanium_server_2                                  = local.tanium2
       tanium_env                                       = local.tanium_env[local.environment]
       tanium_port                                      = var.tanium_port_1
@@ -310,7 +310,7 @@ resource "aws_launch_template" "mgmt_metrics_cluster" {
       install_tenable                                  = local.tenable_install[local.environment]
       install_trend                                    = local.trend_install[local.environment]
       install_tanium                                   = local.tanium_install[local.environment]
-      tanium_server_1                                  = aws_vpc_endpoint.tanium_service[0].dns_entry[0].dns_name
+      tanium_server_1                                  = aws_vpc_endpoint.tanium_service.dns_entry[0].dns_name
       tanium_server_2                                  = local.tanium2
       tanium_env                                       = local.tanium_env[local.environment]
       tanium_port                                      = var.tanium_port_1
