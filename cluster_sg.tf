@@ -211,7 +211,7 @@ resource "aws_security_group_rule" "metrics_host_outbound_tanium_1" {
   from_port                = var.tanium_port_1
   to_port                  = var.tanium_port_1
   protocol                 = "tcp"
-  source_security_group_id = aws_security_group.tanium_service_endpoint[0].id
+  source_security_group_id = aws_security_group.tanium_service_endpoint.id
   security_group_id        = aws_security_group.metrics_cluster.id
 }
 
@@ -221,7 +221,7 @@ resource "aws_security_group_rule" "metrics_host_outbound_tanium_2" {
   from_port                = var.tanium_port_2
   to_port                  = var.tanium_port_2
   protocol                 = "tcp"
-  source_security_group_id = aws_security_group.tanium_service_endpoint[0].id
+  source_security_group_id = aws_security_group.tanium_service_endpoint.id
   security_group_id        = aws_security_group.metrics_cluster.id
 }
 
@@ -232,7 +232,7 @@ resource "aws_security_group_rule" "metrics_host_inbound_tanium_1" {
   to_port                  = var.tanium_port_1
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.metrics_cluster.id
-  security_group_id        = aws_security_group.tanium_service_endpoint[0].id
+  security_group_id        = aws_security_group.tanium_service_endpoint.id
 }
 
 resource "aws_security_group_rule" "data_egress_host_inbound_tanium_2" {
@@ -242,7 +242,7 @@ resource "aws_security_group_rule" "data_egress_host_inbound_tanium_2" {
   to_port                  = var.tanium_port_2
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.metrics_cluster.id
-  security_group_id        = aws_security_group.tanium_service_endpoint[0].id
+  security_group_id        = aws_security_group.tanium_service_endpoint.id
 }
 
 resource "aws_security_group_rule" "secondary_metrics_host_outbound_tanium_1" {

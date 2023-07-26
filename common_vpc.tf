@@ -102,13 +102,11 @@ resource "aws_vpc_endpoint" "secondary_internet_proxy" {
 }
 
 resource "aws_security_group" "tanium_service_endpoint" {
-  count       = local.is_management_env ? 1 : 0
   name        = "tanium_service_endpoint"
   description = "Control access to the Tanium Service VPC Endpoint"
   vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
 }
 resource "aws_vpc_endpoint" "tanium_service" {
-  count               = local.is_management_env ? 1 : 0
   vpc_id              = module.vpc.outputs.vpcs[local.primary_role_index].id
   service_name        = local.tanium_service_name[local.environment]
   vpc_endpoint_type   = "Interface"
