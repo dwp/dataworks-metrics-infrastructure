@@ -110,7 +110,7 @@ resource "aws_vpc_endpoint" "tanium_service" {
   vpc_id              = module.vpc.outputs.vpcs[local.primary_role_index].id
   service_name        = local.tanium_service_name[local.environment]
   vpc_endpoint_type   = "Interface"
-  security_group_ids  = [aws_security_group.tanium_service_endpoint[0].id]
+  security_group_ids  = [aws_security_group.tanium_service_endpoint.id]
   subnet_ids          = module.vpc.outputs.private_subnets[local.primary_role_index]
   private_dns_enabled = false
   tags = {
