@@ -107,6 +107,7 @@ resource "aws_security_group" "tanium_service_endpoint" {
   vpc_id      = module.vpc.outputs.vpcs[local.primary_role_index].id
 }
 resource "aws_vpc_endpoint" "tanium_service" {
+  description         = "Tanium Service VPC Endpoint"
   vpc_id              = module.vpc.outputs.vpcs[local.primary_role_index].id
   service_name        = local.tanium_service_name[local.environment]
   vpc_endpoint_type   = "Interface"
@@ -120,11 +121,12 @@ resource "aws_vpc_endpoint" "tanium_service" {
 
 resource "aws_security_group" "secondary_tanium_service_endpoint" {
   name        = "secondary_tanium_service_endpoint"
-  description = "Control access to the Tanium Service VPC Endpoint"
+  description = "Control access to the Secondary Tanium Service VPC Endpoint"
   vpc_id      = module.vpc.outputs.vpcs[local.secondary_role_index].id
 }
 
 resource "aws_vpc_endpoint" "secondary_tanium_service" {
+  description         = "Secondary Tanium Service VPC Endpoint"
   vpc_id              = module.vpc.outputs.vpcs[local.secondary_role_index].id
   service_name        = local.tanium_service_name[local.environment]
   vpc_endpoint_type   = "Interface"

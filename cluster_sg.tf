@@ -185,6 +185,28 @@ resource "aws_security_group_rule" "allow_metrics_cluster_egress_azkaban_pushgat
   source_security_group_id = data.terraform_remote_state.aws_analytical_env_infra.outputs.vpce_security_groups.azkaban_pushgateway_vpce_security_group.id
 }
 
+resource "aws_security_group_rule" "vpce_egress_internet_proxy" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow Metrics access to proxy"
+  from_port                = var.proxy_port
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.metrics_cluster.id
+  to_port                  = var.proxy_port
+  type                     = "egress"
+  source_security_group_id = aws_security_group.internet_proxy_endpoint[0].id
+}
+
+resource "aws_security_group_rule" "vpce_ingress_internet_proxy" {
+  count                    = local.is_management_env ? 1 : 0
+  description              = "Allow proxy access from Metrics"
+  type                     = "ingress"
+  from_port                = var.proxy_port
+  to_port                  = var.proxy_port
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.metrics_cluster.id
+  security_group_id        = aws_security_group.internet_proxy_endpoint[0].id
+}
+
 resource "aws_security_group_rule" "egress_internet_proxy" {
   description              = "Allow Metrics access to proxy"
   from_port                = var.proxy_port
