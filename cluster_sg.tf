@@ -268,42 +268,46 @@ resource "aws_security_group_rule" "metrics_host_inbound_tanium_2" {
 }
 
 resource "aws_security_group_rule" "mgmt_metrics_host_outbound_tanium_1" {
+  count                    = local.is_management_env ? 1 : 0
   description              = "Mgmt Metrics host outbound port 1 to Tanium"
   type                     = "egress"
   from_port                = var.tanium_port_1
   to_port                  = var.tanium_port_1
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.tanium_service_endpoint.id
-  security_group_id        = aws_security_group.mgmt_metrics_cluster.id
+  security_group_id        = aws_security_group.mgmt_metrics_cluster[0].id
 }
 
 resource "aws_security_group_rule" "mgmt_metrics_host_outbound_tanium_2" {
+  count                    = local.is_management_env ? 1 : 0
   description              = "Mgmt Metrics host outbound port 2 to Tanium"
   type                     = "egress"
   from_port                = var.tanium_port_2
   to_port                  = var.tanium_port_2
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.tanium_service_endpoint.id
-  security_group_id        = aws_security_group.mgmt_metrics_cluster.id
+  security_group_id        = aws_security_group.mgmt_metrics_cluster[0].id
 }
 
 resource "aws_security_group_rule" "mgmt_metrics_host_inbound_tanium_1" {
+  count                    = local.is_management_env ? 1 : 0
   description              = "Mgmt Metrics host inbound port 1 from Tanium"
   type                     = "ingress"
   from_port                = var.tanium_port_1
   to_port                  = var.tanium_port_1
   protocol                 = "tcp"
-  source_security_group_id = aws_security_group.mgmt_metrics_cluster.id
+  source_security_group_id = aws_security_group.mgmt_metrics_cluster[0].id
   security_group_id        = aws_security_group.tanium_service_endpoint.id
 }
 
 resource "aws_security_group_rule" "mgmt_metrics_host_inbound_tanium_2" {
+  count                    = local.is_management_env ? 1 : 0
   description              = "Mgmt Metrics host inbound port 2 from Tanium"
   type                     = "ingress"
   from_port                = var.tanium_port_2
   to_port                  = var.tanium_port_2
   protocol                 = "tcp"
-  source_security_group_id = aws_security_group.mgmt_metrics_cluster.id
+  source_security_group_id = aws_security_group.mgmt_metrics_cluster[0].id
   security_group_id        = aws_security_group.tanium_service_endpoint.id
 }
 
