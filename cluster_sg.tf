@@ -257,7 +257,7 @@ resource "aws_security_group_rule" "metrics_host_inbound_tanium_1" {
   security_group_id        = aws_security_group.tanium_service_endpoint.id
 }
 
-resource "aws_security_group_rule" "data_egress_host_inbound_tanium_2" {
+resource "aws_security_group_rule" "metrics_host_inbound_tanium_2" {
   description              = "Metrics host inbound port 2 from Tanium"
   type                     = "ingress"
   from_port                = var.tanium_port_2
@@ -266,6 +266,47 @@ resource "aws_security_group_rule" "data_egress_host_inbound_tanium_2" {
   source_security_group_id = aws_security_group.metrics_cluster.id
   security_group_id        = aws_security_group.tanium_service_endpoint.id
 }
+
+resource "aws_security_group_rule" "mgmt_metrics_host_outbound_tanium_1" {
+  description              = "Mgmt Metrics host outbound port 1 to Tanium"
+  type                     = "egress"
+  from_port                = var.tanium_port_1
+  to_port                  = var.tanium_port_1
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.tanium_service_endpoint.id
+  security_group_id        = aws_security_group.mgmt_metrics_cluster.id
+}
+
+resource "aws_security_group_rule" "mgmt_metrics_host_outbound_tanium_2" {
+  description              = "Mgmt Metrics host outbound port 2 to Tanium"
+  type                     = "egress"
+  from_port                = var.tanium_port_2
+  to_port                  = var.tanium_port_2
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.tanium_service_endpoint.id
+  security_group_id        = aws_security_group.mgmt_metrics_cluster.id
+}
+
+resource "aws_security_group_rule" "mgmt_metrics_host_inbound_tanium_1" {
+  description              = "Mgmt Metrics host inbound port 1 from Tanium"
+  type                     = "ingress"
+  from_port                = var.tanium_port_1
+  to_port                  = var.tanium_port_1
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.mgmt_metrics_cluster.id
+  security_group_id        = aws_security_group.tanium_service_endpoint.id
+}
+
+resource "aws_security_group_rule" "mgmt_metrics_host_inbound_tanium_2" {
+  description              = "Mgmt Metrics host inbound port 2 from Tanium"
+  type                     = "ingress"
+  from_port                = var.tanium_port_2
+  to_port                  = var.tanium_port_2
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.mgmt_metrics_cluster.id
+  security_group_id        = aws_security_group.tanium_service_endpoint.id
+}
+
 
 resource "aws_security_group_rule" "secondary_metrics_host_outbound_tanium_1" {
   description              = "Metrics host outbound port 1 to Tanium"
@@ -297,7 +338,7 @@ resource "aws_security_group_rule" "secondary_metrics_host_inbound_tanium_1" {
   security_group_id        = aws_security_group.secondary_tanium_service_endpoint.id
 }
 
-resource "aws_security_group_rule" "secondary_data_egress_host_inbound_tanium_2" {
+resource "aws_security_group_rule" "secondary_metrics_host_inbound_tanium_2" {
   description              = "Metrics host inbound port 2 from Tanium"
   type                     = "ingress"
   from_port                = var.tanium_port_2
