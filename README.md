@@ -1,4 +1,4 @@
-# dataworks-metrics-infrastructure
+# DEPRECATED - MIGRATING TO GITLAB.COM (WIP) dataworks-metrics-infrastructure
 Repo for storing the Metrics Infrastructure to be used in AWS
 
 ## Local Development
