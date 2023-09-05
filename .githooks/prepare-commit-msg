@@ -1,0 +1,3 @@
+#!/bin/sh
+
+echo "# DO NOT USE THIS REPO - MIGRATED TO GITLAB!" > $1
