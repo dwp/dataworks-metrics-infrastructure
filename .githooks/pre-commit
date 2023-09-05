@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "# DO NOT USE THIS REPO - MIGRATED TO GITLAB!" > $1
+
 declare -a patterns=(
     "\b[A-Z0-9]{20}\b"
     "\b[A-Za-z0-9\/+=]{40}\b"
