@@ -14,6 +14,7 @@ declare -a patterns=(
     "\b.[a-z]{2}-[a-z]{4,9}-[0-9]{1}.\b"
 )
 
+
 declare -a descriptions=(
     "AWS access key ID"
     "40 character random (e.g. AWS secret access key, PAT)"
