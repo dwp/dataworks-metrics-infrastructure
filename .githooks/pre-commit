@@ -46,3 +46,4 @@ if (( match > 0 )); then
     echo "git commit --no-verify"
     exit 1
 fi
+
