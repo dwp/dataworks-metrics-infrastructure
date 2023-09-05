@@ -12,7 +12,6 @@ declare -a patterns=(
     "PRIVATE KEY-----"
     "\b[A-Za-z0-9._%+-]{1,}@[A-Za-z0-9]{1,}.[A-Za-z0-9]{1,4}.[A-Za-z0-9]{1,4}\b"
     "\b.[a-z]{2}-[a-z]{4,9}-[0-9]{1}.\b"
-    "\b(.*?)\b"
 )
 
 declare -a descriptions=(
@@ -25,7 +24,6 @@ declare -a descriptions=(
     "Private key (e.g. rsa private key, openssh private key)"
     "Email addresses"
     "Regions embedded as part of resource descriptions"
-    "DO NOT USE REPO! Migrated to Gitlab!!"
 )
 
 if [ -d ".gitsecret" ]; then
