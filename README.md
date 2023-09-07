@@ -1,3 +1,5 @@
+# DO NOT USE THIS REPO - MIGRATED TO GITLAB
+
 # dataworks-metrics-infrastructure
 Repo for storing the Metrics Infrastructure to be used in AWS
 
